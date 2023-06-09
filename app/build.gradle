@@ -1,0 +1,94 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
+}
+
+android {
+    namespace 'ru.cooksupteam.cooksup.app'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "ru.cooksupteam.cooksup.app"
+        minSdk 24
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.2.0'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+}
+
+dependencies {
+    implementation "org.jsoup:jsoup:1.7.2"
+    implementation "io.coil-kt:coil-compose:2.2.1"
+
+    implementation "androidx.compose.material3:material3:1.2.0-alpha01"
+
+    implementation 'androidx.core:core-ktx:1.7.0'
+    implementation "androidx.compose.ui:ui:$compose_version"
+    implementation "androidx.compose.material:material:$compose_version"
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
+    implementation "androidx.compose.ui:ui-tooling-preview:$compose_version"
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'androidx.activity:activity-compose:1.3.1'
+    implementation "androidx.navigation:navigation-compose:2.5.3"
+    implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0'
+    implementation 'androidx.compose.material3:material3:1.1.0'
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
+    androidTestImplementation "androidx.compose.ui:ui-test-junit4:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-tooling:$compose_version"
+    debugImplementation "androidx.compose.ui:ui-test-manifest:$compose_version"
+
+    implementation "io.ktor:ktor-client-core:$ktorVersion"
+    implementation "io.ktor:ktor-client-json:$ktorVersion"
+    implementation "io.ktor:ktor-client-okhttp:$ktorVersion"
+
+    implementation "io.ktor:ktor-serialization-kotlinx-json:$ktorVersion"
+    implementation("io.ktor:ktor-client-content-negotiation:$ktorVersion")
+
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.4"
+    implementation "com.google.accompanist:accompanist-systemuicontroller:0.30.0"
+    implementation "com.google.accompanist:accompanist-flowlayout:0.30.0"
+    implementation "androidx.compose.ui:ui-util:$compose_version"
+
+    implementation("cafe.adriel.voyager:voyager-androidx:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-koin:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-hilt:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-livedata:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-tab-navigator:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-transitions:1.0.0-rc05")
+
+}

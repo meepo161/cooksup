@@ -1,0 +1,32 @@
+package ru.cooksupteam.cooksup
+
+import androidx.compose.ui.graphics.Color
+import java.util.*
+
+
+fun getColorFromString(color: String): Color {
+    val colorWithoutHash = color.substring(1)
+    val r = colorWithoutHash.substring(0, 2).toInt(16)
+    val g = colorWithoutHash.substring(2, 4).toInt(16)
+    val b = colorWithoutHash.substring(4, 6).toInt(16)
+    val a = colorWithoutHash.substring(6, 8).toInt(16)
+    return Color(r, g, b, a)
+}
+fun String?.toIntOrDefault(default: Int) = this?.toIntOrNull() ?: default
+fun Double.autoformat(): String =
+    if (this.toLong().toDouble() == this) {
+        "%d".format(Locale.ENGLISH, this.toLong())
+    } else {
+        with(Math.abs(this)) {
+            when {
+                this == 0.0 -> "%.0f"
+                this < 0.1f -> "%.5f"
+                this < 1f -> "%.4f"
+                this < 10f -> "%.3f"
+                this < 100f -> "%.2f"
+                this < 1000f -> "%.1f"
+                else -> "%.0f"
+            }.format(Locale.ENGLISH, this@autoformat)
+        }
+    }
+
