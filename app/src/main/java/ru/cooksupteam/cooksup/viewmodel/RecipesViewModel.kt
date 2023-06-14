@@ -5,7 +5,8 @@ import androidx.compose.runtime.mutableStateListOf
 import kotlinx.coroutines.runBlocking
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.ip
-import ru.cooksupteam.cooksup.model.Recipes
+import ru.cooksupteam.cooksup.Singleton.port
+import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.model.RecipesRemote
 
 class RecipesViewModel {
@@ -20,9 +21,9 @@ class RecipesViewModel {
 
     val allRecipes =
         mutableStateListOf(*all.map {
-            Recipes(
+            RecipeFull(
                 name = it.name,
-                image = "http://$ip:8080/recipes_pics/" + it.name + ".jpg",
+                pic = "http://$ip:$port/recipes_pics/" + it.name + ".jpg",
                 quantityIngredients = it.quantityIngredients
             )
         }.toTypedArray())

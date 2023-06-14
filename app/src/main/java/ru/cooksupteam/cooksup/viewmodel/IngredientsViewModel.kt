@@ -4,13 +4,14 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.ip
+import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.IngredientRemote
 
-class IngredientsViewModel {
+class IngredientsViewModel() {
     var currentPage = 0
     var all = listOf<IngredientRemote>()
     val allIngredients =
@@ -18,7 +19,7 @@ class IngredientsViewModel {
             Ingredient(
                 name = it.name.replace("процент", "%"),
                 group = it.group,
-                image = "http://$ip:8080/ingredients_pics/" + it.name + ".png"
+                image = "http://$ip:$port/ingredients_pics/" + it.name + ".png"
             )
         }.toTypedArray())
 
@@ -30,7 +31,7 @@ class IngredientsViewModel {
     }
 
     fun fetchIngredients() {
-        runBlocking {
+        scope.launch {
             all = RESTAPI.fetchIngredients(currentPage)
             appendToAllIngredients()
             Log.d("DICK", all.toString())
@@ -42,7 +43,7 @@ class IngredientsViewModel {
             Ingredient(
                 name = it.name.replace("процент", "%"),
                 group = it.group,
-                image = "http://$ip:8080/ingredients_pics/" + it.name + ".png",
+                image = "http://$ip:$port/ingredients_pics/" + it.name + ".png",
             )
         })
     }

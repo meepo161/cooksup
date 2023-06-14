@@ -2,14 +2,20 @@ package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,11 +48,12 @@ class RecipesTab(var ivm: IngredientsViewModel, var navigator: Navigator) : Tab 
             }
         }
 
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
     @Composable
     override fun Content() {
         val selectedIngredients = ivm.selectedIngredients.map { it.name }
         val rvmf = RecipeFullViewModel(selectedIngredients)
+        var ppppp = mutableStateOf("")
         CooksupTheme {
             Scaffold(
                 modifier = Modifier.padding(bottom = 56.dp),
@@ -70,7 +77,7 @@ class RecipesTab(var ivm: IngredientsViewModel, var navigator: Navigator) : Tab 
                         text = "Найдено рецептов: ${rvmf.allRecipeFull.size}",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(12.dp),
+                            .padding(bottom = 12.dp, start = 12.dp),
                         textAlign = TextAlign.Start,
                         color = CooksupTheme.colors.textPrimary
                     )
@@ -84,7 +91,14 @@ class RecipesTab(var ivm: IngredientsViewModel, var navigator: Navigator) : Tab 
                         itemsIndexed(rvmf.allRecipeFull) { index, recipe ->
                             RecipeCard(
                                 recipe = recipe,
-                                onRecipeClick = { navigator.push(RecipeFullScreen(recipe, ivm)) },
+                                onRecipeClick = {
+                                    navigator.push(
+                                        RecipeFullScreen(
+                                            recipe,
+                                            ivm
+                                        )
+                                    )
+                                },
                                 index = index,
                                 gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
                                 gradientWidth = 8000f,

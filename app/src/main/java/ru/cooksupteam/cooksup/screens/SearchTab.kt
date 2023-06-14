@@ -3,17 +3,41 @@ package ru.cooksupteam.cooksup.screens
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.*
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
+import androidx.compose.foundation.gestures.rememberScrollableState
+import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,7 +75,7 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
             }
         }
 
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
     @Composable
     override fun Content() {
 //        val searchViewModel = remember { SearchViewModel(ivm) }
@@ -64,7 +88,7 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
 
         var searchTextState = remember { mutableStateOf("") }
         var items = mutableStateListOf(*ivm.allIngredients.sortedBy { it.name.lowercase() }
-            .filter { it.name.contains(searchTextState.value) }
+            .filter { it.name.lowercase().contains(searchTextState.value.lowercase()) }
             .toTypedArray())
         var headers = mutableStateListOf(
             *items.map { it.name.first().uppercase() }.toSet().toList()
@@ -98,6 +122,7 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
                                             .fillMaxWidth()
                                             .padding(horizontal = 12.dp),
                                         textAlign = TextAlign.Start,
+                                        fontSize = 20.sp,
                                         color = CooksupTheme.colors.textPrimary
                                     )
                                 },

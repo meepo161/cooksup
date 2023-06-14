@@ -3,13 +3,27 @@ package ru.cooksupteam.cooksup.screens
 import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.LocalTextStyle
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -28,22 +42,24 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.SubcomposeAsyncImage
-import coil.compose.SubcomposeAsyncImageContent
 import coil.request.ImageRequest
 import ru.cooksupteam.cooksup.Singleton.ip
+import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.autoformat
 import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.toIntOrDefault
+import ru.cooksupteam.cooksup.ui.components.RecipeImage
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 
 class RecipeFullScreen(
     var recipe: RecipeFull, var ivm: IngredientsViewModel
 ) : Screen {
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "MutableCollectionMutableState")
+    @SuppressLint(
+        "UnusedMaterialScaffoldPaddingParameter", "MutableCollectionMutableState",
+        "UnrememberedMutableState"
+    )
     @Composable
     override fun Content() {
         var scrollState = rememberScrollState()
@@ -92,16 +108,12 @@ class RecipeFullScreen(
                             .background(CooksupTheme.colors.uiBackground)
                     ) {
                         item {
-                            AsyncImage(
-                                model = ImageRequest.Builder(LocalContext.current).data(recipe.pic)
-                                    .crossfade(true)
-                                    .build(),
-                                contentDescription = "",
-                                placeholder = painterResource(R.drawable.placeholder),
+                            RecipeImage(
+                                imageUrl = recipe.pic,
                                 modifier = Modifier
                                     .width(400.dp)
                                     .height(400.dp),
-                                contentScale = ContentScale.Crop,
+                                shape = RoundedCornerShape(8.dp)
                             )
                             Box(
                                 modifier = Modifier
@@ -295,24 +307,13 @@ class RecipeFullScreen(
                                         Box(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
                                             Column(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
                                                 if (step.pic.isNotEmpty()) {
-                                                    SubcomposeAsyncImage(
-                                                        model = ImageRequest.Builder(LocalContext.current)
-                                                            .data("http://$ip:8080/recipes_pics/" + recipe.name + "($i)" + ".jpg")
-                                                            .crossfade(true)
-                                                            .build(),
-                                                        contentDescription = "",
+                                                    RecipeImage(
+                                                        imageUrl = "http://$ip:$port/recipes_pics/" + recipe.name + "($i)" + ".jpg",
                                                         modifier = Modifier
                                                             .width(400.dp)
                                                             .height(400.dp),
-                                                        contentScale = ContentScale.Crop,
-                                                    ) {
-                                                        val state = painter.state
-                                                        if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-                                                            CircularProgressIndicator()
-                                                        } else {
-                                                            SubcomposeAsyncImageContent()
-                                                        }
-                                                    }
+                                                        shape = RoundedCornerShape(0.dp)
+                                                    )
                                                 }
                                                 Text(
                                                     modifier = Modifier.padding(16.dp),

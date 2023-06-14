@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup.ui.components
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -17,11 +18,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun IngredientListItem(ingredient: Ingredient, onClick: (Ingredient, Boolean) -> Unit) {
     var isSelected = mutableStateOf(ingredient.selected)
@@ -66,8 +69,14 @@ fun IngredientListItem(ingredient: Ingredient, onClick: (Ingredient, Boolean) ->
         Icon(
             if (!isSelected.value) Icons.Rounded.AddCircle else Icons.Rounded.RemoveCircle,
             contentDescription = null,
-            tint = if (!isSelected.value) Color.Green else Color.Red,
-            modifier = Modifier.weight(0.1f)
+            modifier = if (!isSelected.value) Modifier
+                .weight(0.1f)
+                .diagonalGradientTint(
+                    CooksupTheme.colors.gradient6_1,
+                    BlendMode.Color
+                ) else Modifier
+                .weight(0.1f)
+                .diagonalGradientTint(CooksupTheme.colors.gradient6_2, BlendMode.Color)
         )
     }
 }
