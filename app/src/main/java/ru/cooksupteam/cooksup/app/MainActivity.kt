@@ -15,7 +15,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         appContext = applicationContext
         IngredientsViewModel().load()
-
         setContent {
             CooksupTheme {
                 Navigator(MainScreen())

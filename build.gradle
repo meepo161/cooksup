@@ -2,6 +2,7 @@ buildscript {
     ext {
         compose_version = '1.4.0'
         ktorVersion = "2.2.2"
+        voyager_version = "1.0.0-rc06"
     }
 }// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {

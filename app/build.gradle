@@ -82,13 +82,13 @@ dependencies {
     implementation "com.google.accompanist:accompanist-flowlayout:0.30.0"
     implementation "androidx.compose.ui:ui-util:$compose_version"
 
-    implementation("cafe.adriel.voyager:voyager-androidx:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-koin:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-hilt:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-livedata:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-navigator:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-tab-navigator:1.0.0-rc05")
-    implementation("cafe.adriel.voyager:voyager-transitions:1.0.0-rc05")
+    implementation("cafe.adriel.voyager:voyager-androidx:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-koin:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-hilt:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-livedata:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-navigator:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-bottom-sheet-navigator:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-tab-navigator:$voyager_version")
+    implementation("cafe.adriel.voyager:voyager-transitions:$voyager_version")
 
 }
