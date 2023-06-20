@@ -11,18 +11,11 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
-import ru.cooksupteam.cooksup.Singleton.isConnected
 import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
 import ru.cooksupteam.cooksup.model.RecipesRemote
-import java.io.File
 
 object RESTAPI {
     var client = HttpClient {
@@ -31,27 +24,36 @@ object RESTAPI {
         }
     }
 
-    suspend fun fetchIngredients(page: Int): List<IngredientRemote> {
-        return if (isConnected()) {
-            val file = File(appContext.filesDir, "ingredients_group.json")
-            if (!file.exists()) {
-                withContext(Dispatchers.IO) {
-                    file.appendText(client.get("http://$ip:$port/ingredients?page=$page").body())
-                }
-            }
-            Json.decodeFromString(string = file.readText())
-
-        } else {
-            List(0) { IngredientRemote("") }
-        }
+    suspend fun fetchIngredients(): List<IngredientRemote> {
+//        val file = File(appContext.filesDir, "ingredients_group.json")
+//        return if (!file.exists()) {
+//            if (isConnected()) {
+//                Log.d("FILE_EXISTS", "${file.exists()}")
+//                withContext(Dispatchers.IO) {
+//                    file.createNewFile()
+//                    file.appendText(client.get("http://$ip:$port/ingredients?page=0").body())
+//                }
+//            }
+//            Json.decodeFromString(string = file.readText())
+//        } else {
+//            Json.decodeFromString(string = file.readText())
+//        }
+        return client.get("http://$ip:$port/ingredients?page=0").body()
     }
 
-    suspend fun fetchRecipes(): List<RecipesRemote> {
-        val response = client.get("http://$ip:$port/recipe_full")
+    suspend fun fetchAllRecipes(): List<RecipesRemote> {
+        val response = client.get("http://$ip:$port/recipe_full1")
         return response.body()
     }
 
-    suspend fun fetchRecipeFull(list: List<String>): List<RecipeFullRemote> {
+    suspend fun fetchRecipeFilteredFromText(name: String): List<RecipeFullRemote> {
+        val response = client.get {
+            url("http://$ip:$port/recipe_filtered_from_text")
+            parameter("name", name)
+        }
+        return response.body()
+    }
+    suspend fun fetchRecipeFiltered(list: List<String>): List<RecipeFullRemote> {
         val response = client.get {
             url("http://$ip:$port/recipe_filtered")
             parameter("ingredients", list)

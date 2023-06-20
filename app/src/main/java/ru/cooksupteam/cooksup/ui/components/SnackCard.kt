@@ -58,7 +58,7 @@ fun SnackCard(
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
                 IngredientImage(
-                    imageUrl = ingredient.image,
+                    imageUrl = ingredient.pic,
                     modifier = Modifier
                         .size(120.dp)
                         .align(Alignment.BottomCenter)
@@ -76,7 +76,7 @@ fun SnackCard(
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = ingredient.group,
+                text = ingredient.name,
                 style = MaterialTheme.typography.body1,
                 softWrap = false,
                 color = CooksupTheme.colors.textHelp,

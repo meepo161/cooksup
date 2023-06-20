@@ -16,14 +16,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 
-class FridgeTab(var ivm: IngredientsViewModel) : Tab {
+class FridgeTab(private val navigator: Navigator) : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -70,7 +71,7 @@ class FridgeTab(var ivm: IngredientsViewModel) : Tab {
                     ) {
                         item {
                             Text(
-                                text = "Всего ингредиентов: ${ivm.selectedIngredients.size}",
+                                text = "Всего ингредиентов: ${selectedIngredients.size}",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(horizontal = 12.dp),
@@ -78,9 +79,9 @@ class FridgeTab(var ivm: IngredientsViewModel) : Tab {
                                 color = CooksupTheme.colors.textPrimary
                             )
                         }
-                        itemsIndexed(ivm.selectedIngredients) { index, ingredient ->
-                            IngredientListItem(ingredient = ingredient, onClick = { _, _ ->
-                                ivm.selectedIngredients.remove(ingredient)
+                        itemsIndexed(selectedIngredients) { index, ingredient ->
+                            IngredientListItem(ingredient = ingredient, navigator, onClick = { _, _ ->
+                                selectedIngredients.remove(ingredient)
                             })
                         }
                     }

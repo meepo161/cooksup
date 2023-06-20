@@ -40,7 +40,7 @@
     <string name="ingredients">Ingredients</string>
     <string name="ingredients_list">Vanilla, Almond Flour, Eggs, Butter, Cream, Sugar</string>
     <string name="quantity">Qty</string>
-    <string name="add_to_cart">ADD TO CART</string>
+    <string name="add_to_cart">Добавить в продукты</string>
 
     <!-- Cart -->
     <string name="cart_order_header">Order (%1s)</string>
@@ -62,8 +62,8 @@
     <string name="label_decrease">Decrease</string>
     <string name="work_in_progress">This is currently work in progress</string>
     <string name="grab_beverage">Grab a beverage and check back later!</string>
-    <string name="see_more">SEE MORE</string>
-    <string name="see_less">SEE LESS</string>
+    <string name="see_more">Посмотреть еще</string>
+    <string name="see_less">Свернуть</string>
     <string name="remove_item">Remove Item</string>
     <string name="reset">Reset</string>
     <string name="sort">Sort</string>

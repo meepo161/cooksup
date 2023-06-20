@@ -11,22 +11,25 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.*
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 
-class MainScreen(private var ivm: IngredientsViewModel) : Screen {
+class MainScreen() :
+    Screen {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        TabNavigator(MainTab(ivm)) {
+        TabNavigator(MainTab(navigator)) {
             Scaffold(
                 bottomBar = {
                     CooksupTheme {
-                        BottomNavigation(backgroundColor = CooksupTheme.colors.uiBackground, contentColor = CooksupTheme.colors.textPrimary) {
-                            TabNavigationItem(tab = MainTab(ivm))
-                            TabNavigationItem(tab = SearchTab(ivm))
-                            TabNavigationItem(tab = FridgeTab(ivm))
-                            TabNavigationItem(tab = RecipesTab(ivm, navigator = navigator))
+                        BottomNavigation(
+                            backgroundColor = CooksupTheme.colors.uiBackground,
+                            contentColor = CooksupTheme.colors.textPrimary
+                        ) {
+                            TabNavigationItem(tab = MainTab(navigator))
+                            TabNavigationItem(tab = SearchTab(navigator))
+                            TabNavigationItem(tab = FridgeTab(navigator))
+                            TabNavigationItem(tab = RecipesTab(navigator))
                         }
                     }
                 }) {
@@ -57,5 +60,5 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
 )
 @Composable
 private fun MainScreenPreview() {
-    MainScreen(IngredientsViewModel())
+    MainScreen()
 }

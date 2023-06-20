@@ -53,7 +53,7 @@ fun IngredientCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IngredientImage(
-                    imageUrl = ingredient.image,
+                    imageUrl = ingredient.pic,
                     modifier = Modifier
                         .size(128.dp)
                 )

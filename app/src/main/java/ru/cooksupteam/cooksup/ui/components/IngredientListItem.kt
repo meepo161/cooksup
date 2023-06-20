@@ -18,15 +18,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.BlendMode
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.Navigator
 import ru.cooksupteam.cooksup.model.Ingredient
+import ru.cooksupteam.cooksup.screens.IngredientDetailScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
-fun IngredientListItem(ingredient: Ingredient, onClick: (Ingredient, Boolean) -> Unit) {
+fun IngredientListItem(
+    ingredient: Ingredient,
+    navigator: Navigator,
+    onClick: (Ingredient, Boolean) -> Unit
+) {
     var isSelected = mutableStateOf(ingredient.selected)
     Row(
         modifier = Modifier
@@ -40,9 +45,7 @@ fun IngredientListItem(ingredient: Ingredient, onClick: (Ingredient, Boolean) ->
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(color = CooksupTheme.colors.brand),
                 onClick = {
-                    onClick(ingredient, isSelected.value)
-                    isSelected.value = !isSelected.value
-                    ingredient.selected = isSelected.value
+                    navigator.push(IngredientDetailScreen(ingredient, navigator))
                 }
             ),
         horizontalArrangement = Arrangement.spacedBy(
@@ -58,7 +61,7 @@ fun IngredientListItem(ingredient: Ingredient, onClick: (Ingredient, Boolean) ->
                     shape = MaterialTheme.shapes.medium
                 )
                 .size(48.dp),
-            imageUrl = ingredient.image,
+            imageUrl = ingredient.pic,
             background = Color.Transparent
         )
         Text(
@@ -66,17 +69,21 @@ fun IngredientListItem(ingredient: Ingredient, onClick: (Ingredient, Boolean) ->
             color = CooksupTheme.colors.textPrimary,
             modifier = Modifier.weight(0.9f)
         )
-        Icon(
-            if (!isSelected.value) Icons.Rounded.AddCircle else Icons.Rounded.RemoveCircle,
-            contentDescription = null,
-            modifier = if (!isSelected.value) Modifier
+        Box(
+            modifier = Modifier
                 .weight(0.1f)
-                .diagonalGradientTint(
-                    CooksupTheme.colors.gradient6_1,
-                    BlendMode.Color
-                ) else Modifier
-                .weight(0.1f)
-                .diagonalGradientTint(CooksupTheme.colors.gradient6_2, BlendMode.Color)
-        )
+                .clickable {
+                    onClick(ingredient, isSelected.value)
+                    isSelected.value = !isSelected.value
+                    ingredient.selected = isSelected.value
+                },
+        ) {
+            Icon(
+                if (!isSelected.value) Icons.Rounded.AddCircle else Icons.Rounded.RemoveCircle,
+                contentDescription = null,
+
+                tint = if (!isSelected.value) CooksupTheme.colors.brand else CooksupTheme.colors.error,
+            )
+        }
     }
 }

@@ -20,6 +20,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -39,26 +41,33 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.launch
+import ru.cooksupteam.cooksup.Singleton.allIngredients
+import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 import java.lang.Math.abs
 
-class SearchTab(var ivm: IngredientsViewModel) : Tab {
+class SearchTab(var navigator: Navigator) : Tab {
 
     override val options: TabOptions
         @Composable
@@ -75,26 +84,26 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
             }
         }
 
+    @OptIn(ExperimentalComposeUiApi::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
     @Composable
     override fun Content() {
-//        val searchViewModel = remember { SearchViewModel(ivm) }
+        val navigatorTab = LocalNavigator.currentOrThrow
         val selectedHeader = remember { mutableStateOf("") }
         val listState = rememberLazyListState()
         var isNeedSelectedHeader by remember { mutableStateOf(false) }
         val offsets = remember { mutableStateMapOf<Int, Float>() }
         var selectedHeaderIndex by remember { mutableStateOf(0) }
         val scope = rememberCoroutineScope()
+        val searchTextState = remember { mutableStateOf("") }
+        val keyboardController = LocalSoftwareKeyboardController.current
 
-        var searchTextState = remember { mutableStateOf("") }
-        var items = mutableStateListOf(*ivm.allIngredients.sortedBy { it.name.lowercase() }
-            .filter { it.name.lowercase().contains(searchTextState.value.lowercase()) }
+        val items = mutableStateListOf(*allIngredients.sortedBy { it.name.lowercase() }
+            .filter { it.name.lowercase().contains(searchTextState.value.lowercase().trim()) }
             .toTypedArray())
-        var headers = mutableStateListOf(
-            *items.map { it.name.first().uppercase() }.toSet().toList()
-                .toTypedArray()
+        val headers = mutableStateListOf(
+            *items.map { it.name.first().uppercase() }.toSet().toList().toTypedArray()
         )
-
 
         CooksupTheme {
             Scaffold(
@@ -145,6 +154,10 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
                                 onValueChange = {
                                     searchTextState.value = it
                                 },
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                                keyboardActions = KeyboardActions(
+                                    onSearch = { navigatorTab.push(RecipesTab(navigator)) }
+                                ),
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .background(CooksupTheme.colors.uiBackground),
@@ -188,12 +201,14 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
                             )
                         }
                         itemsIndexed(items) { index, ingredient ->
-                            println("${ingredient.name} ${ingredient.selected}")
-                            IngredientListItem(ingredient) { _, isSelected ->
+                            if (listState.isScrollInProgress) {
+                                keyboardController?.hide()
+                            }
+                            IngredientListItem(ingredient, navigator) { _, isSelected ->
                                 if (!isSelected) {
-                                    ivm.selectedIngredients.add(ingredient)
+                                    selectedIngredients.add(ingredient)
                                 } else {
-                                    ivm.selectedIngredients.remove(ingredient)
+                                    selectedIngredients.remove(ingredient)
                                 }
                                 isNeedSelectedHeader = false
                             }
@@ -210,7 +225,7 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
                         selectedHeaderIndex = index
                         val selectedItemIndex = items.indexOfFirst {
                             it.name.first().uppercase() == headers[selectedHeaderIndex]
-                        }
+                        } + 1
                         scope.launch {
                             listState.scrollToItem(selectedItemIndex)
                             isNeedSelectedHeader = true
@@ -240,7 +255,7 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
                                 }
                         ) {
                             Box(
-                                modifier = Modifier.padding(end = 12.dp),
+                                modifier = Modifier,
                                 contentAlignment = Alignment.CenterEnd
                             ) {
                                 if (!listState.isScrollInProgress && isNeedSelectedHeader) {
@@ -253,7 +268,7 @@ class SearchTab(var ivm: IngredientsViewModel) : Tab {
                                                 shape = RoundedCornerShape(16.dp)
                                             ),
                                         textAlign = TextAlign.Center,
-                                        fontSize = 22.sp,
+                                        fontSize = 28.sp,
                                         color = CooksupTheme.colors.uiBackground,
                                     )
                                 } else {

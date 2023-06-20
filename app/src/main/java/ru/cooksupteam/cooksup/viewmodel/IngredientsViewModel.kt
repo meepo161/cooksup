@@ -1,40 +1,25 @@
 package ru.cooksupteam.cooksup.viewmodel
 
-import android.util.Log
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton.ip
-import ru.cooksupteam.cooksup.Singleton.port
+import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.IngredientRemote
 
-class IngredientsViewModel() {
-    var currentPage = 0
+class IngredientsViewModel {
     var all = listOf<IngredientRemote>()
-    val allIngredients =
-        mutableStateListOf(*all.map {
-            Ingredient(
-                name = it.name.replace("процент", "%"),
-                group = it.group,
-                image = "http://$ip:$port/ingredients_pics/" + it.name + ".png"
-            )
-        }.toTypedArray())
-
+    var isDataReady = mutableStateOf(false)
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    init {
-        Log.d("DICK", "fetchIngridients")
-        fetchIngredients()
-    }
-
-    fun fetchIngredients() {
+    fun load() {
+        isDataReady.value = false
         scope.launch {
-            all = RESTAPI.fetchIngredients(currentPage)
+            all = RESTAPI.fetchIngredients()
             appendToAllIngredients()
-            Log.d("DICK", all.toString())
+            isDataReady.value = true
         }
     }
 
@@ -42,14 +27,17 @@ class IngredientsViewModel() {
         allIngredients.addAll(all.map {
             Ingredient(
                 name = it.name.replace("процент", "%"),
-                group = it.group,
-                image = "http://$ip:$port/ingredients_pics/" + it.name + ".png",
+                description = it.description,
+                pic = it.pic,
+                nutrition = it.nutrition,
+                history = it.history,
+                benefitAndHarm = it.benefitAndHarm,
+                taste = it.taste,
+                howTo = it.howTo,
+                howLong = it.howLong,
             )
-        })
+        }.sortedBy { it.name })
     }
-
-    val selectedIngredients = mutableStateListOf<Ingredient>()
-
 
     fun getFilteredIngredients(predicate: String): List<Ingredient> =
         allIngredients.filter { it.name.lowercase().contains(predicate.lowercase()) }

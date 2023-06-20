@@ -1,18 +1,32 @@
 package ru.cooksupteam.cooksup.screens
 
-import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
+import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.rounded.FilterList
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -21,21 +35,20 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.model.Filter
-import ru.cooksupteam.cooksup.model.GroupsIngredient
 import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
 import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.components.diagonalGradientBorder
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 
-class MainTab(var ivm: IngredientsViewModel) : Tab {
+class MainTab(var navigator: Navigator) : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -53,8 +66,11 @@ class MainTab(var ivm: IngredientsViewModel) : Tab {
 
     @Composable
     override fun Content() {
+        var alphabet =
+            allIngredients.map { it.name.first().uppercase() }.toSet().toList().toTypedArray()
         var scaffoldState = rememberScaffoldState()
         val scrollState = rememberLazyListState()
+
         CooksupTheme {
             Scaffold(
                 scaffoldState = scaffoldState,
@@ -126,67 +142,60 @@ class MainTab(var ivm: IngredientsViewModel) : Tab {
                             }
                         }
                     }
-                    GroupsIngredient.values().forEachIndexed { groupIndex, groupsIngredient ->
-                        if (groupsIngredient != GroupsIngredient.OTHER && groupsIngredient != GroupsIngredient.OIL && groupsIngredient != GroupsIngredient.TEA_AND_COFFEE)
-                            item {
-                                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                                    Text(
-                                        text = groupsIngredient.nameGroup,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.h6,
-                                        softWrap = false,
-                                        color = CooksupTheme.colors.textSecondary,
-                                        modifier = Modifier.padding(horizontal = 16.dp)
-                                    )
-                                    LazyRow(
-                                        verticalAlignment = Alignment.CenterVertically,
-                                        horizontalArrangement = Arrangement.spacedBy(
-                                            8.dp,
-                                            Alignment.Start
-                                        ),
-                                        contentPadding = PaddingValues(
-                                            start = 12.dp,
-                                            end = 8.dp
-                                        ),
-                                        modifier = Modifier
-                                            .heightIn(min = 56.dp)
-                                            .fillMaxWidth()
-                                    ) {
-                                        itemsIndexed(ivm.allIngredients.filter { it.group == groupsIngredient.nameGroup }) { index, ingredient ->
-                                            SnackCard(
-                                                ingredient = ingredient,
-                                                onSnackClick = {},
-                                                index = index,
-                                                gradient = if (groupIndex % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
-                                                gradientWidth = 1800f,
-                                                scroll = 1,
-                                                modifier = Modifier
-                                            )
-                                        }
+                    alphabet.forEachIndexed { _, alphabet ->
+                        item {
+                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Text(
+                                    text = alphabet.toString(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.h6,
+                                    softWrap = false,
+                                    color = CooksupTheme.colors.textSecondary,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                                LazyRow(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(
+                                        8.dp,
+                                        Alignment.Start
+                                    ),
+                                    contentPadding = PaddingValues(
+                                        start = 12.dp,
+                                        end = 8.dp
+                                    ),
+                                    modifier = Modifier
+                                        .heightIn(min = 56.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    itemsIndexed(allIngredients.filter {
+                                        it.name.startsWith(
+                                            alphabet
+                                        )
+                                    }) { index, ingredient ->
+                                        SnackCard(
+                                            ingredient = ingredient,
+                                            onSnackClick = {
+                                                navigator.push(
+                                                    IngredientDetailScreen(
+                                                        ingredient,
+                                                        navigator
+                                                    )
+                                                )
+                                            },
+                                            index = index,
+                                            gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                            gradientWidth = 1800f,
+                                            scroll = 1,
+                                            modifier = Modifier
+                                        )
                                     }
                                 }
                             }
-
+                        }
                     }
                 }
             }
         }
     }
 }
-
-@Preview("default", showSystemUi = true, showBackground = true)
-@Preview(
-    "dark theme",
-    uiMode = Configuration.UI_MODE_NIGHT_YES,
-    showSystemUi = true,
-    showBackground = true
-)
-@Composable
-private fun MainTabPreview() {
-    CooksupTheme {
-        MainTab(IngredientsViewModel()).Content()
-    }
-}
-
-
