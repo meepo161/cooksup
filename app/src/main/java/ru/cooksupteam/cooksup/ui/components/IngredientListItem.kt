@@ -32,7 +32,7 @@ fun IngredientListItem(
     navigator: Navigator,
     onClick: (Ingredient, Boolean) -> Unit
 ) {
-    var isSelected = mutableStateOf(ingredient.selected)
+    val isSelected = mutableStateOf(ingredient.selected)
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -45,7 +45,7 @@ fun IngredientListItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(color = CooksupTheme.colors.brand),
                 onClick = {
-                    navigator.push(IngredientDetailScreen(ingredient, navigator))
+                    navigator.push(IngredientDetailScreen(ingredient))
                 }
             ),
         horizontalArrangement = Arrangement.spacedBy(

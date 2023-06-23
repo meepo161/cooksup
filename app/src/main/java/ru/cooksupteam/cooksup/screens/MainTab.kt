@@ -37,10 +37,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.Singleton.allIngredients
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
@@ -48,7 +48,7 @@ import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.components.diagonalGradientBorder
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
-class MainTab(var navigator: Navigator) : Tab {
+class MainTab() : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -176,12 +176,7 @@ class MainTab(var navigator: Navigator) : Tab {
                                         SnackCard(
                                             ingredient = ingredient,
                                             onSnackClick = {
-                                                navigator.push(
-                                                    IngredientDetailScreen(
-                                                        ingredient,
-                                                        navigator
-                                                    )
-                                                )
+                                                navigator.push(                                                    IngredientDetailScreen(ingredient))
                                             },
                                             index = index,
                                             gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,

@@ -11,11 +11,21 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
 import ru.cooksupteam.cooksup.Singleton.port
+import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
 import ru.cooksupteam.cooksup.model.RecipesRemote
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.io.Reader
+
 
 object RESTAPI {
     var client = HttpClient {
@@ -25,20 +35,11 @@ object RESTAPI {
     }
 
     suspend fun fetchIngredients(): List<IngredientRemote> {
-//        val file = File(appContext.filesDir, "ingredients_group.json")
-//        return if (!file.exists()) {
-//            if (isConnected()) {
-//                Log.d("FILE_EXISTS", "${file.exists()}")
-//                withContext(Dispatchers.IO) {
-//                    file.createNewFile()
-//                    file.appendText(client.get("http://$ip:$port/ingredients?page=0").body())
-//                }
-//            }
-//            Json.decodeFromString(string = file.readText())
-//        } else {
-//            Json.decodeFromString(string = file.readText())
-//        }
-        return client.get("http://$ip:$port/ingredients?page=0").body()
+        val file = appContext.resources.openRawResource(R.raw.ingredients_group)
+        val ingredientsJson: Reader = BufferedReader(withContext(Dispatchers.IO) {
+            InputStreamReader(file, "UTF8")
+        })
+        return Json.decodeFromString(string = ingredientsJson.readText())
     }
 
     suspend fun fetchAllRecipes(): List<RecipesRemote> {
@@ -53,6 +54,7 @@ object RESTAPI {
         }
         return response.body()
     }
+
     suspend fun fetchRecipeFiltered(list: List<String>): List<RecipeFullRemote> {
         val response = client.get {
             url("http://$ip:$port/recipe_filtered")

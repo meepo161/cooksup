@@ -24,6 +24,7 @@ class IngredientsViewModel {
     }
 
     private fun appendToAllIngredients() {
+        allIngredients.clear()
         allIngredients.addAll(all.map {
             Ingredient(
                 name = it.name.replace("процент", "%"),

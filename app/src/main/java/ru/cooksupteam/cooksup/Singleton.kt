@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
+import cafe.adriel.voyager.navigator.Navigator
 import io.ktor.client.request.get
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -22,6 +23,7 @@ object Singleton {
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
     var lastIndex = 0
+    lateinit var navigator: Navigator
 
     @Throws(InterruptedException::class, IOException::class)
     fun isConnected(): Boolean {

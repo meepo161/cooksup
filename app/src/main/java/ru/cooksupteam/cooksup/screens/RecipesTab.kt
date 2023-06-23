@@ -41,21 +41,19 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.Singleton.allRecipeFull
 import ru.cooksupteam.cooksup.Singleton.lastIndex
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
 
-class RecipesTab(
-    var navigator: Navigator
-) : Tab {
+class RecipesTab() : Tab {
     override val options: TabOptions
         @Composable
         get() {

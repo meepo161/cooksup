@@ -55,19 +55,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.Singleton.allIngredients
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.lang.Math.abs
 
-class SearchTab(var navigator: Navigator) : Tab {
+class SearchTab() : Tab {
 
     override val options: TabOptions
         @Composable
@@ -156,7 +156,7 @@ class SearchTab(var navigator: Navigator) : Tab {
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
-                                    onSearch = { navigatorTab.push(RecipesTab(navigator)) }
+                                    onSearch = { navigatorTab.push(RecipesTab()) }
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()

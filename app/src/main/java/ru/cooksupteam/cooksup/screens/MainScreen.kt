@@ -10,15 +10,18 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.*
+import kotlinx.serialization.Serializable
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
+@Serializable
 class MainScreen() :
     Screen {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
-        TabNavigator(MainTab(navigator)) {
+        navigator = LocalNavigator.currentOrThrow
+        TabNavigator(MainTab()) {
             Scaffold(
                 bottomBar = {
                     CooksupTheme {
@@ -26,10 +29,10 @@ class MainScreen() :
                             backgroundColor = CooksupTheme.colors.uiBackground,
                             contentColor = CooksupTheme.colors.textPrimary
                         ) {
-                            TabNavigationItem(tab = MainTab(navigator))
-                            TabNavigationItem(tab = SearchTab(navigator))
-                            TabNavigationItem(tab = FridgeTab(navigator))
-                            TabNavigationItem(tab = RecipesTab(navigator))
+                            TabNavigationItem(tab = MainTab())
+                            TabNavigationItem(tab = SearchTab())
+                            TabNavigationItem(tab = FridgeTab())
+                            TabNavigationItem(tab = RecipesTab())
                         }
                     }
                 }) {
