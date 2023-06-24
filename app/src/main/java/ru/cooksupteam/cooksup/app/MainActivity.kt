@@ -8,6 +8,7 @@ import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.screens.MainScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
+import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -15,6 +16,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         appContext = applicationContext
         IngredientsViewModel().load()
+        RecipeFullViewModel().load()
         setContent {
             CooksupTheme {
                 Navigator(MainScreen())

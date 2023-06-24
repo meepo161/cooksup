@@ -9,16 +9,19 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.RecipeFull
+import ru.cooksupteam.cooksup.model.RecipeShort
 import java.io.IOException
 
 
 object Singleton {
-    var ip = "45.141.100.161"
+    var ip = "192.168.1.78"
+//    var ip = "45.141.100.161"
 //    var ip = "192.168.0.17"
     var port = "80"
     lateinit var appContext: Context
     val scope = CoroutineScope(Dispatchers.Default)
     var allRecipeFull = mutableStateListOf<RecipeFull>()
+    var allRecipeShort = mutableStateListOf<RecipeShort>()
     var lastIngredients : List<String> = listOf()
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
@@ -30,7 +33,7 @@ object Singleton {
         var isCon: Boolean
         runBlocking {
             isCon = try {
-                RESTAPI.client.get("http://$ip:$port/ingredients?page=0")
+                RESTAPI.client.get("http://$ip:$port/ingredients")
                 true
             } catch (e: Exception) {
                 false

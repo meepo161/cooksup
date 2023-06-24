@@ -13,8 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.cooksupteam.cooksup.model.Nutrition
-import ru.cooksupteam.cooksup.model.RecipeFull
+import ru.cooksupteam.cooksup.model.RecipeShort
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 private val HighlightCardWidth = 170.dp
@@ -22,7 +21,7 @@ private val HighlightCardPadding = 16.dp
 
 @Composable
 fun RecipeCard(
-    recipe: RecipeFull,
+    recipe: RecipeShort,
     onRecipeClick: (String) -> Unit,
     index: Int,
     gradient: List<Color>,
@@ -86,20 +85,20 @@ fun RecipeCard(
 )
 @Composable
 private fun SnackCardPreview() {
-    CooksupTheme {
-        RecipeCard(
-            recipe = RecipeFull(
-                "Рыбный салат с авокадо и творожным сыром Рыбный салат с авокадо и творожным сыром",
-                "Рыбный салат с авокадо и творожным сыром обязательно понравится любителям суши! Простой и быстрый, а значит, идеален для современного человека. Рестораны делают на такой салат пятикратную наценку, но любителям давно известно, что рецепты можно повторить дома без особых усилий!Знайте: c каждым кусочком вы будете все больше переносится в ощущение отпуска. Морской прибой, мягкий теплый ветер, что обволакивает плечи и гастрономическое удовольствие, сила которого не сравнима с усилиями от готовки",
-                "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg",
-                Nutrition(1.0, 2.0, 3.0, 4.0)
-            ),
-            onRecipeClick = {},
-            index = 2,
-            gradient = CooksupTheme.colors.gradient2_1,
-            gradientWidth = 380f,
-            scroll = 1,
-            modifier = Modifier.width(800.dp)
-        )
-    }
+//    CooksupTheme {
+//        RecipeCard(
+//            recipe = RecipeFull(
+//                "Рыбный салат с авокадо и творожным сыром Рыбный салат с авокадо и творожным сыром",
+//                "Рыбный салат с авокадо и творожным сыром обязательно понравится любителям суши! Простой и быстрый, а значит, идеален для современного человека. Рестораны делают на такой салат пятикратную наценку, но любителям давно известно, что рецепты можно повторить дома без особых усилий!Знайте: c каждым кусочком вы будете все больше переносится в ощущение отпуска. Морской прибой, мягкий теплый ветер, что обволакивает плечи и гастрономическое удовольствие, сила которого не сравнима с усилиями от готовки",
+//                "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg",
+//                Nutrition(1.0, 2.0, 3.0, 4.0)
+//            ),
+//            onRecipeClick = {},
+//            index = 2,
+//            gradient = CooksupTheme.colors.gradient2_1,
+//            gradientWidth = 380f,
+//            scroll = 1,
+//            modifier = Modifier.width(800.dp)
+//        )
+//    }
 }
