@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -13,6 +14,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
@@ -25,9 +27,9 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -37,16 +39,19 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import ru.cooksupteam.cooksup.Singleton.allRecipeShort
-import ru.cooksupteam.cooksup.Singleton.lastIndex
+import ru.cooksupteam.cooksup.Singleton.allRecipeFull
+import ru.cooksupteam.cooksup.Singleton.lastIndexRecipe
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
 
 class RecipesTab() : Tab {
     override val options: TabOptions
@@ -70,16 +75,19 @@ class RecipesTab() : Tab {
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
         val selectedIngredients = selectedIngredients.map { it.name }
-        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = lastIndex)
+        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = lastIndexRecipe)
+        var recipeFullViewModel = remember { RecipeFullViewModel() }
         val searchTextState = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
-//        val items = mutableStateListOf(*allRecipeShort.sortedBy { it.name.lowercase() }
-//            .filter {
-//                val nameRequest = searchTextState.value.lowercase().split(' ').toSet()
-//                val nameRecipe = it.name.lowercase().split(' ').toSet()
-//                (nameRequest subtract nameRecipe).isEmpty() }
-//            .toTypedArray())
-        val items = mutableStateListOf(*allRecipeShort.toTypedArray())
+//        val items = mutableStateListOf(*allRecipeShort.toTypedArray())
+
+        LifecycleEffect(onStarted = {
+            if (selectedIngredients.isNotEmpty() || searchTextState.value.isNotEmpty()) {
+                recipeFullViewModel.load()
+            } else {
+                recipeFullViewModel.isDataReady.value = true
+            }
+        })
 
         CooksupTheme {
             Scaffold(
@@ -132,7 +140,11 @@ class RecipesTab() : Tab {
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
-                                    onSearch = { }
+                                    onSearch = {
+                                        if (selectedIngredients.isEmpty()) {
+                                            recipeFullViewModel.load(searchTextState.value)
+                                        }
+                                    }
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -147,59 +159,92 @@ class RecipesTab() : Tab {
 
                         })
                 }) {
-                Column {
-                    val size = items.size
-                    Text(
-                        text = "Найдено рецептов: ${if (size == 400) "400+" else size}",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(bottom = 12.dp, start = 12.dp),
-                        textAlign = TextAlign.Start,
-                        color = CooksupTheme.colors.textPrimary
-                    )
-                    LazyVerticalGrid(
-                        state = stateGrid,
-                        columns = GridCells.Fixed(2),
-                        modifier = Modifier
-                            .background(CooksupTheme.colors.uiBackground)
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        if (stateGrid.isScrollInProgress) {
-                            keyboardController?.hide()
-                        }
-                        itemsIndexed(items) { index, recipe ->
-                            RecipeCard(
-                                recipe = recipe,
-                                onRecipeClick = {
-                                    lastIndex = index
-//                                    navigator.push(RecipeFullScreen(recipe))
-                                },
-                                index = index,
-                                gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
-                                gradientWidth = 8000f,
-                                scroll = 1,
-                                modifier = Modifier.padding(horizontal = 16.dp)
-                            )
+                if (recipeFullViewModel.isDataReady.value) {
+                    Column {
+                        val items =
+                            if (selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
+                                allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                    it.name.lowercase()
+                                        .contains(searchTextState.value.lowercase())
+                                }
+                            } else if (searchTextState.value.isNotEmpty()) {
+                                allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                    val nameRequest =
+                                        searchTextState.value.trim().lowercase().split(' ')
+                                            .toSet()
+                                    val nameRecipe = it.name.lowercase().split(' ').toSet()
+                                    if (nameRequest.size == 1) {
+                                        if (searchTextState.value.length > 2) {
+                                            it.name.trim().lowercase().contains(
+                                                searchTextState.value.removeRange(
+                                                    3,
+                                                    searchTextState.value.length
+                                                ).trim().lowercase()
+                                            )
+                                        } else {
+                                            it.name.trim().lowercase()
+                                                .contains(searchTextState.value.trim().lowercase())
+                                        }
+                                    } else {
+                                        (nameRequest subtract nameRecipe).isEmpty()
+                                    }
+                                }
+                            } else {
+                                allRecipeFull
+                            }
+                        Text(
+                            text = "Найдено рецептов: ${if (items.size == 400) "400+" else items.size}",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp, start = 12.dp),
+                            textAlign = TextAlign.Start,
+                            color = CooksupTheme.colors.textPrimary
+                        )
+                        LazyVerticalGrid(
+                            state = stateGrid,
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier
+                                .background(CooksupTheme.colors.uiBackground)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            if (stateGrid.isScrollInProgress) {
+                                keyboardController?.hide()
+                            }
+                            itemsIndexed(items) { index, recipe ->
+                                RecipeCard(
+                                    recipe = recipe,
+                                    onRecipeClick = {
+                                        lastIndexRecipe = index
+                                        navigator.push(RecipeFullScreen(recipe))
+                                    },
+                                    index = index,
+                                    gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
+                                    gradientWidth = 8000f,
+                                    scroll = 1,
+                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                )
+                            }
                         }
                     }
+                } else {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(
+                            16.dp,
+                            Alignment.CenterVertically
+                        )
+                    ) {
+                        CircularProgressIndicator(color = CooksupTheme.colors.brand)
+                        Text(
+                            text = "Идет поиск рецептов...",
+                            textAlign = TextAlign.Center,
+                            modifier = Modifier.fillMaxWidth(),
+                            color = CooksupTheme.colors.brand
+                        )
+                    }
                 }
-//                Column(
-//                    modifier = Modifier.fillMaxSize(),
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    verticalArrangement = Arrangement.spacedBy(
-//                        16.dp,
-//                        Alignment.CenterVertically
-//                    )
-//                ) {
-//                    CircularProgressIndicator(color = CooksupTheme.colors.brand)
-//                    Text(
-//                        text = "Идет поиск рецептов...",
-//                        textAlign = TextAlign.Center,
-//                        modifier = Modifier.fillMaxWidth(),
-//                        color = CooksupTheme.colors.brand
-//                    )
-//                }
             }
         }
     }

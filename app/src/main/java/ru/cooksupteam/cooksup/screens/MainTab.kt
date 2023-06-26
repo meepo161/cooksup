@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -64,6 +65,7 @@ class MainTab() : Tab {
             }
         }
 
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
         var alphabet =
@@ -106,7 +108,7 @@ class MainTab() : Tab {
                 LazyColumn(
                     state = scrollState,
                     modifier = Modifier
-                        .padding(it)
+                        .padding(bottom = 56.dp)
                         .fillMaxSize()
                         .background(CooksupTheme.colors.uiBackground),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -142,11 +144,11 @@ class MainTab() : Tab {
                             }
                         }
                     }
-                    alphabet.forEachIndexed { _, alphabet ->
-                        item {
-                            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            repeat(5) { repeat ->
                                 Text(
-                                    text = alphabet.toString(),
+                                    text = if (repeat == 0) "Избранные" else if (repeat == 1) "Популярные" else if (repeat == 2) "Новые" else if (repeat == 3) "ПИР рекомендует" else "Интересные",
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.h6,
@@ -168,15 +170,19 @@ class MainTab() : Tab {
                                         .heightIn(min = 56.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    itemsIndexed(allIngredients.filter {
-                                        it.name.startsWith(
-                                            alphabet
+                                    itemsIndexed(
+                                        listOf(
+                                            allIngredients.random(),
+                                            allIngredients.random(),
+                                            allIngredients.random(),
+                                            allIngredients.random(),
+                                            allIngredients.random()
                                         )
-                                    }) { index, ingredient ->
+                                    ) { index, ingredient ->
                                         SnackCard(
                                             ingredient = ingredient,
                                             onSnackClick = {
-                                                navigator.push(                                                    IngredientDetailScreen(ingredient))
+                                                navigator.push(IngredientDetailScreen(ingredient))
                                             },
                                             index = index,
                                             gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,

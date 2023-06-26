@@ -3,7 +3,18 @@ package ru.cooksupteam.cooksup.ui.theme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.material.ripple.LocalRippleTheme
+import androidx.compose.material.ripple.RippleAlpha
+import androidx.compose.material.ripple.RippleTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -228,6 +239,18 @@ private val LocalCooksupColors = staticCompositionLocalOf<CooksupColors> {
     error("No CooksupColorPalette provided")
 }
 
+
+private object CooksupThemeRippleTheme : RippleTheme {
+    @Composable
+    override fun defaultColor(): Color = CooksupTheme.colors.brand
+
+    @Composable
+    override fun rippleAlpha(): RippleAlpha = RippleTheme.defaultRippleAlpha(
+        Color.Black, !isSystemInDarkTheme()
+    )
+}
+
+
 @Composable
 fun CooksupTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
@@ -246,9 +269,13 @@ fun CooksupTheme(
         MaterialTheme(
             colors = debugColors(darkTheme),
             typography = Typography,
-            shapes = Shapes,
-            content = content
-        )
+            shapes = Shapes
+        ) {
+            CompositionLocalProvider(
+                LocalRippleTheme provides CooksupThemeRippleTheme,
+                content = content
+            )
+        }
     }
 }
 

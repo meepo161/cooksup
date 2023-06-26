@@ -1,6 +1,5 @@
 package ru.cooksupteam.cooksup
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -14,7 +13,6 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.cooksupteam.cooksup.Singleton.appContext
@@ -22,7 +20,6 @@ import ru.cooksupteam.cooksup.Singleton.ip
 import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
-import ru.cooksupteam.cooksup.model.RecipeShortRemote
 import java.io.File
 
 
@@ -34,7 +31,7 @@ object RESTAPI {
     }
 
     suspend fun fetchIngredients(): List<IngredientRemote> {
-        val file = File(appContext.cacheDir, "ingredients_group.json")
+        val file = File(appContext.cacheDir, "ingredients.json")
         if (!file.exists()) {
             withContext(Dispatchers.IO) {
                 file.createNewFile()
@@ -47,34 +44,6 @@ object RESTAPI {
 //            InputStreamReader(file, "UTF8")
 //        })
         return Json.decodeFromString(string = file.readText())
-    }
-
-    @OptIn(ExperimentalSerializationApi::class)
-    suspend fun fetchAllRecipes(): List<RecipeShortRemote> {
-        val file = File(appContext.cacheDir, "recipe_short.json")
-        Log.d("FILE_EXISTS", file.exists().toString())
-        if (!file.exists()) {
-            withContext(Dispatchers.IO) {
-                file.createNewFile()
-                val response = client.get("http://$ip:$port/recipe_short")
-                response.body<List<RecipeShortRemote>>().forEach {
-                    file.appendText(
-                        RecipeShortRemote(
-                            it.name,
-                            it.pic,
-                            it.quantityIngredients,
-                            it.ingredients
-                        ).toString()
-                    )
-                }
-            }
-        }
-
-//        return Json.decodeFromStream(fileInputStream)
-        return listOf(RecipeShortRemote("хуйня"))
-//        return Json.decodeFromString(string = file.readText())
-//        val response = client.get("http://$ip:$port/recipe_short")
-//        return response.body()
     }
 
     suspend fun fetchRecipeFilteredFromText(name: String): List<RecipeFullRemote> {

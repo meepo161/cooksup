@@ -80,9 +80,13 @@ class FridgeTab() : Tab {
                             )
                         }
                         itemsIndexed(selectedIngredients) { index, ingredient ->
-                            IngredientListItem(ingredient = ingredient, navigator, onClick = { _, _ ->
-                                selectedIngredients.remove(ingredient)
-                            })
+                            IngredientListItem(
+                                ingredient = ingredient,
+                                index,
+                                navigator,
+                                onClick = { _, _ ->
+                                    selectedIngredients.remove(ingredient)
+                                })
                         }
                     }
                 }

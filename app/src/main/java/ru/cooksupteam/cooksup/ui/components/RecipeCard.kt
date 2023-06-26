@@ -13,7 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.cooksupteam.cooksup.model.RecipeShort
+import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 private val HighlightCardWidth = 170.dp
@@ -21,7 +21,7 @@ private val HighlightCardPadding = 16.dp
 
 @Composable
 fun RecipeCard(
-    recipe: RecipeShort,
+    recipe: RecipeFull,
     onRecipeClick: (String) -> Unit,
     index: Int,
     gradient: List<Color>,

@@ -1,5 +1,7 @@
 package ru.cooksupteam.cooksup.ui.components
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -14,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import coil.request.CachePolicy
 import coil.request.ImageRequest
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -22,8 +25,7 @@ import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 fun IngredientImage(
     imageUrl: String,
     modifier: Modifier = Modifier,
-    elevation: Dp = 0.dp,
-    background: Color = CooksupTheme.colors.uiBackground
+    elevation: Dp = 0.dp
 ) {
     CooksupSurface(
         color = CooksupTheme.colors.uiBackground,
@@ -34,7 +36,10 @@ fun IngredientImage(
         SubcomposeAsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(imageUrl)
-                .crossfade(true)
+//                .crossfade(true)
+                .networkCachePolicy(CachePolicy.ENABLED)
+                .diskCachePolicy(CachePolicy.ENABLED)
+                .memoryCachePolicy(CachePolicy.ENABLED)
                 .build(),
             contentDescription = "",
             modifier = Modifier
@@ -42,20 +47,11 @@ fun IngredientImage(
                 .height(400.dp),
             contentScale = ContentScale.Crop,
         ) {
-            val state = painter.state
-            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.placeholder),
-//                    contentDescription = stringResource(id = R.string.downloading),
-//                    contentScale = ContentScale.FillHeight
-//                )
-//                Icon(
-//                    Icons.Rounded.WifiOff,
-//                    contentDescription = null,
-//                    tint = Color.Gray
-//                )
-                CircularProgressIndicator(color = CooksupTheme.colors.brand)
-//                CircularProgressIndicator()
+            if (painter.state is AsyncImagePainter.State.Loading || painter.state is AsyncImagePainter.State.Error) {
+                CircularProgressIndicator(
+                    modifier = Modifier.fillMaxSize().background(Color.White),
+                    color = CooksupTheme.colors.brand
+                )
             } else {
                 SubcomposeAsyncImageContent()
             }

@@ -31,8 +31,9 @@ class MainScreen() :
                         ) {
                             TabNavigationItem(tab = MainTab())
                             TabNavigationItem(tab = SearchTab())
-                            TabNavigationItem(tab = FridgeTab())
+//                            TabNavigationItem(tab = FridgeTab())
                             TabNavigationItem(tab = RecipesTab())
+                            TabNavigationItem(tab = ProfileTab())
                         }
                     }
                 }) {

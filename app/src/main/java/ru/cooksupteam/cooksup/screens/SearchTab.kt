@@ -60,6 +60,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.Singleton.allIngredients
+import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
@@ -90,7 +91,7 @@ class SearchTab() : Tab {
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
         val selectedHeader = remember { mutableStateOf("") }
-        val listState = rememberLazyListState()
+        val listState = rememberLazyListState(initialFirstVisibleItemIndex = lastIndexIngredient)
         var isNeedSelectedHeader by remember { mutableStateOf(false) }
         val offsets = remember { mutableStateMapOf<Int, Float>() }
         var selectedHeaderIndex by remember { mutableStateOf(0) }
@@ -200,11 +201,11 @@ class SearchTab() : Tab {
                                 color = CooksupTheme.colors.textPrimary
                             )
                         }
-                        itemsIndexed(items) { index, ingredient ->
+                        itemsIndexed(items.sortedBy { !it.selected }) { index, ingredient ->
                             if (listState.isScrollInProgress) {
                                 keyboardController?.hide()
                             }
-                            IngredientListItem(ingredient, navigator) { _, isSelected ->
+                            IngredientListItem(ingredient,index, navigator) { _, isSelected ->
                                 if (!isSelected) {
                                     selectedIngredients.add(ingredient)
                                 } else {

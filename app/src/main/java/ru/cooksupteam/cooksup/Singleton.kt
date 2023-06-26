@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup
 
 import android.content.Context
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import cafe.adriel.voyager.navigator.Navigator
 import io.ktor.client.request.get
 import kotlinx.coroutines.CoroutineScope
@@ -9,23 +10,25 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.RecipeFull
-import ru.cooksupteam.cooksup.model.RecipeShort
 import java.io.IOException
 
 
 object Singleton {
     var ip = "192.168.1.78"
-//    var ip = "45.141.100.161"
+
+    //    var ip = "45.141.100.161"
 //    var ip = "192.168.0.17"
     var port = "80"
     lateinit var appContext: Context
     val scope = CoroutineScope(Dispatchers.Default)
     var allRecipeFull = mutableStateListOf<RecipeFull>()
-    var allRecipeShort = mutableStateListOf<RecipeShort>()
-    var lastIngredients : List<String> = listOf()
+    var lastIngredients: List<String> = listOf()
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
-    var lastIndex = 0
+    var lastIndexRecipe = 0
+    var lastIndexIngredient = 0
+    var isAuthorized = mutableStateOf(false)
+    var loginState = mutableStateOf(true)
     lateinit var navigator: Navigator
 
     @Throws(InterruptedException::class, IOException::class)

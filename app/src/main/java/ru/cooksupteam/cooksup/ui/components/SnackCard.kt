@@ -10,9 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -67,21 +68,23 @@ fun SnackCard(
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = ingredient.name,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                maxLines = 2,
+//                overflow = TextOverflow.Ellipsis,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6,
-                softWrap = false,
+//                softWrap = false,
                 color = CooksupTheme.colors.textSecondary,
-                modifier = Modifier.padding(horizontal = 16.dp)
+                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = ingredient.name,
-                style = MaterialTheme.typography.body1,
-                softWrap = false,
-                color = CooksupTheme.colors.textHelp,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
+//            Text(
+//                text = ingredient.name,
+//                style = MaterialTheme.typography.body1,
+//                fontSize = 12.sp,
+//                softWrap = false,
+//                color = CooksupTheme.colors.textHelp,
+//                modifier = Modifier.padding(horizontal = 16.dp)
+//            )
         }
     }
 }

@@ -7,42 +7,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.allRecipeFull
-import ru.cooksupteam.cooksup.Singleton.allRecipeShort
+import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
-import ru.cooksupteam.cooksup.model.RecipeShort
-import ru.cooksupteam.cooksup.model.RecipeShortRemote
 
 class RecipeFullViewModel() {
     var all = listOf<RecipeFullRemote>()
-    var allShort = listOf<RecipeShortRemote>()
     var isDataReady = mutableStateOf(false)
-
     private val scope = CoroutineScope(Dispatchers.Default)
 
-    fun load() {
-        isDataReady.value = false
-        Log.d("FILE_READY", isDataReady.value.toString())
-        scope.launch {
-            allShort = RESTAPI.fetchAllRecipes()
-            appendToAllRecipes()
-            isDataReady.value = true
-            Log.d("FILE_READY", isDataReady.value.toString())
-            Log.d("FILE_READY", allRecipeShort.size.toString())
-        }
-    }
-
-    private fun appendToAllRecipes() {
-        allRecipeShort.clear()
-        allShort.forEach {
-            allRecipeShort.add(
-                RecipeShort(
-                    name = it.name,
-                    pic = it.pic,
-                    quantityIngredients = it.quantityIngredients
-                )
-            )
-        }
 //        allRecipeShort.addAll(all.map {
 //            RecipeShort(
 //                name = it.name,
@@ -50,15 +23,16 @@ class RecipeFullViewModel() {
 //                quantityIngredients = it.quantityIngredients
 //            )
 //        }.sortedBy { it.name })
-    }
+//    }
 
-    fun load0(search: String = "") {
+    fun load(search: String = "") {
         isDataReady.value = false
         scope.launch {
 //            if (lastIngredients != listIngredients || allRecipeFull.isEmpty()) {
             allRecipeFull.clear()
             if (search.isNotEmpty()) {
-                all = RESTAPI.fetchRecipeFilteredFromText(search.replace("ё", "е"))
+                Log.d("FETCH", "FilteredFromText: ${search.replace("ё", "е")}")
+                all = RESTAPI.fetchRecipeFilteredFromText(search.replace("ё", "е").trim())
                 allRecipeFull.addAll(all.map {
                     RecipeFull(
                         name = it.name,
@@ -71,56 +45,23 @@ class RecipeFullViewModel() {
                         instructions = it.instructions
                     )
                 })
+            } else if (selectedIngredients.isNotEmpty()) {
+                Log.d("FETCH", "Filtered: ${selectedIngredients.map { it.name }}")
+                all = RESTAPI.fetchRecipeFiltered(selectedIngredients.map { it.name })
+                allRecipeFull.addAll(all.map {
+                    RecipeFull(
+                        name = it.name,
+                        description = it.description,
+                        pic = it.pic,
+                        nutrition = it.nutrition,
+                        time = it.time,
+                        servings = it.servings,
+                        quantityIngredients = it.quantityIngredients,
+                        instructions = it.instructions
+                    )
+                })
+                Log.d("FETCH", "allRecipeFull: ${allRecipeFull[0].name}")
             }
-
-
-//                if (search.isNotEmpty() && listIngredients.isEmpty()) {
-//                    all = RESTAPI.fetchRecipeFilteredFromText(search)
-//                    allRecipeFull.addAll(all.map {
-//                        RecipeFull(
-//                            name = it.name,
-//                            description = it.description,
-//                            pic = it.pic,
-//                            nutrition = it.nutrition,
-//                            time = it.time,
-//                            servings = it.servings,
-//                            quantityIngredients = it.quantityIngredients,
-//                            instructions = it.instructions
-//                        )
-//                    })
-//                } else if (search.isNotEmpty()) {
-//                    all = RESTAPI.fetchRecipeFilteredFromText(search)
-//                    allRecipeFull.addAll(all.map {
-//                        RecipeFull(
-//                            name = it.name,
-//                            description = it.description,
-//                            pic = it.pic,
-//                            nutrition = it.nutrition,
-//                            time = it.time,
-//                            servings = it.servings,
-//                            quantityIngredients = it.quantityIngredients,
-//                            instructions = it.instructions
-//                        )
-//                    })
-//                } else {
-//                    lastIndex = 0
-//                    allRecipeFull.clear()
-//                    all = RESTAPI.fetchRecipeFiltered(listIngredients)
-//                    allRecipeFull.addAll(all.map {
-//                        RecipeFull(
-//                            name = it.name,
-//                            description = it.description,
-//                            pic = it.pic,
-//                            nutrition = it.nutrition,
-//                            time = it.time,
-//                            servings = it.servings,
-//                            quantityIngredients = it.quantityIngredients,
-//                            instructions = it.instructions
-//                        )
-//                    })
-//                }
-//            lastIngredients = listIngredients
-//            }
             isDataReady.value = true
         }
     }

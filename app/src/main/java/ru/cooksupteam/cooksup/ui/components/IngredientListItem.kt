@@ -18,9 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
+import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.screens.IngredientDetailScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
@@ -29,6 +29,7 @@ import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 @Composable
 fun IngredientListItem(
     ingredient: Ingredient,
+    index: Int,
     navigator: Navigator,
     onClick: (Ingredient, Boolean) -> Unit
 ) {
@@ -45,6 +46,7 @@ fun IngredientListItem(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = rememberRipple(color = CooksupTheme.colors.brand),
                 onClick = {
+                    lastIndexIngredient = index + 1
                     navigator.push(IngredientDetailScreen(ingredient))
                 }
             ),
@@ -61,8 +63,7 @@ fun IngredientListItem(
                     shape = MaterialTheme.shapes.medium
                 )
                 .size(48.dp),
-            imageUrl = ingredient.pic,
-            background = Color.Transparent
+            imageUrl = ingredient.pic
         )
         Text(
             text = ingredient.name,
