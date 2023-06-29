@@ -60,6 +60,7 @@ import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.isAuthorized
 import ru.cooksupteam.cooksup.Singleton.loginState
+import ru.cooksupteam.cooksup.Singleton.user
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -196,7 +197,7 @@ class ProfileTab() : Tab {
                 ) {
 
                     Text(
-                        text = "Meepo Meepo",
+                        text = user.name,
                         style = TextStyle(
                             fontSize = 22.sp,
                         ),
@@ -208,7 +209,20 @@ class ProfileTab() : Tab {
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = "meepo161@email.com",
+                        text = user.email,
+                        style = TextStyle(
+                            fontSize = 14.sp,
+                            color = Color.Gray,
+                            letterSpacing = (0.8).sp
+                        ),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+
+                    Spacer(modifier = Modifier.height(2.dp))
+
+                    Text(
+                        text = user.phone,
                         style = TextStyle(
                             fontSize = 14.sp,
                             color = Color.Gray,

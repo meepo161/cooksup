@@ -39,7 +39,11 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
+import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.loginState
+import ru.cooksupteam.cooksup.Singleton.scope
+import ru.cooksupteam.cooksup.model.Person
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
@@ -219,7 +223,12 @@ fun RegisterPage() {
                 ),
                 keyboardActions = KeyboardActions(
                     onDone = {
-                        register()
+                        register(
+                            name = nameValue.value,
+                            email = emailValue.value,
+                            phone = phoneValue.value,
+                            password = passwordValue.value
+                        )
                     }
                 ),
                 singleLine = true,
@@ -251,7 +260,12 @@ fun RegisterPage() {
             Spacer(modifier = Modifier.padding(12.dp))
             Button(
                 onClick = {
-                    register()
+                    register(
+                        name = nameValue.value,
+                        email = emailValue.value,
+                        phone = phoneValue.value,
+                        password = passwordValue.value
+                    )
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -285,6 +299,9 @@ fun RegisterPage() {
     }
 }
 
-private fun register() {
+private fun register(name: String, email: String, phone: String, password: String) {
     loginState.value = true
+    scope.launch {
+        RESTAPI.postPerson(Person(name, email, phone, password))
+    }
 }

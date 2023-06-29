@@ -170,26 +170,28 @@ class MainTab() : Tab {
                                         .heightIn(min = 56.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    itemsIndexed(
-                                        listOf(
-                                            allIngredients.random(),
-                                            allIngredients.random(),
-                                            allIngredients.random(),
-                                            allIngredients.random(),
-                                            allIngredients.random()
-                                        )
-                                    ) { index, ingredient ->
-                                        SnackCard(
-                                            ingredient = ingredient,
-                                            onSnackClick = {
-                                                navigator.push(IngredientDetailScreen(ingredient))
-                                            },
-                                            index = index,
-                                            gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
-                                            gradientWidth = 1800f,
-                                            scroll = 1,
-                                            modifier = Modifier
-                                        )
+                                    if (allIngredients.isNotEmpty()) {
+                                        itemsIndexed(
+                                            listOf(
+                                                allIngredients.random(),
+                                                allIngredients.random(),
+                                                allIngredients.random(),
+                                                allIngredients.random(),
+                                                allIngredients.random()
+                                            )
+                                        ) { index, ingredient ->
+                                            SnackCard(
+                                                ingredient = ingredient,
+                                                onSnackClick = {
+                                                    navigator.push(IngredientDetailScreen(ingredient))
+                                                },
+                                                index = index,
+                                                gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                                gradientWidth = 1800f,
+                                                scroll = 1,
+                                                modifier = Modifier
+                                            )
+                                        }
                                     }
                                 }
                             }

@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runBlocking
 import ru.cooksupteam.cooksup.model.Ingredient
+import ru.cooksupteam.cooksup.model.Person
 import ru.cooksupteam.cooksup.model.RecipeFull
 import java.io.IOException
 
@@ -28,6 +29,7 @@ object Singleton {
     var lastIndexRecipe = 0
     var lastIndexIngredient = 0
     var isAuthorized = mutableStateOf(false)
+    var user = Person()
     var loginState = mutableStateOf(true)
     lateinit var navigator: Navigator
 

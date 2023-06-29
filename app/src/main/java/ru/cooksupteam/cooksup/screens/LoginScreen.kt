@@ -1,6 +1,5 @@
 package ru.cooksupteam.cooksup.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -40,9 +39,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.cooksupteam.cooksup.Singleton.appContext
+import kotlinx.coroutines.launch
+import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.isAuthorized
 import ru.cooksupteam.cooksup.Singleton.loginState
+import ru.cooksupteam.cooksup.Singleton.scope
+import ru.cooksupteam.cooksup.Singleton.user
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 
@@ -182,15 +184,10 @@ private fun authorize(
     loginValue: MutableState<String>,
     passwordValue: MutableState<String>
 ) {
-    if (loginValue.value == "meepo" && passwordValue.value == "avem") {
-        isAuthorized.value = true
-    } else {
-        Toast
-            .makeText(
-                appContext,
-                "Неправильный логин и пароль",
-                Toast.LENGTH_SHORT
-            )
-            .show()
+    scope.launch {
+        user = RESTAPI.fetchPerson(listOf(loginValue.value, passwordValue.value))
+        if (user.email == loginValue.value && user.password == passwordValue.value) {
+            isAuthorized.value = true
+        }
     }
 }
