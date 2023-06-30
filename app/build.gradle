@@ -92,5 +92,4 @@ dependencies {
     implementation("cafe.adriel.voyager:voyager-transitions:$voyager_version")
 
     implementation 'com.google.code.gson:gson:2.10.1'
-
 }

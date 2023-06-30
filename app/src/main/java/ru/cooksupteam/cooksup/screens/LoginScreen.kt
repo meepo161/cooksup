@@ -41,11 +41,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.isAuthorized
 import ru.cooksupteam.cooksup.Singleton.loginState
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.Singleton.user
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+import java.io.File
 
 
 @Composable
@@ -188,6 +190,8 @@ private fun authorize(
         user = RESTAPI.fetchPerson(listOf(loginValue.value, passwordValue.value))
         if (user.email == loginValue.value && user.password == passwordValue.value) {
             isAuthorized.value = true
+            val file = File(Singleton.appContext.filesDir, "id.txt")
+            file.writeText(user.id)
         }
     }
 }

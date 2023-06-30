@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup
 
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.post
@@ -28,17 +29,22 @@ object RESTAPI {
         install(ContentNegotiation) {
             json()
         }
+        install(HttpTimeout) {
+            requestTimeoutMillis = 60000L
+            connectTimeoutMillis = 60000L
+            socketTimeoutMillis = 60000L
+        }
     }
 
     suspend fun fetchIngredients(): List<IngredientRemote> {
-        val file = File(appContext.cacheDir, "ingredients.json")
-//        if (!file.exists()) {
-        withContext(Dispatchers.IO) {
-            file.createNewFile()
-            val response = client.get("http://$ip:$port/ingredients")
-            file.writeText(response.body())
+        val file = File(appContext.filesDir, "ingredients.json")
+        if (!file.exists()) {
+            withContext(Dispatchers.IO) {
+                file.createNewFile()
+                val response = client.get("http://$ip:$port/ingredients")
+                file.writeText(response.body())
+            }
         }
-//        }
         return Json.decodeFromString(string = file.readText())
     }
 
@@ -66,6 +72,13 @@ object RESTAPI {
     suspend fun fetchPerson(list: List<String>): Person {
         val response = client.get {
             url("http://$ip:$port/person/$list")
+        }
+        return response.body()
+    }
+
+    suspend fun fetchAuthPerson(id: String): Person {
+        val response = client.get {
+            url("http://$ip:$port/person/auth/$id")
         }
         return response.body()
     }

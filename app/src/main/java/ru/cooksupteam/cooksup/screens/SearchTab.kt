@@ -64,6 +64,7 @@ import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.lang.Math.abs
@@ -153,7 +154,8 @@ class SearchTab() : Tab {
                                 textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                                 value = searchTextState.value,
                                 onValueChange = {
-                                    searchTextState.value = it
+                                    searchTextState.value =
+                                        regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
@@ -205,7 +207,7 @@ class SearchTab() : Tab {
                             if (listState.isScrollInProgress) {
                                 keyboardController?.hide()
                             }
-                            IngredientListItem(ingredient,index, navigator) { _, isSelected ->
+                            IngredientListItem(ingredient, index, navigator) { _, isSelected ->
                                 if (!isSelected) {
                                     selectedIngredients.add(ingredient)
                                 } else {

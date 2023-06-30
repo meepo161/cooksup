@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.ChevronRight
 import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.ExitToApp
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.Help
 import androidx.compose.material.icons.outlined.Person
@@ -63,6 +64,7 @@ import ru.cooksupteam.cooksup.Singleton.loginState
 import ru.cooksupteam.cooksup.Singleton.user
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+import java.io.File
 
 class ProfileTab() : Tab {
     override val options: TabOptions
@@ -263,6 +265,10 @@ class ProfileTab() : Tab {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(color = CooksupTheme.colors.brand),
                     onClick = {
+                        if (item.title == "Выйти") {
+                            File(appContext.filesDir, "id.txt").writeText("")
+                            isAuthorized.value = false
+                        }
                         Toast
                             .makeText(context, item.title, Toast.LENGTH_SHORT)
                             .show()
@@ -359,6 +365,13 @@ class ProfileTab() : Tab {
                 icon = appIcons.Help,
                 title = "Справочный центр",
                 subTitle = "Часто задаваемые вопросы и поддержка клиентов"
+            )
+        )
+        optionsList.add(
+            OptionsData(
+                icon = appIcons.ExitToApp,
+                title = "Выйти",
+                subTitle = "Выйти из аккаунта"
             )
         )
 

@@ -49,6 +49,7 @@ import ru.cooksupteam.cooksup.Singleton.lastIndexRecipe
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
@@ -136,7 +137,8 @@ class RecipesTab() : Tab {
                                 textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                                 value = searchTextState.value,
                                 onValueChange = {
-                                    searchTextState.value = it
+                                    searchTextState.value =
+                                        regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(

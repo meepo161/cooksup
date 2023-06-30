@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -51,10 +50,8 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
     )
     @Composable
     override fun Content() {
-        var scrollState = rememberScrollState()
         val navigator = LocalNavigator.currentOrThrow
         val servingsState = remember { mutableStateOf(recipe.servings.toString()) }
-        var servingsStateError = remember { mutableStateOf(false) }
 
         CooksupTheme {
             Scaffold(
@@ -133,6 +130,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     color = CooksupTheme.colors.textPrimary
                                 )
                             }
+                            Spacer(modifier = Modifier.height(4.dp))
                             Row {
                                 Text(
                                     text = "Жиры:",
@@ -152,6 +150,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     color = CooksupTheme.colors.textPrimary
                                 )
                             }
+                            Spacer(modifier = Modifier.height(4.dp))
                             Row {
                                 Text(
                                     text = "Протеины:",
@@ -171,6 +170,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     color = CooksupTheme.colors.textPrimary
                                 )
                             }
+                            Spacer(modifier = Modifier.height(4.dp))
                             Row {
                                 Text(
                                     text = "Белки:",
@@ -252,26 +252,29 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                 )
                             }
                             recipe.quantityIngredients.forEach {
-                                Row {
-                                    Text(
-                                        text = it.ingredient.name,
-                                        color = CooksupTheme.colors.textPrimary
-                                    )
-                                    Spacer(
-                                        modifier = Modifier
-                                            .weight(1f)
-                                            .height(1.dp)
-                                            .background(Color.LightGray)
-                                            .align(Alignment.Bottom)
-                                    )
-                                    Text(
-                                        text = "${
-                                            (it.amount / recipe.servings * servingsState.value.toIntOrDefault(
-                                                0
-                                            )).autoformat()
-                                        } г.",
-                                        color = CooksupTheme.colors.textPrimary
-                                    )
+                                Column {
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Row {
+                                        Text(
+                                            text = it.ingredient.name,
+                                            color = CooksupTheme.colors.textPrimary
+                                        )
+                                        Spacer(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .height(1.dp)
+                                                .background(Color.LightGray)
+                                                .align(Alignment.Bottom)
+                                        )
+                                        Text(
+                                            text = "${
+                                                (it.amount / recipe.servings * servingsState.value.toIntOrDefault(
+                                                    0
+                                                )).autoformat()
+                                            } г.",
+                                            color = CooksupTheme.colors.textPrimary
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -286,6 +289,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     modifier = Modifier
                                         .padding(top = 8.dp)
                                         .background(CooksupTheme.colors.uiBackground)
+                                        .fillMaxWidth()
                                 ) {
                                     Box(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
                                         Column(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {

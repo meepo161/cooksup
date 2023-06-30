@@ -1,7 +1,7 @@
 package ru.cooksupteam.cooksup
 
 import androidx.compose.ui.graphics.Color
-import java.util.*
+import java.util.Locale
 
 
 fun getColorFromString(color: String): Color {
@@ -12,6 +12,9 @@ fun getColorFromString(color: String): Color {
     val a = colorWithoutHash.substring(6, 8).toInt(16)
     return Color(r, g, b, a)
 }
+
+val regex = Regex("[^А-Яа-яёЁ]")
+
 fun String?.toIntOrDefault(default: Int) = this?.toIntOrNull() ?: default
 fun Double.autoformat(): String =
     if (this.toLong().toDouble() == this) {

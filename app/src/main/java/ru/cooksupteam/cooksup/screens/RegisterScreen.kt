@@ -302,6 +302,12 @@ fun RegisterPage() {
 private fun register(name: String, email: String, phone: String, password: String) {
     loginState.value = true
     scope.launch {
-        RESTAPI.postPerson(Person(name, email, phone, password))
+        RESTAPI.postPerson(Person(
+            id = "",
+            name = name,
+            email = email,
+            phone = phone,
+            password = password
+        ))
     }
 }

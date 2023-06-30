@@ -15,11 +15,13 @@ class IngredientsViewModel {
     private val scope = CoroutineScope(Dispatchers.Default)
 
     fun load() {
-        isDataReady.value = false
-        scope.launch {
-            all = RESTAPI.fetchIngredients()
-            appendToAllIngredients()
-            isDataReady.value = true
+        if (all.isEmpty()) {
+            isDataReady.value = false
+            scope.launch {
+                all = RESTAPI.fetchIngredients()
+                appendToAllIngredients()
+                isDataReady.value = true
+            }
         }
     }
 
@@ -42,5 +44,4 @@ class IngredientsViewModel {
 
     fun getFilteredIngredients(predicate: String): List<Ingredient> =
         allIngredients.filter { it.name.lowercase().contains(predicate.lowercase()) }
-
 }
