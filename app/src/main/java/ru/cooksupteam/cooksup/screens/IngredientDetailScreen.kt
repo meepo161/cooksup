@@ -1,6 +1,7 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -204,110 +205,130 @@ class IngredientDetailScreen(
                     Column(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
                         Spacer(Modifier.height(ImageOverlap))
                         Spacer(Modifier.height(TitleHeight))
-
-                        Spacer(Modifier.height(16.dp))
                         var seeMore by remember { mutableStateOf(true) }
 
-                        Spacer(Modifier.height(16.dp))
                         Text(
                             text = "Описание",
                             style = MaterialTheme.typography.overline,
                             color = CooksupTheme.colors.textPrimary,
-                            modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                            modifier = HzPadding.background(CooksupTheme.colors.uiBackground).padding(vertical = 16.dp)
                         )
-                        Spacer(Modifier.height(16.dp))
                         Text(
                             text = ingredient.description,
                             style = MaterialTheme.typography.body1,
                             color = CooksupTheme.colors.textHelp,
                             maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                            modifier = HzPadding.background(CooksupTheme.colors.uiBackground).padding(vertical = 16.dp)
                         )
-                        if (!seeMore) {
-                            Spacer(Modifier.height(16.dp))
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "История появления",
                                 style = MaterialTheme.typography.overline,
                                 color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.history,
                                 style = MaterialTheme.typography.body1,
                                 color = CooksupTheme.colors.textHelp,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "Польза и вред",
                                 style = MaterialTheme.typography.overline,
                                 color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.benefitAndHarm,
                                 style = MaterialTheme.typography.body1,
                                 color = CooksupTheme.colors.textHelp,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "На вкус",
                                 style = MaterialTheme.typography.overline,
                                 color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.taste,
                                 style = MaterialTheme.typography.body1,
                                 color = CooksupTheme.colors.textHelp,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "Как это есть/пить",
                                 style = MaterialTheme.typography.overline,
                                 color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.howTo,
                                 style = MaterialTheme.typography.body1,
                                 color = CooksupTheme.colors.textHelp,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "Как и сколько хранить",
                                 style = MaterialTheme.typography.overline,
                                 color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
-                            Spacer(Modifier.height(16.dp))
+                        }
+                        AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.howLong,
                                 style = MaterialTheme.typography.body1,
                                 color = CooksupTheme.colors.textHelp,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                                modifier = HzPadding
+                                    .background(CooksupTheme.colors.uiBackground)
+                                    .padding(vertical = 16.dp)
                             )
                         }
 

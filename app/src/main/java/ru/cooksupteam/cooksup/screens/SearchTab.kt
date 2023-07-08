@@ -67,9 +67,8 @@ import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import java.lang.Math.abs
 
-class SearchTab() : Tab {
+class SearchTab : Tab {
 
     override val options: TabOptions
         @Composable
@@ -220,7 +219,7 @@ class SearchTab() : Tab {
 
                     fun updateSelectedIndexIfNeeded(offset: Float) {
                         val index = offsets
-                            .mapValues { abs(it.value - offset) }
+                            .mapValues { kotlin.math.abs(it.value - offset) }
                             .entries
                             .minByOrNull { it.value }
                             ?.key ?: return

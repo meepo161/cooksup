@@ -13,7 +13,7 @@ fun getColorFromString(color: String): Color {
     return Color(r, g, b, a)
 }
 
-val regex = Regex("[^А-Яа-яёЁ]")
+val regex = Regex("[^А-Яа-яёЁ ]")
 
 fun String?.toIntOrDefault(default: Int) = this?.toIntOrNull() ?: default
 fun Double.autoformat(): String =

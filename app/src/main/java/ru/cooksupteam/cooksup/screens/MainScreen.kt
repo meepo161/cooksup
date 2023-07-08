@@ -2,14 +2,23 @@ package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -18,6 +27,7 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.serialization.Serializable
+import ru.cooksupteam.cooksup.Singleton.isJsonReady
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -28,23 +38,45 @@ class MainScreen() :
     @Composable
     override fun Content() {
         navigator = LocalNavigator.currentOrThrow
-        TabNavigator(MainTab()) {
-            Scaffold(
-                bottomBar = {
-                    CooksupTheme {
-                        BottomNavigation(
-                            backgroundColor = CooksupTheme.colors.uiBackground,
-                            contentColor = CooksupTheme.colors.textPrimary
-                        ) {
-                            TabNavigationItem(tab = MainTab())
-                            TabNavigationItem(tab = SearchTab())
+        if (isJsonReady.value) {
+            TabNavigator(MainTab()) {
+                Scaffold(
+                    bottomBar = {
+                        CooksupTheme {
+                            BottomNavigation(
+                                backgroundColor = CooksupTheme.colors.uiBackground,
+                                contentColor = CooksupTheme.colors.textPrimary
+                            ) {
+                                TabNavigationItem(tab = MainTab())
+                                TabNavigationItem(tab = SearchTab())
 //                            TabNavigationItem(tab = FridgeTab())
-                            TabNavigationItem(tab = RecipesTab())
-                            TabNavigationItem(tab = ProfileTab())
+                                TabNavigationItem(tab = RecipesTab())
+                                TabNavigationItem(tab = ProfileTab())
+                            }
                         }
-                    }
-                }) {
-                CurrentTab()
+                    }) {
+                    CurrentTab()
+
+                }
+            }
+        } else {
+            CooksupTheme {
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(
+                        16.dp,
+                        Alignment.CenterVertically
+                    )
+                ) {
+                    CircularProgressIndicator(color = CooksupTheme.colors.brand)
+                    Text(
+                        text = "Загрузка...",
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.fillMaxWidth(),
+                        color = CooksupTheme.colors.brand
+                    )
+                }
             }
         }
     }

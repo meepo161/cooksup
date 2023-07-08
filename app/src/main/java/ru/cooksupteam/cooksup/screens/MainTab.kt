@@ -49,7 +49,7 @@ import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.components.diagonalGradientBorder
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
-class MainTab() : Tab {
+class MainTab : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -68,9 +68,7 @@ class MainTab() : Tab {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
-        var alphabet =
-            allIngredients.map { it.name.first().uppercase() }.toSet().toList().toTypedArray()
-        var scaffoldState = rememberScaffoldState()
+        val scaffoldState = rememberScaffoldState()
         val scrollState = rememberLazyListState()
 
         CooksupTheme {

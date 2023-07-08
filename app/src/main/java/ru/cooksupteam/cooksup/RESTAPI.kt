@@ -17,6 +17,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
+import ru.cooksupteam.cooksup.Singleton.isJsonReady
 import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.Person
@@ -40,11 +41,15 @@ object RESTAPI {
         val file = File(appContext.filesDir, "ingredients.json")
         if (!file.exists()) {
             withContext(Dispatchers.IO) {
+                isJsonReady.value = false
                 file.createNewFile()
                 val response = client.get("http://$ip:$port/ingredients")
                 file.writeText(response.body())
             }
         }
+
+//        return response.body()
+        isJsonReady.value = true
         return Json.decodeFromString(string = file.readText())
     }
 
