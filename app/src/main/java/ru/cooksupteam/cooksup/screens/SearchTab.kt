@@ -3,23 +3,16 @@ package ru.cooksupteam.cooksup.screens
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -33,6 +26,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
@@ -40,14 +34,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.boundsInParent
-import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -58,10 +47,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import kotlinx.coroutines.launch
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
-import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.Singleton.pageRecipes
+import ru.cooksupteam.cooksup.Singleton.searchTextStateStored
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.regex
@@ -90,21 +80,33 @@ class SearchTab : Tab {
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
-        val selectedHeader = remember { mutableStateOf("") }
         val listState = rememberLazyListState(initialFirstVisibleItemIndex = lastIndexIngredient)
         var isNeedSelectedHeader by remember { mutableStateOf(false) }
-        val offsets = remember { mutableStateMapOf<Int, Float>() }
-        var selectedHeaderIndex by remember { mutableStateOf(0) }
-        val scope = rememberCoroutineScope()
-        val searchTextState = remember { mutableStateOf("") }
+        val searchTextState = remember { mutableStateOf(searchTextStateStored) }
         val keyboardController = LocalSoftwareKeyboardController.current
+        val stateGrid =
+            rememberLazyGridState(initialFirstVisibleItemIndex = Singleton.lastIndexRecipe)
 
-        val items = mutableStateListOf(*allIngredients.sortedBy { it.name.lowercase() }
-            .filter { it.name.lowercase().contains(searchTextState.value.lowercase().trim()) }
-            .toTypedArray())
-        val headers = mutableStateListOf(
-            *items.map { it.name.first().uppercase() }.toSet().toList().toTypedArray()
-        )
+        var items = mutableStateListOf(*allIngredients.toTypedArray())
+        if (searchTextState.value != "") {
+            items.clear()
+            var toTypedArray = searchTextState.value.lowercase().split(" ")
+                .toTypedArray().toMutableList()
+            if (toTypedArray.last() == "") {
+                toTypedArray.removeLast()
+            }
+            toTypedArray.forEach { s ->
+                items.addAll(
+                    allIngredients.toTypedArray()
+                        .sortedBy { it.name.lowercase() }
+                        .filter {
+                            it.name.lowercase().contains(
+                                s.trim().lowercase()
+                            )
+                        }
+                )
+            }
+        }
 
         CooksupTheme {
             Scaffold(
@@ -155,6 +157,25 @@ class SearchTab : Tab {
                                 onValueChange = {
                                     searchTextState.value =
                                         regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
+                                    searchTextStateStored = searchTextState.value
+                                    items.clear()
+
+                                    var toTypedArray = searchTextState.value.lowercase().split(" ")
+                                        .toTypedArray().toMutableList()
+                                    if (toTypedArray.last() == "") {
+                                        toTypedArray.removeLast()
+                                    }
+                                    toTypedArray.forEach { s ->
+                                        items.addAll(
+                                            allIngredients.toTypedArray()
+                                                .sortedBy { it.name.lowercase() }
+                                                .filter {
+                                                    it.name.lowercase().contains(
+                                                        s.trim().lowercase()
+                                                    )
+                                                }
+                                        )
+                                    }
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
@@ -173,121 +194,53 @@ class SearchTab : Tab {
 
                         })
                 }) {
-                Row {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier
-                            .scrollable(
-                                rememberScrollableState {
-                                    isNeedSelectedHeader = false
-                                    it
-                                },
-                                orientation = Orientation.Vertical,
-                            )
-                            .weight(0.9f)
-                            .background(CooksupTheme.colors.uiBackground),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-
-                        item {
-                            Text(
-                                text = "Всего ингредиентов: ${
-                                    items.size
-                                }",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp),
-                                textAlign = TextAlign.Start,
-                                color = CooksupTheme.colors.textPrimary
-                            )
-                        }
-                        itemsIndexed(items.sortedBy { !it.selected }) { index, ingredient ->
-                            if (listState.isScrollInProgress) {
+                Row() {
+                    Column {
+                        Text(
+                            text = "Всего ингредиентов: ${items.size}",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 12.dp, start = 12.dp),
+                            textAlign = TextAlign.Start,
+                            color = CooksupTheme.colors.textPrimary
+                        )
+                        LazyVerticalGrid(
+                            state = stateGrid,
+                            columns = GridCells.Fixed(2),
+                            modifier = Modifier
+                                .background(CooksupTheme.colors.uiBackground)
+                                .fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            if (stateGrid.isScrollInProgress) {
                                 keyboardController?.hide()
                             }
-                            IngredientListItem(ingredient, index, navigator) { _, isSelected ->
-                                if (!isSelected) {
-                                    selectedIngredients.add(ingredient)
-                                } else {
-                                    selectedIngredients.remove(ingredient)
+                            itemsIndexed(items.sortedBy { !it.selected }) { index, ingredient ->
+                                if (listState.isScrollInProgress) {
+                                    keyboardController?.hide()
                                 }
-                                isNeedSelectedHeader = false
-                            }
-                        }
-                    }
+                                IngredientListItem(
+                                    ingredient = ingredient,
+                                    index = index,
+                                    gradient = if (ingredient.selected) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                    gradientWidth = 1800f,
+                                    scroll = 1,
+                                    modifier = if (index % 2 == 0) Modifier.padding(
+                                        start = 12.dp,
+                                        end = 4.dp
+                                    ) else Modifier.padding(start = 4.dp, end = 12.dp),
 
-                    fun updateSelectedIndexIfNeeded(offset: Float) {
-                        val index = offsets
-                            .mapValues { kotlin.math.abs(it.value - offset) }
-                            .entries
-                            .minByOrNull { it.value }
-                            ?.key ?: return
-                        if (selectedHeaderIndex == index) return
-                        selectedHeaderIndex = index
-                        val selectedItemIndex = items.indexOfFirst {
-                            it.name.first().uppercase() == headers[selectedHeaderIndex]
-                        } + 1
-                        scope.launch {
-                            listState.scrollToItem(selectedItemIndex)
-                            isNeedSelectedHeader = true
-                            selectedHeader.value =
-                                items[selectedItemIndex].name.first().uppercase()
-                        }
-                    }
+                                    ) { _, isSelected ->
+                                    if (!isSelected) {
+                                        selectedIngredients.add(ingredient)
+                                        pageRecipes = 1
+                                    } else {
+                                        selectedIngredients.remove(ingredient)
+                                        pageRecipes = 1
+                                    }
+                                    isNeedSelectedHeader = false
+                                }
 
-                    if (searchTextState.value == "") {
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier
-                                .fillMaxHeight()
-                                .weight(0.1f)
-                                .padding(end = 12.dp)
-                                .background(CooksupTheme.colors.uiBackground)
-                                .pointerInput(Unit) {
-                                    detectTapGestures {
-                                        updateSelectedIndexIfNeeded(it.y)
-                                    }
-                                }
-                                .pointerInput(Unit) {
-                                    detectVerticalDragGestures { change, _ ->
-                                        updateSelectedIndexIfNeeded(change.position.y)
-                                    }
-                                }
-                        ) {
-                            Box(
-                                modifier = Modifier,
-                                contentAlignment = Alignment.CenterEnd
-                            ) {
-                                if (!listState.isScrollInProgress && isNeedSelectedHeader) {
-                                    Text(
-                                        text = selectedHeader.value,
-                                        modifier = Modifier
-                                            .size(32.dp)
-                                            .background(
-                                                Color.Gray,
-                                                shape = RoundedCornerShape(16.dp)
-                                            ),
-                                        textAlign = TextAlign.Center,
-                                        fontSize = 28.sp,
-                                        color = CooksupTheme.colors.uiBackground,
-                                    )
-                                } else {
-                                    Text(
-                                        text = "",
-                                        modifier = Modifier.size(32.dp)
-                                    )
-                                }
-                            }
-                            headers.forEachIndexed { i, header ->
-                                Text(
-                                    header,
-                                    modifier = Modifier.onGloballyPositioned {
-                                        offsets[i] = it.boundsInParent().center.y
-                                    },
-                                    color = CooksupTheme.colors.brand
-                                )
                             }
                         }
                     }

@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup
 
+import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
@@ -38,19 +39,22 @@ object RESTAPI {
     }
 
     suspend fun fetchIngredients(): List<IngredientRemote> {
-        val file = File(appContext.filesDir, "ingredients.json")
-        if (!file.exists()) {
-            withContext(Dispatchers.IO) {
-                isJsonReady.value = false
-                file.createNewFile()
-                val response = client.get("http://$ip:$port/ingredients")
-                file.writeText(response.body())
-            }
-        }
+//        val file = File(appContext.filesDir, "ingredients.json")
+//        if (!file.exists()) {
+//            withContext(Dispatchers.IO) {
+//                isJsonReady.value = false
+//                file.createNewFile()
+//                val response = client.get("http://$ip:$port/ingredients")
+//                file.writeText(response.body())
+//            }
+//        }
+//
+//        isJsonReady.value = true
+//        return Json.decodeFromString(string = file.readText())
 
-//        return response.body()
-        isJsonReady.value = true
-        return Json.decodeFromString(string = file.readText())
+        val response = client.get("http://$ip:$port/ingredients")
+        Log.d("1111", response.body<List<IngredientRemote>>().toString())
+        return response.body<List<IngredientRemote>>()
     }
 
     suspend fun fetchRecipeFilteredFromText(name: String): List<RecipeFullRemote> {

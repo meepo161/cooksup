@@ -1,6 +1,8 @@
 package ru.cooksupteam.cooksup.ui.components
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -18,73 +20,122 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.Navigator
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.screens.IngredientDetailScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
+private val HighlightCardWidth = 170.dp
+private val HighlightCardPadding = 16.dp
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun IngredientListItem(
     ingredient: Ingredient,
     index: Int,
-    navigator: Navigator,
+    scroll: Int,
+    gradient: List<Color>,
+    gradientWidth: Float,
+    modifier: Modifier = Modifier,
     onClick: (Ingredient, Boolean) -> Unit
 ) {
     val isSelected = mutableStateOf(ingredient.selected)
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .background(
-                color = CooksupTheme.colors.uiBackground,
-                shape = RoundedCornerShape(16.dp)
+    val left = index * with(LocalDensity.current) {
+        (HighlightCardWidth + HighlightCardPadding).toPx()
+    }
+    CooksupCard(
+        modifier = modifier
+            .size(
+                width = 170.dp,
+                height = 220.dp
             )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = rememberRipple(color = CooksupTheme.colors.brand),
-                onClick = {
-                    lastIndexIngredient = index + 1
-                    navigator.push(IngredientDetailScreen(ingredient))
-                }
-            ),
-        horizontalArrangement = Arrangement.spacedBy(
-            32.dp,
-            Alignment.Start
-        ),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(bottom = 16.dp)
     ) {
-        IngredientImage(
+        Column(
             modifier = Modifier
-                .diagonalGradientBorder(
-                    colors = CooksupTheme.colors.gradient3_2,
-                    shape = MaterialTheme.shapes.medium
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = rememberRipple(color = CooksupTheme.colors.brand),
+                    onClick = {
+                        lastIndexIngredient = index + 1
+                        navigator.push(IngredientDetailScreen(ingredient))
+                    }
                 )
-                .size(48.dp),
-            imageUrl = ingredient.pic
-        )
-        Text(
-            text = ingredient.name,
-            color = CooksupTheme.colors.textPrimary,
-            modifier = Modifier.weight(0.9f)
-        )
-        Box(
-            modifier = Modifier
-                .weight(0.1f)
-                .clickable {
-                    onClick(ingredient, isSelected.value)
-                    isSelected.value = !isSelected.value
-                    ingredient.selected = isSelected.value
-                },
+                .fillMaxSize()
         ) {
-            Icon(
-                if (!isSelected.value) Icons.Rounded.AddCircle else Icons.Rounded.RemoveCircle,
-                contentDescription = null,
-
-                tint = if (!isSelected.value) CooksupTheme.colors.brand else CooksupTheme.colors.error,
+            Box(
+                modifier = Modifier
+                    .height(140.dp)
+                    .fillMaxWidth()
+            ) {
+                val gradientOffset = left - (scroll / 3f)
+                AnimatedContent(targetState = isSelected.value) {targetState ->
+                    Box(
+                        modifier = Modifier
+                            .height(60.dp)
+                            .fillMaxWidth()
+                            .offsetGradientBackground(
+                                if (targetState) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                gradientWidth,
+                                gradientOffset
+                            )
+                            .clickable {
+                                onClick(ingredient, isSelected.value)
+                                isSelected.value = !isSelected.value
+                                ingredient.selected = isSelected.value
+                            }
+                    )
+                }
+                IngredientImage(
+                    imageUrl = ingredient.pic,
+                    modifier = Modifier
+                        .size(120.dp)
+                        .align(Alignment.BottomCenter)
+                )
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            androidx.compose.material.Text(
+                text = ingredient.name,
+                maxLines = 2,
+//                overflow = TextOverflow.Ellipsis,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.h6,
+//                softWrap = false,
+                color = CooksupTheme.colors.textSecondary,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
             )
+        }
+    }
+}
+
+@Preview("default")
+@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview("large font", fontScale = 2f)
+@Composable
+private fun CardPreview() {
+    CooksupTheme {
+        IngredientListItem(
+            ingredient = Ingredient(
+                name = "Абрикосовое пюре",
+                pic = "https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9wcm9kdWN0cy83NjkvY292ZXJzL0QyV0xtZS5qcGc.jpg"
+            ),
+            index = 1,
+            scroll = 1,
+            gradient = CooksupTheme.colors.gradient6_2,
+            gradientWidth = 1800f
+        ) { _, isSelected ->
         }
     }
 }

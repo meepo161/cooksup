@@ -16,10 +16,10 @@ import java.io.IOException
 
 object Singleton {
     //    var ip = "192.168.1.78"
-    var ip = "94.142.141.190"
+    var ip = "192.168.0.17"
+//    var ip = "94.142.141.190"
 
     //    var ip = "45.141.100.161"
-//    var ip = "192.168.0.17"
     var port = "80"
     lateinit var appContext: Context
     var isJsonReady = mutableStateOf(true)
@@ -28,11 +28,13 @@ object Singleton {
     var lastIngredients: List<String> = listOf()
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
+    var searchTextStateStored = ""
     var lastIndexRecipe = 0
     var lastIndexIngredient = 0
     var isAuthorized = mutableStateOf(false)
     var user = Person()
     var loginState = mutableStateOf(true)
+    var pageRecipes = 1
     lateinit var navigator: Navigator
 
     @Throws(InterruptedException::class, IOException::class)

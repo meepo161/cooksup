@@ -1,12 +1,17 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
+import android.graphics.Paint.Align
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -47,6 +52,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.Singleton.allRecipeFull
 import ru.cooksupteam.cooksup.Singleton.lastIndexRecipe
 import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.Singleton.pageRecipes
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.regex
@@ -76,7 +82,7 @@ class RecipesTab() : Tab {
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
         val selectedIngredients = selectedIngredients.map { it.name }
-        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = lastIndexRecipe)
+        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = 1)
         var recipeFullViewModel = remember { RecipeFullViewModel() }
         val searchTextState = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -161,58 +167,69 @@ class RecipesTab() : Tab {
 
                         })
                 }) {
-                if (recipeFullViewModel.isDataReady.value) {
-                    Column {
-                        val items =
-                            if (selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
-                                allRecipeFull.sortedBy { it.name.lowercase() }.filter {
-                                    it.name.lowercase()
-                                        .contains(searchTextState.value.lowercase())
-                                }
-                            } else if (searchTextState.value.isNotEmpty()) {
-                                allRecipeFull.sortedBy { it.name.lowercase() }.filter {
-                                    val nameRequest =
-                                        searchTextState.value.trim().lowercase().split(' ')
-                                            .toSet()
-                                    val nameRecipe = it.name.lowercase().split(' ').toSet()
-                                    if (nameRequest.size == 1) {
-                                        if (searchTextState.value.length > 2) {
-                                            it.name.trim().lowercase().contains(
-                                                searchTextState.value.removeRange(
-                                                    3,
-                                                    searchTextState.value.length
-                                                ).trim().lowercase()
-                                            )
-                                        } else {
-                                            it.name.trim().lowercase()
-                                                .contains(searchTextState.value.trim().lowercase())
-                                        }
-                                    } else {
-                                        (nameRequest subtract nameRecipe).isEmpty()
-                                    }
-                                }
-                            } else {
-                                allRecipeFull
+                Column {
+                    val items =
+                        if (selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
+                            allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                it.name.lowercase()
+                                    .contains(searchTextState.value.lowercase())
                             }
-                        Text(
-                            text = "Найдено рецептов: ${if (items.size == 400) "400+" else items.size}",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp, start = 12.dp),
-                            textAlign = TextAlign.Start,
-                            color = CooksupTheme.colors.textPrimary
-                        )
+                        } else if (searchTextState.value.isNotEmpty()) {
+                            allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                val nameRequest =
+                                    searchTextState.value.trim().lowercase().split(' ')
+                                        .toSet()
+                                val nameRecipe = it.name.lowercase().split(' ').toSet()
+                                if (nameRequest.size == 1) {
+                                    if (searchTextState.value.length > 2) {
+                                        it.name.trim().lowercase().contains(
+                                            searchTextState.value.removeRange(
+                                                3,
+                                                searchTextState.value.length
+                                            ).trim().lowercase()
+                                        )
+                                    } else {
+                                        it.name.trim().lowercase()
+                                            .contains(searchTextState.value.trim().lowercase())
+                                    }
+                                } else {
+                                    (nameRequest subtract nameRecipe).isEmpty()
+                                }
+                            }
+                        } else {
+                            allRecipeFull
+                        }
+                    Text(
+                        text = "Найдено рецептов: ${if (items.size == 400) "400+" else items.size}",
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp, start = 12.dp),
+                        textAlign = TextAlign.Start,
+                        color = CooksupTheme.colors.textPrimary
+                    )
+                    Column(modifier = Modifier.fillMaxSize()) {
                         LazyVerticalGrid(
                             state = stateGrid,
                             columns = GridCells.Fixed(2),
                             modifier = Modifier
                                 .background(CooksupTheme.colors.uiBackground)
-                                .fillMaxWidth(),
+                                .fillMaxWidth().weight(0.8f),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             if (stateGrid.isScrollInProgress) {
+                                Log.d(
+                                    "firstVisibleItemIndex", "${
+                                        stateGrid.firstVisibleItemIndex
+                                    }"
+                                )
+                                stateGrid.firstVisibleItemIndex
                                 keyboardController?.hide()
                             }
+                            if (stateGrid.firstVisibleItemIndex > pageRecipes * 20 - 10) {
+                                pageRecipes++
+                                recipeFullViewModel.load()
+                            }
+
                             itemsIndexed(items) { index, recipe ->
                                 RecipeCard(
                                     recipe = recipe,
@@ -222,29 +239,20 @@ class RecipesTab() : Tab {
                                     },
                                     index = index,
                                     gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
-                                    gradientWidth = 8000f,
+                                    gradientWidth = 1800f,
                                     scroll = 1,
                                     modifier = Modifier.padding(horizontal = 16.dp)
                                 )
                             }
                         }
-                    }
-                } else {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(
-                            16.dp,
-                            Alignment.CenterVertically
-                        )
-                    ) {
-                        CircularProgressIndicator(color = CooksupTheme.colors.brand)
-                        Text(
-                            text = "Идет поиск рецептов...",
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.fillMaxWidth(),
-                            color = CooksupTheme.colors.brand
-                        )
+
+                        AnimatedVisibility(!recipeFullViewModel.isDataReady.value) {
+                            Box(
+                                modifier = Modifier.weight(0.2f).fillMaxWidth(), contentAlignment = Alignment.Center
+                            ) {
+                                CircularProgressIndicator(color = CooksupTheme.colors.brand)
+                            }
+                        }
                     }
                 }
             }

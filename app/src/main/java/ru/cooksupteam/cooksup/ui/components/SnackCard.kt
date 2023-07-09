@@ -77,14 +77,6 @@ fun SnackCard(
                 color = CooksupTheme.colors.textSecondary,
                 modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
             )
-//            Text(
-//                text = ingredient.name,
-//                style = MaterialTheme.typography.body1,
-//                fontSize = 12.sp,
-//                softWrap = false,
-//                color = CooksupTheme.colors.textHelp,
-//                modifier = Modifier.padding(horizontal = 16.dp)
-//            )
         }
     }
 }

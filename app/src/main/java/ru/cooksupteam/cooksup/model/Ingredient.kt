@@ -1,5 +1,7 @@
 package ru.cooksupteam.cooksup.model
 
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 
 class Ingredient(

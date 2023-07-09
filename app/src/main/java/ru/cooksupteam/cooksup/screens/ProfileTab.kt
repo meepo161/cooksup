@@ -220,19 +220,6 @@ class ProfileTab() : Tab {
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
-
-                    Spacer(modifier = Modifier.height(2.dp))
-
-                    Text(
-                        text = user.phone,
-                        style = TextStyle(
-                            fontSize = 14.sp,
-                            color = Color.Gray,
-                            letterSpacing = (0.8).sp
-                        ),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
                 }
 
                 // Edit button

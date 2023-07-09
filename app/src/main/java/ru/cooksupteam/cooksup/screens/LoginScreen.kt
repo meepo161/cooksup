@@ -81,7 +81,7 @@ fun LoginPage() {
                 singleLine = true,
                 label = {
                     Text(
-                        text = "Номер телефона или email",
+                        text = "Email",
                         color = CooksupTheme.colors.brand
                     )
                 },

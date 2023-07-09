@@ -57,8 +57,10 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import cafe.adriel.voyager.core.screen.Screen
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.Singleton.pageRecipes
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.model.Ingredient
@@ -603,10 +605,12 @@ class IngredientDetailScreen(
                         onClick = {
                             if (ingredient.selected) {
                                 selectedIngredients.remove(ingredient)
+                                pageRecipes = 1
                                 ingredient.selected = false
                                 textButton.value = "Добавить в продукты"
                             } else {
                                 selectedIngredients.add(ingredient)
+                                pageRecipes = 1
                                 ingredient.selected = true
                                 textButton.value = "Убрать из продуктов"
                             }

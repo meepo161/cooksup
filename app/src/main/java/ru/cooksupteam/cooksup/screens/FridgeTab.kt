@@ -43,54 +43,5 @@ class FridgeTab() : Tab {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
-        val listState = rememberLazyListState()
-        CooksupTheme {
-            Scaffold(
-                modifier = Modifier.padding(bottom = 56.dp),
-                backgroundColor = CooksupTheme.colors.uiBackground,
-                topBar = {
-                    TopAppBar(
-                        elevation = 0.dp,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(CooksupTheme.colors.uiBackground),
-                        backgroundColor = Color.Transparent,
-                        title = {
-                            Text(
-                                text = "Мои ингредиенты",
-                                color = CooksupTheme.colors.brand
-                            )
-                        })
-                }) {
-                Row {
-                    LazyColumn(
-                        state = listState,
-                        modifier = Modifier.background(CooksupTheme.colors.uiBackground),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        item {
-                            Text(
-                                text = "Всего ингредиентов: ${selectedIngredients.size}",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 12.dp),
-                                textAlign = TextAlign.Start,
-                                color = CooksupTheme.colors.textPrimary
-                            )
-                        }
-                        itemsIndexed(selectedIngredients) { index, ingredient ->
-                            IngredientListItem(
-                                ingredient = ingredient,
-                                index,
-                                navigator,
-                                onClick = { _, _ ->
-                                    selectedIngredients.remove(ingredient)
-                                })
-                        }
-                    }
-                }
-            }
-        }
     }
 }

@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -26,6 +27,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -43,16 +45,21 @@ import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.loginState
 import ru.cooksupteam.cooksup.Singleton.scope
+import ru.cooksupteam.cooksup.isEmailValid
 import ru.cooksupteam.cooksup.model.Person
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
 fun RegisterPage() {
-    val nameValue = remember { mutableStateOf("") }
-    val emailValue = remember { mutableStateOf("") }
-    val phoneValue = remember { mutableStateOf("") }
-    val passwordValue = remember { mutableStateOf("") }
-    val confirmPasswordValue = remember { mutableStateOf("") }
+    val name = remember { mutableStateOf("") }
+    val email = remember { mutableStateOf("") }
+    val password = remember { mutableStateOf("") }
+    val confirmPassword = remember { mutableStateOf("") }
+    val nameError = remember { mutableStateOf(false) }
+    val emailError = remember { mutableStateOf(false) }
+    val passwordError = remember { mutableStateOf(false) }
+    val confirmPasswordError = remember { mutableStateOf(false) }
+    val person: Person
     val passwordVisibility = remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -73,8 +80,9 @@ fun RegisterPage() {
         Spacer(modifier = Modifier.padding(20.dp))
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             OutlinedTextField(
-                value = nameValue.value,
-                onValueChange = { nameValue.value = it },
+                value = name.value,
+                isError = nameError.value,
+                onValueChange = { name.value = it },
                 label = {
                     Text(
                         text = "Имя",
@@ -102,8 +110,9 @@ fun RegisterPage() {
             )
 
             OutlinedTextField(
-                value = emailValue.value,
-                onValueChange = { emailValue.value = it },
+                value = email.value,
+                isError = emailError.value,
+                onValueChange = { email.value = it },
                 label = {
                     Text(
                         text = "Email",
@@ -129,39 +138,10 @@ fun RegisterPage() {
                     unfocusedIndicatorColor = CooksupTheme.colors.brand
                 )
             )
-
             OutlinedTextField(
-                value = phoneValue.value,
-                onValueChange = { phoneValue.value = it },
-                label = {
-                    Text(
-                        text = "Номер телефона",
-                        color = CooksupTheme.colors.brand
-                    )
-                },
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Phone,
-                    imeAction = ImeAction.Next
-                ),
-                keyboardActions = KeyboardActions(
-                    onNext = {
-                        focusManager.moveFocus(FocusDirection.Down)
-                    }
-                ),
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(0.8f),
-                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
-                colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = CooksupTheme.colors.uiBackground,
-                    cursorColor = CooksupTheme.colors.brand,
-                    focusedIndicatorColor = CooksupTheme.colors.brand,
-                    unfocusedIndicatorColor = CooksupTheme.colors.brand
-                )
-            )
-
-            OutlinedTextField(
-                value = passwordValue.value,
-                onValueChange = { passwordValue.value = it },
+                value = password.value,
+                isError = passwordError.value,
+                onValueChange = { password.value = it },
                 label = {
                     Text(
                         text = "Пароль",
@@ -209,8 +189,9 @@ fun RegisterPage() {
             )
 
             OutlinedTextField(
-                value = confirmPasswordValue.value,
-                onValueChange = { confirmPasswordValue.value = it },
+                value = confirmPassword.value,
+                isError = confirmPasswordError.value,
+                onValueChange = { confirmPassword.value = it },
                 label = {
                     Text(
                         text = "Подвердите пароль",
@@ -224,10 +205,14 @@ fun RegisterPage() {
                 keyboardActions = KeyboardActions(
                     onDone = {
                         register(
-                            name = nameValue.value,
-                            email = emailValue.value,
-                            phone = phoneValue.value,
-                            password = passwordValue.value
+                            name = name,
+                            nameError = nameError,
+                            email = email,
+                            emailError = emailError,
+                            password = password,
+                            passwordError = passwordError,
+                            confirmPassword = confirmPassword,
+                            confirmPasswordError = confirmPasswordError
                         )
                     }
                 ),
@@ -261,10 +246,14 @@ fun RegisterPage() {
             Button(
                 onClick = {
                     register(
-                        name = nameValue.value,
-                        email = emailValue.value,
-                        phone = phoneValue.value,
-                        password = passwordValue.value
+                        name = name,
+                        nameError = nameError,
+                        email = email,
+                        emailError = emailError,
+                        password = password,
+                        passwordError = passwordError,
+                        confirmPassword = confirmPassword,
+                        confirmPasswordError = confirmPasswordError
                     )
                 },
                 modifier = Modifier
@@ -285,7 +274,7 @@ fun RegisterPage() {
             Spacer(modifier = Modifier.padding(20.dp))
 
             Text(
-                text = "Войти по логину и паролю",
+                text = "Авторизация",
                 modifier = Modifier.clickable(
                     enabled = true,
                     interactionSource = remember { MutableInteractionSource() },
@@ -299,15 +288,80 @@ fun RegisterPage() {
     }
 }
 
-private fun register(name: String, email: String, phone: String, password: String) {
-    loginState.value = true
-    scope.launch {
-        RESTAPI.postPerson(Person(
-            id = "",
-            name = name,
-            email = email,
-            phone = phone,
-            password = password
-        ))
+private fun register(
+    name: MutableState<String>,
+    nameError: MutableState<Boolean>,
+    email: MutableState<String>,
+    emailError: MutableState<Boolean>,
+    password: MutableState<String>,
+    passwordError: MutableState<Boolean>,
+    confirmPassword: MutableState<String>,
+    confirmPasswordError: MutableState<Boolean>
+) {
+    if (validate(
+            name,
+            nameError,
+            email,
+            emailError,
+            password,
+            passwordError,
+            confirmPassword,
+            confirmPasswordError
+        )
+    ) {
+        postPerson(
+            person = Person(
+                name = name.value,
+                email = email.value,
+                password = password.value
+            )
+        )
     }
+}
+
+private fun validate(
+    name: MutableState<String>,
+    nameError: MutableState<Boolean>,
+    email: MutableState<String>,
+    emailError: MutableState<Boolean>,
+    password: MutableState<String>,
+    passwordError: MutableState<Boolean>,
+    confirmPassword: MutableState<String>,
+    confirmPasswordError: MutableState<Boolean>
+): Boolean {
+    nameError.value = false
+    emailError.value = false
+    passwordError.value = false
+    confirmPasswordError.value = false
+
+    if (name.value == "") {
+        nameError.value = true
+    }
+    if (!email.value.isEmailValid()) {
+        emailError.value = true
+    }
+    if (password.value == "") {
+        passwordError.value = true
+    }
+    if (confirmPassword.value != password.value || confirmPassword.value == "") {
+        confirmPasswordError.value = true
+    }
+
+    return !nameError.value && !emailError.value && !passwordError.value && !confirmPasswordError.value
+}
+
+private fun postPerson(
+    person: Person
+) {
+    scope.launch {
+        RESTAPI.postPerson(
+            Person(
+                id = "",
+                name = person.name,
+                email = person.email,
+                password = person.password
+            )
+        )
+    }
+    loginState.value = true
 }

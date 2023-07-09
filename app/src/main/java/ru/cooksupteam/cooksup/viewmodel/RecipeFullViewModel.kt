@@ -7,7 +7,9 @@ import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.allRecipeFull
 import ru.cooksupteam.cooksup.Singleton.lastIngredients
+import ru.cooksupteam.cooksup.Singleton.pageRecipes
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
+import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
 
@@ -44,23 +46,23 @@ class RecipeFullViewModel() {
                     )
                 })
             } else if (selectedIngredients.isNotEmpty()) {
-                if (lastIngredients != selectedIngredients.map { it.name }) {
-                    all = RESTAPI.fetchRecipeFiltered(selectedIngredients.map { it.name })
+                selectedIngredients.add(Ingredient(pageRecipes.toString()))
+                all = RESTAPI.fetchRecipeFiltered(selectedIngredients.map { it.name })
+                if (pageRecipes == 1) {
                     allRecipeFull.clear()
-                    allRecipeFull.addAll(all.map {
-                        RecipeFull(
-                            name = it.name,
-                            description = it.description,
-                            pic = it.pic,
-                            nutrition = it.nutrition,
-                            time = it.time,
-                            servings = it.servings,
-                            quantityIngredients = it.quantityIngredients,
-                            instructions = it.instructions
-                        )
-                    })
-                    lastIngredients = selectedIngredients.map { it.name }
                 }
+                allRecipeFull.addAll(all.map {
+                    RecipeFull(
+                        name = it.name,
+                        description = it.description,
+                        pic = it.pic,
+                        nutrition = it.nutrition,
+                        time = it.time,
+                        servings = it.servings,
+                        quantityIngredients = it.quantityIngredients,
+                        instructions = it.instructions
+                    )
+                })
             }
             isDataReady.value = true
         }

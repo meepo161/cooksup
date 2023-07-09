@@ -3,6 +3,7 @@ package ru.cooksupteam.cooksup.ui.components
 import android.content.res.Configuration
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,7 +37,7 @@ fun RecipeCard(
         modifier = modifier
             .size(
                 width = 170.dp,
-                height = 250.dp
+                height = 220.dp
             )
             .padding(bottom = 16.dp)
     ) {
@@ -47,14 +48,14 @@ fun RecipeCard(
         ) {
             Box(
                 modifier = Modifier
-                    .height(150.dp)
-                    .width(170.dp)
+                    .height(140.dp)
+                    .fillMaxWidth()
             ) {
                 val gradientOffset = left - (scroll / 3f)
                 Box(
                     modifier = Modifier
-                        .height(64.dp)
-                        .width(170.dp)
+                        .height(100.dp)
+                        .fillMaxWidth()
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
                 RecipeImage(
@@ -65,14 +66,18 @@ fun RecipeCard(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            Text(
+            androidx.compose.material.Text(
                 text = recipe.name,
-                softWrap = true,
-                maxLines = 3,
-                fontSize = 14.sp,
-                color = CooksupTheme.colors.textHelp,
+                maxLines = 2,
+//                overflow = TextOverflow.Ellipsis,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center,
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxSize()
+                style = MaterialTheme.typography.h6,
+//                softWrap = false,
+                color = CooksupTheme.colors.textSecondary,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
             )
         }
     }

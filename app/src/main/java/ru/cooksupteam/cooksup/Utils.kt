@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup
 
+import android.text.TextUtils
 import androidx.compose.ui.graphics.Color
 import java.util.Locale
 
@@ -15,7 +16,11 @@ fun getColorFromString(color: String): Color {
 
 val regex = Regex("[^А-Яа-яёЁ ]")
 
+fun String.isEmailValid(): Boolean {
+    return !TextUtils.isEmpty(this) && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+}
 fun String?.toIntOrDefault(default: Int) = this?.toIntOrNull() ?: default
+
 fun Double.autoformat(): String =
     if (this.toLong().toDouble() == this) {
         "%d".format(Locale.ENGLISH, this.toLong())
