@@ -3,18 +3,12 @@ package ru.cooksupteam.cooksup.ui.components
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.foundation.background
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.AddCircle
-import androidx.compose.material.icons.rounded.RemoveCircle
 import androidx.compose.material.ripple.rememberRipple
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,8 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.navigator.Navigator
-import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.model.Ingredient
@@ -38,6 +30,7 @@ private val HighlightCardWidth = 170.dp
 private val HighlightCardPadding = 16.dp
 
 @SuppressLint("UnrememberedMutableState")
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun IngredientListItem(
     ingredient: Ingredient,
