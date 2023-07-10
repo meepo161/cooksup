@@ -34,7 +34,6 @@ object Singleton {
     var isAuthorized = mutableStateOf(false)
     var user = Person()
     var loginState = mutableStateOf(true)
-    var pageRecipes = 1
     lateinit var navigator: Navigator
 
     @Throws(InterruptedException::class, IOException::class)

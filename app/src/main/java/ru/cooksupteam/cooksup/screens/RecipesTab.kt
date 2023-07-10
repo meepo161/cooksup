@@ -50,7 +50,6 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.Singleton.allRecipeFull
 import ru.cooksupteam.cooksup.Singleton.lastIndexRecipe
 import ru.cooksupteam.cooksup.Singleton.navigator
-import ru.cooksupteam.cooksup.Singleton.pageRecipes
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.regex
@@ -216,21 +215,8 @@ class RecipesTab() : Tab {
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             if (stateGrid.isScrollInProgress) {
-                                Log.d(
-                                    "firstVisibleItemIndex", "${
-                                        stateGrid.firstVisibleItemIndex
-                                    }"
-                                )
-                                stateGrid.firstVisibleItemIndex
                                 keyboardController?.hide()
                             }
-
-                            if (stateGrid.firstVisibleItemIndex > pageRecipes * 20 - 18) {
-                                Log.d("pageRecipes", "$pageRecipes")
-                                pageRecipes++
-                                recipeFullViewModel.load()
-                            }
-
                             itemsIndexed(items) { index, recipe ->
                                 RecipeCard(
                                     recipe = recipe,

@@ -50,7 +50,6 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
-import ru.cooksupteam.cooksup.Singleton.pageRecipes
 import ru.cooksupteam.cooksup.Singleton.searchTextStateStored
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
@@ -233,10 +232,8 @@ class SearchTab : Tab {
                                     ) { _, isSelected ->
                                     if (!isSelected) {
                                         selectedIngredients.add(ingredient)
-                                        pageRecipes = 1
                                     } else {
                                         selectedIngredients.remove(ingredient)
-                                        pageRecipes = 1
                                     }
                                     isNeedSelectedHeader = false
                                 }
