@@ -1,26 +1,27 @@
 package ru.cooksupteam.cooksup.viewmodel
 
-import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.allIngredients
+import ru.cooksupteam.cooksup.Singleton.ip
+import ru.cooksupteam.cooksup.Singleton.isIngredientDataReady
+import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.IngredientRemote
 
 class IngredientsViewModel {
     var all = listOf<IngredientRemote>()
-    var isDataReady = mutableStateOf(false)
     private val scope = CoroutineScope(Dispatchers.Default)
 
     fun load() {
         if (all.isEmpty()) {
-            isDataReady.value = false
             scope.launch {
+                isIngredientDataReady.value = false
                 all = RESTAPI.fetchIngredients()
                 appendToAllIngredients()
-                isDataReady.value = true
+                isIngredientDataReady.value = true
             }
         }
     }
@@ -31,6 +32,7 @@ class IngredientsViewModel {
             Ingredient(
                 name = it.name.replace("процент", "%"),
                 description = it.description,
+//                pic = "http://$ip:$port/ingredients_pics/" + it.name + ".webp",
                 pic = it.pic,
                 nutrition = it.nutrition,
                 history = it.history,

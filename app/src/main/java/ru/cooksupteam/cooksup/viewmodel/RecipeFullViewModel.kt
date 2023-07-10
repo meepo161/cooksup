@@ -5,9 +5,12 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.allRecipeFull
+import ru.cooksupteam.cooksup.Singleton.ip
 import ru.cooksupteam.cooksup.Singleton.lastIngredients
 import ru.cooksupteam.cooksup.Singleton.pageRecipes
+import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.RecipeFull
@@ -37,6 +40,7 @@ class RecipeFullViewModel() {
                     RecipeFull(
                         name = it.name,
                         description = it.description,
+//                        pic = "http://${ip}:${port}/recipes_pics/" + it.name + ".webp",
                         pic = it.pic,
                         nutrition = it.nutrition,
                         time = it.time,

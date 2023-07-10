@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
@@ -27,7 +28,7 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.serialization.Serializable
-import ru.cooksupteam.cooksup.Singleton.isJsonReady
+import ru.cooksupteam.cooksup.Singleton.isIngredientDataReady
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -38,7 +39,7 @@ class MainScreen() :
     @Composable
     override fun Content() {
         navigator = LocalNavigator.currentOrThrow
-        if (isJsonReady.value) {
+        if (isIngredientDataReady.value) {
             TabNavigator(MainTab()) {
                 Scaffold(
                     bottomBar = {
@@ -62,7 +63,7 @@ class MainScreen() :
         } else {
             CooksupTheme {
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().background(CooksupTheme.colors.uiBackground),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(
                         16.dp,

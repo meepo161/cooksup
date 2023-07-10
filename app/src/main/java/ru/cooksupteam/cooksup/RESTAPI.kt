@@ -1,6 +1,5 @@
 package ru.cooksupteam.cooksup
 
-import android.util.Log
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
@@ -18,7 +17,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
-import ru.cooksupteam.cooksup.Singleton.isJsonReady
+import ru.cooksupteam.cooksup.Singleton.isIngredientDataReady
 import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.Person
@@ -32,29 +31,29 @@ object RESTAPI {
             json()
         }
         install(HttpTimeout) {
-            requestTimeoutMillis = 60000L
-            connectTimeoutMillis = 60000L
-            socketTimeoutMillis = 60000L
+            requestTimeoutMillis = 600000L
+            connectTimeoutMillis = 600000L
+            socketTimeoutMillis = 600000L
         }
     }
 
     suspend fun fetchIngredients(): List<IngredientRemote> {
-//        val file = File(appContext.filesDir, "ingredients.json")
-//        if (!file.exists()) {
-//            withContext(Dispatchers.IO) {
-//                isJsonReady.value = false
-//                file.createNewFile()
-//                val response = client.get("http://$ip:$port/ingredients")
-//                file.writeText(response.body())
-//            }
-//        }
-//
-//        isJsonReady.value = true
-//        return Json.decodeFromString(string = file.readText())
-
-        val response = client.get("http://$ip:$port/ingredients")
-        Log.d("1111", response.body<List<IngredientRemote>>().toString())
-        return response.body<List<IngredientRemote>>()
+        try {
+            val file = File(appContext.filesDir, "ingredients.json")
+            if (!file.exists()) {
+                withContext(Dispatchers.IO) {
+                    file.createNewFile()
+                    val response = client.get("http://$ip:$port/ingredients")
+                    file.writeText(response.body())
+                }
+            }
+            isIngredientDataReady.value = true
+            return Json.decodeFromString(string = file.readText())
+        } catch (e: Exception) {
+            val response = client.get("http://$ip:$port/ingredients")
+            isIngredientDataReady.value = true
+            return response.body()
+        }
     }
 
     suspend fun fetchRecipeFilteredFromText(name: String): List<RecipeFullRemote> {

@@ -1,7 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
-import android.graphics.Paint.Align
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -82,7 +80,6 @@ class RecipesTab() : Tab {
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
         val selectedIngredients = selectedIngredients.map { it.name }
-        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = 1)
         var recipeFullViewModel = remember { RecipeFullViewModel() }
         val searchTextState = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -208,12 +205,14 @@ class RecipesTab() : Tab {
                         color = CooksupTheme.colors.textPrimary
                     )
                     Column(modifier = Modifier.fillMaxSize()) {
+                        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = 1)
                         LazyVerticalGrid(
                             state = stateGrid,
                             columns = GridCells.Fixed(2),
                             modifier = Modifier
                                 .background(CooksupTheme.colors.uiBackground)
-                                .fillMaxWidth().weight(0.8f),
+                                .fillMaxWidth()
+                                .weight(0.8f),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             if (stateGrid.isScrollInProgress) {
@@ -225,7 +224,9 @@ class RecipesTab() : Tab {
                                 stateGrid.firstVisibleItemIndex
                                 keyboardController?.hide()
                             }
-                            if (stateGrid.firstVisibleItemIndex > pageRecipes * 20 - 10) {
+
+                            if (stateGrid.firstVisibleItemIndex > pageRecipes * 20 - 18) {
+                                Log.d("pageRecipes", "$pageRecipes")
                                 pageRecipes++
                                 recipeFullViewModel.load()
                             }
@@ -248,7 +249,10 @@ class RecipesTab() : Tab {
 
                         AnimatedVisibility(!recipeFullViewModel.isDataReady.value) {
                             Box(
-                                modifier = Modifier.weight(0.2f).fillMaxWidth(), contentAlignment = Alignment.Center
+                                modifier = Modifier
+                                    .weight(0.2f)
+                                    .fillMaxWidth(),
+                                contentAlignment = Alignment.Center
                             ) {
                                 CircularProgressIndicator(color = CooksupTheme.colors.brand)
                             }

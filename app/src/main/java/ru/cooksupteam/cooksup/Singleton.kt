@@ -22,7 +22,7 @@ object Singleton {
     //    var ip = "45.141.100.161"
     var port = "80"
     lateinit var appContext: Context
-    var isJsonReady = mutableStateOf(true)
+    var isIngredientDataReady = mutableStateOf(true)
     val scope = CoroutineScope(Dispatchers.Default)
     var allRecipeFull = mutableStateListOf<RecipeFull>()
     var lastIngredients: List<String> = listOf()
