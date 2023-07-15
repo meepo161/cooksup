@@ -26,13 +26,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -147,6 +144,7 @@ class SearchTab : Tab {
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
                                                     searchTextState.value = ""
+                                                    searchTextStateStored = ""
                                                 }
                                         )
                                     }
@@ -159,7 +157,7 @@ class SearchTab : Tab {
                                     searchTextStateStored = searchTextState.value
                                     items.clear()
 
-                                    var toTypedArray = searchTextState.value.lowercase().split(" ")
+                                    val toTypedArray = searchTextState.value.lowercase().split(" ")
                                         .toTypedArray().toMutableList()
                                     if (toTypedArray.last() == "") {
                                         toTypedArray.removeLast()

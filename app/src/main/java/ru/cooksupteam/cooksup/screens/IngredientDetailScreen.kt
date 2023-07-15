@@ -57,7 +57,6 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import cafe.adriel.voyager.core.screen.Screen
-import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients

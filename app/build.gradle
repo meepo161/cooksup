@@ -8,12 +8,20 @@ android {
     namespace 'ru.cooksupteam.cooksup.app'
     compileSdk 33
 
+    def Properties versionProps = new Properties()
+    def versionPropsFile = file('version.properties')
+    if(versionPropsFile.exists())
+        versionProps.load(new FileInputStream(versionPropsFile))
+    def code = (versionProps['VERSION_CODE'] ?: "0").toInteger() + 1
+    versionProps['VERSION_CODE'] = code.toString()
+    versionProps.store(versionPropsFile.newWriter(), null)
+
     defaultConfig {
         applicationId "ru.cooksupteam.cooksup.app"
         minSdk 24
         targetSdk 33
-        versionCode 2
-        versionName "2.0"
+        versionCode code
+        versionName "2.02a"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

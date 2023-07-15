@@ -4,10 +4,15 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -49,7 +54,7 @@ fun IngredientListItem(
         modifier = modifier
             .size(
                 width = 170.dp,
-                height = 220.dp
+                height = 250.dp
             )
             .padding(bottom = 16.dp)
     ) {
@@ -67,14 +72,14 @@ fun IngredientListItem(
         ) {
             Box(
                 modifier = Modifier
-                    .height(140.dp)
+                    .height(160.dp)
                     .fillMaxWidth()
             ) {
                 val gradientOffset = left - (scroll / 3f)
-                AnimatedContent(targetState = isSelected.value) {targetState ->
+                AnimatedContent(targetState = isSelected.value) { targetState ->
                     Box(
                         modifier = Modifier
-                            .height(60.dp)
+                            .height(100.dp)
                             .fillMaxWidth()
                             .offsetGradientBackground(
                                 if (targetState) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
@@ -87,6 +92,16 @@ fun IngredientListItem(
                                 ingredient.selected = isSelected.value
                             }
                     )
+                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+                        Icon(
+                            imageVector = Icons.Rounded.Done,
+                            tint = if (isSelected.value) CooksupTheme.colors.brand else CooksupTheme.colors.uiBackground,
+                            contentDescription = "Favorite",
+                            modifier = Modifier
+                                .background(Color.Transparent)
+                                .padding(4.dp)
+                        )
+                    }
                 }
                 IngredientImage(
                     imageUrl = ingredient.pic,
@@ -96,7 +111,7 @@ fun IngredientListItem(
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            androidx.compose.material.Text(
+            Text(
                 text = ingredient.name,
                 maxLines = 2,
 //                overflow = TextOverflow.Ellipsis,
@@ -122,9 +137,10 @@ private fun CardPreview() {
         IngredientListItem(
             ingredient = Ingredient(
                 name = "Абрикосовое пюре",
-                pic = "https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9wcm9kdWN0cy83NjkvY292ZXJzL0QyV0xtZS5qcGc.jpg"
+                pic = "https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9wcm9kdWN0cy83NjkvY292ZXJzL0QyV0xtZS5qcGc.jpg",
+                selected = true
             ),
-            index = 1,
+            index = 2,
             scroll = 1,
             gradient = CooksupTheme.colors.gradient6_2,
             gradientWidth = 1800f

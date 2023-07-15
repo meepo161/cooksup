@@ -1,7 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -228,7 +227,12 @@ class RecipesTab() : Tab {
                                     gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
                                     gradientWidth = 1800f,
                                     scroll = 1,
-                                    modifier = Modifier.padding(horizontal = 16.dp)
+                                    modifier = if (index % 2 == 0) Modifier.padding(
+                                        start = 12.dp,
+                                        end = 4.dp
+                                    ) else Modifier.padding(
+                                        start = 4.dp, end = 12.dp
+                                    )
                                 )
                             }
                         }

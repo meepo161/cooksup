@@ -1,11 +1,18 @@
 package ru.cooksupteam.cooksup.ui.components
 
+import android.annotation.SuppressLint
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +27,7 @@ import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 private val HighlightCardWidth = 170.dp
 private val HighlightCardPadding = 16.dp
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun RecipeCard(
     recipe: RecipeFull,
@@ -30,6 +38,7 @@ fun RecipeCard(
     scroll: Int,
     modifier: Modifier = Modifier
 ) {
+    val isSelected = mutableStateOf(recipe.favorite)
     val left = index * with(LocalDensity.current) {
         (HighlightCardWidth + HighlightCardPadding).toPx()
     }
@@ -37,7 +46,7 @@ fun RecipeCard(
         modifier = modifier
             .size(
                 width = 170.dp,
-                height = 220.dp
+                height = 250.dp
             )
             .padding(bottom = 16.dp)
     ) {
@@ -48,7 +57,7 @@ fun RecipeCard(
         ) {
             Box(
                 modifier = Modifier
-                    .height(140.dp)
+                    .height(160.dp)
                     .fillMaxWidth()
             ) {
                 val gradientOffset = left - (scroll / 3f)
@@ -58,15 +67,29 @@ fun RecipeCard(
                         .fillMaxWidth()
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
+                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+                    Icon(
+                        imageVector = if (isSelected.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                        tint = if (isSelected.value) Color.Red else CooksupTheme.colors.uiBackground,
+                        contentDescription = "Favorite",
+                        modifier = Modifier
+                            .background(Color.Transparent)
+                            .padding(4.dp)
+                            .clickable {
+                                isSelected.value = !isSelected.value
+                                recipe.favorite = isSelected.value
+                            }
+                    )
+                }
                 RecipeImage(
                     imageUrl = recipe.pic,
                     modifier = Modifier
-                        .size(140.dp)
+                        .size(120.dp)
                         .align(Alignment.BottomCenter)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
-            androidx.compose.material.Text(
+            Text(
                 text = recipe.name,
                 maxLines = 2,
 //                overflow = TextOverflow.Ellipsis,
@@ -79,6 +102,7 @@ fun RecipeCard(
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
+
         }
     }
 }
@@ -90,20 +114,37 @@ fun RecipeCard(
 )
 @Composable
 private fun SnackCardPreview() {
-//    CooksupTheme {
-//        RecipeCard(
-//            recipe = RecipeFull(
-//                "Рыбный салат с авокадо и творожным сыром Рыбный салат с авокадо и творожным сыром",
-//                "Рыбный салат с авокадо и творожным сыром обязательно понравится любителям суши! Простой и быстрый, а значит, идеален для современного человека. Рестораны делают на такой салат пятикратную наценку, но любителям давно известно, что рецепты можно повторить дома без особых усилий!Знайте: c каждым кусочком вы будете все больше переносится в ощущение отпуска. Морской прибой, мягкий теплый ветер, что обволакивает плечи и гастрономическое удовольствие, сила которого не сравнима с усилиями от готовки",
-//                "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg",
-//                Nutrition(1.0, 2.0, 3.0, 4.0)
-//            ),
-//            onRecipeClick = {},
-//            index = 2,
-//            gradient = CooksupTheme.colors.gradient2_1,
-//            gradientWidth = 380f,
-//            scroll = 1,
-//            modifier = Modifier.width(800.dp)
-//        )
-//    }
+    CooksupTheme {
+        Row {
+            RecipeCard(
+                recipe = RecipeFull(
+                    "Рыбный салат",
+                    "Рыбный салат быстрый,",
+                    "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg",
+                ),
+                onRecipeClick = {
+                },
+                index = 2,
+                gradient = if (2 % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
+                gradientWidth = 1800f,
+                scroll = 1,
+                modifier = Modifier
+            )
+            RecipeCard(
+                recipe = RecipeFull(
+                    "Рыбный салат",
+                    "Рыбный салат быстрый,",
+                    "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg",
+                    favorite = true
+                ),
+                onRecipeClick = {
+                },
+                index = 2,
+                gradient = if (1 % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
+                gradientWidth = 1800f,
+                scroll = 1,
+                modifier = Modifier
+            )
+        }
+    }
 }

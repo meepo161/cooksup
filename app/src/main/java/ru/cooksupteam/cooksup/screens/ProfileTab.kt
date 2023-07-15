@@ -257,7 +257,7 @@ class ProfileTab() : Tab {
                             isAuthorized.value = false
                         }
                         Toast
-                            .makeText(context, item.title, Toast.LENGTH_SHORT)
+                            .makeText(context, "В разработке", Toast.LENGTH_SHORT)
                             .show()
                     })
                 .padding(all = 16.dp),

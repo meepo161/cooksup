@@ -16,6 +16,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Stable
@@ -273,6 +275,7 @@ fun CooksupTheme(
         ) {
             CompositionLocalProvider(
                 LocalRippleTheme provides CooksupThemeRippleTheme,
+                LocalDensity provides Density(LocalDensity.current.density, 1f),
                 content = content
             )
         }

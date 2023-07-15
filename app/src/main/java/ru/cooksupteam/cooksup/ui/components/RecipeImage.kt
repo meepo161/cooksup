@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,8 +62,10 @@ fun RecipeImage(
 //                    contentDescription = null,
 //                    tint = Color.Gray
 //                    )
-                CircularProgressIndicator(color = CooksupTheme.colors.brand)
+                AnimatedShimmer()
+//                CircularProgressIndicator(color = CooksupTheme.colors.brand)
             } else {
+
                 SubcomposeAsyncImageContent()
             }
         }

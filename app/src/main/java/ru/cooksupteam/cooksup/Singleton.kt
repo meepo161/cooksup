@@ -16,8 +16,8 @@ import java.io.IOException
 
 object Singleton {
     //    var ip = "192.168.1.78"
-    var ip = "192.168.0.17"
-//    var ip = "94.142.141.190"
+//    var ip = "192.168.0.17"
+    var ip = "94.142.141.190"
 
     //    var ip = "45.141.100.161"
     var port = "80"

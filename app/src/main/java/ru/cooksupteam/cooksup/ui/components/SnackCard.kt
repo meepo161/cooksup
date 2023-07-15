@@ -75,7 +75,9 @@ fun SnackCard(
                 style = MaterialTheme.typography.h6,
 //                softWrap = false,
                 color = CooksupTheme.colors.textSecondary,
-                modifier = Modifier.padding(horizontal = 16.dp).fillMaxWidth()
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
             )
         }
     }
@@ -101,6 +103,6 @@ private fun SnackCardPreview() {
             gradientWidth = 380f,
             scroll = 1,
             modifier = Modifier
-            )
+        )
     }
 }
