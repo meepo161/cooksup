@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
@@ -38,6 +40,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -193,21 +196,14 @@ class SearchTab : Tab {
                 }) {
                 Row() {
                     Column {
-                        Text(
-                            text = "Всего ингредиентов: ${items.size}",
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(bottom = 12.dp, start = 12.dp),
-                            textAlign = TextAlign.Start,
-                            color = CooksupTheme.colors.textPrimary
-                        )
+                        Spacer(modifier = Modifier.size(8.dp))
                         LazyVerticalGrid(
                             state = stateGrid,
                             columns = GridCells.Fixed(2),
                             modifier = Modifier
                                 .background(CooksupTheme.colors.uiBackground)
                                 .fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
                             if (stateGrid.isScrollInProgress) {
                                 keyboardController?.hide()

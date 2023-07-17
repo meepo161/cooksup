@@ -1,6 +1,7 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -44,12 +45,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -62,9 +67,11 @@ import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.model.Ingredient
+import ru.cooksupteam.cooksup.ui.components.CooksupCard
 import ru.cooksupteam.cooksup.ui.components.CooksupSurface
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.SnackCard
+import ru.cooksupteam.cooksup.ui.theme.AlphaNearOpaque
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.ui.theme.Neutral8
 import ru.cooksupteam.cooksup.utils.mirroringBackIcon
@@ -73,7 +80,8 @@ import kotlin.math.min
 
 
 class IngredientDetailScreen(
-    var ingredient: Ingredient
+    var ingredient: Ingredient,
+    var onClickArrowBack: () -> Unit = { navigator.popUntilRoot() }
 ) : Screen {
     val BottomBarHeight = 56.dp
     val TitleHeight = 128.dp
@@ -117,7 +125,7 @@ class IngredientDetailScreen(
                         backgroundColor = CooksupTheme.colors.uiBackground,
                         title = {
                             IconButton(
-                                onClick = { navigator.popUntilRoot() },
+                                onClick = { onClickArrowBack() },
                                 modifier = Modifier.background(CooksupTheme.colors.uiBackground)
                             ) {
                                 Icon(
@@ -211,7 +219,9 @@ class IngredientDetailScreen(
                             text = "Описание",
                             style = MaterialTheme.typography.overline,
                             color = CooksupTheme.colors.textPrimary,
-                            modifier = HzPadding.background(CooksupTheme.colors.uiBackground).padding(vertical = 16.dp)
+                            modifier = HzPadding
+                                .background(CooksupTheme.colors.uiBackground)
+                                .padding(vertical = 16.dp)
                         )
                         Text(
                             text = ingredient.description,
@@ -219,7 +229,9 @@ class IngredientDetailScreen(
                             color = CooksupTheme.colors.textHelp,
                             maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = HzPadding.background(CooksupTheme.colors.uiBackground).padding(vertical = 16.dp)
+                            modifier = HzPadding
+                                .background(CooksupTheme.colors.uiBackground)
+                                .padding(vertical = 16.dp)
                         )
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
@@ -455,7 +467,8 @@ class IngredientDetailScreen(
                         }
 
                         Spacer(Modifier.height(16.dp))
-                        Divider()
+                        Divider(color = CooksupTheme.colors.uiFloated)
+                        Spacer(Modifier.height(16.dp))
 
                         LazyRow(
                             modifier = Modifier.padding(horizontal = 12.dp),
@@ -523,7 +536,7 @@ class IngredientDetailScreen(
                 modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
             )
             Spacer(Modifier.height(8.dp))
-            Divider()
+            Divider(color = CooksupTheme.colors.uiFloated)
         }
     }
 
@@ -589,7 +602,7 @@ class IngredientDetailScreen(
         val (count, updateCount) = remember { mutableStateOf(1) }
         CooksupSurface(modifier.background(CooksupTheme.colors.uiBackground)) {
             Column(Modifier.background(CooksupTheme.colors.uiBackground)) {
-                Divider()
+                Divider(color = CooksupTheme.colors.uiFloated)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
@@ -612,10 +625,9 @@ class IngredientDetailScreen(
                             }
                         },
                         modifier = Modifier
-                            .weight(1f)
-                            .background(CooksupTheme.colors.uiBackground),
+                            .weight(1f),
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CooksupTheme.colors.uiBackground,
+                            backgroundColor = CooksupTheme.colors.uiFloated,
                             contentColor = CooksupTheme.colors.brand
                         )
                     ) {
@@ -624,7 +636,7 @@ class IngredientDetailScreen(
                             color = CooksupTheme.colors.textPrimary,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .background(CooksupTheme.colors.uiBackground),
+                                .background(CooksupTheme.colors.uiFloated),
                             textAlign = TextAlign.Center,
                             maxLines = 1
                         )

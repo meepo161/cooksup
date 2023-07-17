@@ -39,7 +39,7 @@ class MainScreen() :
     @Composable
     override fun Content() {
         navigator = LocalNavigator.currentOrThrow
-        if (isIngredientDataReady.value) {
+        if (isIngredientDataReady.value ) {
             TabNavigator(MainTab()) {
                 Scaffold(
                     bottomBar = {
@@ -57,13 +57,14 @@ class MainScreen() :
                         }
                     }) {
                     CurrentTab()
-
                 }
             }
-        } else {
+        } else  {
             CooksupTheme {
                 Column(
-                    modifier = Modifier.fillMaxSize().background(CooksupTheme.colors.uiBackground),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(CooksupTheme.colors.uiBackground),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(
                         16.dp,

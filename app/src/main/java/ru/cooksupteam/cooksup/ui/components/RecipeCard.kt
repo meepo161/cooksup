@@ -38,7 +38,7 @@ fun RecipeCard(
     scroll: Int,
     modifier: Modifier = Modifier
 ) {
-    val isSelected = mutableStateOf(recipe.favorite)
+    val isFavorite = mutableStateOf(recipe.favorite)
     val left = index * with(LocalDensity.current) {
         (HighlightCardWidth + HighlightCardPadding).toPx()
     }
@@ -69,15 +69,15 @@ fun RecipeCard(
                 )
                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                     Icon(
-                        imageVector = if (isSelected.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        tint = if (isSelected.value) Color.Red else CooksupTheme.colors.uiBackground,
+                        imageVector = if (isFavorite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                        tint = if (isFavorite.value) Color.Red else CooksupTheme.colors.uiBackground,
                         contentDescription = "Favorite",
                         modifier = Modifier
                             .background(Color.Transparent)
                             .padding(4.dp)
                             .clickable {
-                                isSelected.value = !isSelected.value
-                                recipe.favorite = isSelected.value
+                                isFavorite.value = !isFavorite.value
+                                recipe.favorite = isFavorite.value
                             }
                     )
                 }

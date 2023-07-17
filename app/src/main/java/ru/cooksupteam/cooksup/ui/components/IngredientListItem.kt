@@ -12,7 +12,9 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Done
+import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -94,8 +96,8 @@ fun IngredientListItem(
                     )
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                         Icon(
-                            imageVector = Icons.Rounded.Done,
-                            tint = if (isSelected.value) CooksupTheme.colors.brand else CooksupTheme.colors.uiBackground,
+                            imageVector = if (isSelected.value) Icons.Rounded.Remove else Icons.Rounded.Add,
+                            tint = if (isSelected.value) CooksupTheme.colors.uiBackground else CooksupTheme.colors.brand,
                             contentDescription = "Favorite",
                             modifier = Modifier
                                 .background(Color.Transparent)
@@ -138,7 +140,7 @@ private fun CardPreview() {
             ingredient = Ingredient(
                 name = "Абрикосовое пюре",
                 pic = "https://cdn.food.ru/unsigned/fit/640/480/ce/0/czM6Ly9tZWRpYS9waWN0dXJlcy9wcm9kdWN0cy83NjkvY292ZXJzL0QyV0xtZS5qcGc.jpg",
-                selected = true
+                selected = false
             ),
             index = 2,
             scroll = 1,
