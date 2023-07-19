@@ -1,19 +1,30 @@
 package ru.cooksupteam.cooksup.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton.allIngredients
-import ru.cooksupteam.cooksup.Singleton.ip
-import ru.cooksupteam.cooksup.Singleton.isIngredientDataReady
-import ru.cooksupteam.cooksup.Singleton.port
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.IngredientRemote
 
 class IngredientsViewModel {
     var all = listOf<IngredientRemote>()
     private val scope = CoroutineScope(Dispatchers.Default)
+    var isIngredientDataReady = mutableStateOf(true)
+    var lastIngredients: List<String> = listOf()
+    var allIngredients = mutableStateListOf<Ingredient>()
+    val selectedIngredients = mutableStateListOf<Ingredient>()
+    val selectedIngredientsName = mutableStateListOf<String>()
+    val selectedIngredientIdx = mutableStateOf<Int>(1)
+    var searchTextStateStored = ""
+    var items = mutableStateListOf<Ingredient>()
+
+    init {
+        load()
+    }
 
     fun load() {
         if (all.isEmpty()) {
@@ -21,6 +32,7 @@ class IngredientsViewModel {
                 isIngredientDataReady.value = false
                 all = RESTAPI.fetchIngredients()
                 appendToAllIngredients()
+                items = mutableStateListOf(*ivm.allIngredients.toTypedArray())
                 isIngredientDataReady.value = true
             }
         }

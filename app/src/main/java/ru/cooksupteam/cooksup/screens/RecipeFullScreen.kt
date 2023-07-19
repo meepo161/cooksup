@@ -1,7 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -40,23 +39,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import ru.cooksupteam.cooksup.Singleton
-import ru.cooksupteam.cooksup.Singleton.allIngredients
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.autoformat
-import ru.cooksupteam.cooksup.model.Ingredient
-import ru.cooksupteam.cooksup.model.IngredientRemote
-import ru.cooksupteam.cooksup.model.Measure
-import ru.cooksupteam.cooksup.model.Nutrition
 import ru.cooksupteam.cooksup.model.RecipeFull
-import ru.cooksupteam.cooksup.model.Step
 import ru.cooksupteam.cooksup.toIntOrDefault
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
-import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.components.RecipeImage
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -169,6 +162,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     Text(
                                         text = "Калории",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -192,6 +186,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     Text(
                                         text = "Белки",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -215,6 +210,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     Text(
                                         text = "Жиры",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -238,6 +234,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     Text(
                                         text = "Углеводы",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -344,7 +341,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                             Spacer(modifier = Modifier.size(8.dp))
                             recipe.quantityIngredients.forEach { measure ->
                                 val ingredient =
-                                    allIngredients.find { it.name == measure.ingredient.name }!!
+                                    ivm.allIngredients.find { it.name == measure.ingredient.name }!!
                                 Column {
                                     Spacer(modifier = Modifier.height(4.dp))
                                     Row(

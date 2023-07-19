@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -57,12 +56,9 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.appContext
-import ru.cooksupteam.cooksup.Singleton.isAuthorized
-import ru.cooksupteam.cooksup.Singleton.loginState
-import ru.cooksupteam.cooksup.Singleton.user
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.io.File
 
@@ -85,10 +81,7 @@ class ProfileTab() : Tab {
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
-        var alphabet =
-            allIngredients.map { it.name.first().uppercase() }.toSet().toList().toTypedArray()
         var scaffoldState = rememberScaffoldState()
-        val scrollState = rememberLazyListState()
 
         CooksupTheme {
             Scaffold(
@@ -123,10 +116,10 @@ class ProfileTab() : Tab {
                         .background(CooksupTheme.colors.uiBackground)
                         .padding(bottom = 56.dp)
                 ) {
-                    if (isAuthorized.value) {
+                    if (uvm.isAuthorized.value) {
                         ProfileEcommerce()
                     } else {
-                        if (loginState.value) {
+                        if (uvm.loginState.value) {
                             LoginPage()
                         } else {
                             RegisterPage()
@@ -199,7 +192,7 @@ class ProfileTab() : Tab {
                 ) {
 
                     Text(
-                        text = user.name,
+                        text = uvm.user.name,
                         style = TextStyle(
                             fontSize = 22.sp,
                         ),
@@ -211,7 +204,7 @@ class ProfileTab() : Tab {
                     Spacer(modifier = Modifier.height(2.dp))
 
                     Text(
-                        text = user.email,
+                        text = uvm.user.email,
                         style = TextStyle(
                             fontSize = 14.sp,
                             color = Color.Gray,
@@ -254,7 +247,7 @@ class ProfileTab() : Tab {
                     onClick = {
                         if (item.title == "Выйти") {
                             File(appContext.filesDir, "id.txt").writeText("")
-                            isAuthorized.value = false
+                            uvm.isAuthorized.value = false
                         }
                         Toast
                             .makeText(context, "В разработке", Toast.LENGTH_SHORT)

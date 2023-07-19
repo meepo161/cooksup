@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup.ui.theme
 
+import android.text.style.LocaleSpan
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme

@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup.ui.components
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +23,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
+import ru.cooksupteam.cooksup.RESTAPI
+import ru.cooksupteam.cooksup.Singleton.scope
+import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -38,7 +44,12 @@ fun RecipeCard(
     scroll: Int,
     modifier: Modifier = Modifier
 ) {
-    val isFavorite = mutableStateOf(recipe.favorite)
+    var isInFavouriteList = false
+    uvm.user.favourite.forEach {
+        Log.d("recipefavourite", it)
+        if (it == recipe.id) isInFavouriteList = true
+    }
+    val isFavorite = remember { mutableStateOf(isInFavouriteList) }
     val left = index * with(LocalDensity.current) {
         (HighlightCardWidth + HighlightCardPadding).toPx()
     }
@@ -77,7 +88,9 @@ fun RecipeCard(
                             .padding(4.dp)
                             .clickable {
                                 isFavorite.value = !isFavorite.value
-                                recipe.favorite = isFavorite.value
+                                scope.launch {
+                                    RESTAPI.postFavouriteRecipe(uvm.user.id, recipe.id)
+                                }
                             }
                     )
                 }
@@ -135,7 +148,6 @@ private fun SnackCardPreview() {
                     "Рыбный салат",
                     "Рыбный салат быстрый,",
                     "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg",
-                    favorite = true
                 ),
                 onRecipeClick = {
                 },

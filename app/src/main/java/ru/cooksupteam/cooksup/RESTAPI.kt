@@ -6,6 +6,7 @@ import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.client.request.get
 import io.ktor.client.request.post
+import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.client.request.url
 import io.ktor.http.ContentType
@@ -17,8 +18,8 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
-import ru.cooksupteam.cooksup.Singleton.isIngredientDataReady
 import ru.cooksupteam.cooksup.Singleton.port
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.Person
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
@@ -47,11 +48,11 @@ object RESTAPI {
                     file.writeText(response.body())
                 }
             }
-            isIngredientDataReady.value = true
+            ivm.isIngredientDataReady.value = true
             return Json.decodeFromString(string = file.readText())
         } catch (e: Exception) {
             val response = client.get("http://$ip:$port/ingredients")
-            isIngredientDataReady.value = true
+            ivm.isIngredientDataReady.value = true
             return response.body()
         }
     }
@@ -96,5 +97,12 @@ object RESTAPI {
             url("http://$ip:$port/person/$email")
         }
         return response.body()
+    }
+
+    suspend fun postFavouriteRecipe(id: String, recipeId: String) {
+        client.put("http://$ip:$port/favourite/$id") {
+            contentType(ContentType.Application.Json)
+            setBody(recipeId)
+        }
     }
 }

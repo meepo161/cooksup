@@ -1,7 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -45,16 +44,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.DefaultShadowColor
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -62,16 +57,13 @@ import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.util.lerp
 import cafe.adriel.voyager.core.screen.Screen
-import ru.cooksupteam.cooksup.Singleton.allIngredients
 import ru.cooksupteam.cooksup.Singleton.navigator
-import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.Ingredient
-import ru.cooksupteam.cooksup.ui.components.CooksupCard
 import ru.cooksupteam.cooksup.ui.components.CooksupSurface
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.SnackCard
-import ru.cooksupteam.cooksup.ui.theme.AlphaNearOpaque
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.ui.theme.Neutral8
 import ru.cooksupteam.cooksup.utils.mirroringBackIcon
@@ -109,7 +101,7 @@ class IngredientDetailScreen(
         )
         val snack = ingredient
         val related =
-            allIngredients.filter {
+            ivm.allIngredients.filter {
                 it.name.contains(
                     ingredient.name.removeRange(
                         3,
@@ -384,6 +376,7 @@ class IngredientDetailScreen(
                                     Text(
                                         text = "Калории",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -407,6 +400,7 @@ class IngredientDetailScreen(
                                     Text(
                                         text = "Белки",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -430,6 +424,7 @@ class IngredientDetailScreen(
                                     Text(
                                         text = "Жиры",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -453,6 +448,7 @@ class IngredientDetailScreen(
                                     Text(
                                         text = "Углеводы",
                                         style = MaterialTheme.typography.button,
+                                        fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
                                     )
@@ -615,11 +611,11 @@ class IngredientDetailScreen(
                     Button(
                         onClick = {
                             if (ingredient.selected) {
-                                selectedIngredients.remove(ingredient)
+                                ivm.selectedIngredients.remove(ingredient)
                                 ingredient.selected = false
                                 textButton.value = "Добавить в продукты"
                             } else {
-                                selectedIngredients.add(ingredient)
+                                ivm.selectedIngredients.add(ingredient)
                                 ingredient.selected = true
                                 textButton.value = "Убрать из продуктов"
                             }

@@ -104,8 +104,6 @@ dependencies {
     implementation("androidx.compose.animation:animation:1.4.3")
 
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.my.target:mytarget-sdk:5.17.0'
-
     implementation("ru.rustore.sdk:appupdate:0.1.2")
-    implementation("androidx.compose.ui:ui-viewbinding:1.2.0-beta03")
+
 }

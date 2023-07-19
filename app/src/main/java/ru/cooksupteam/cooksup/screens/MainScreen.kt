@@ -28,8 +28,8 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.serialization.Serializable
-import ru.cooksupteam.cooksup.Singleton.isIngredientDataReady
 import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Serializable
@@ -39,7 +39,7 @@ class MainScreen() :
     @Composable
     override fun Content() {
         navigator = LocalNavigator.currentOrThrow
-        if (isIngredientDataReady.value ) {
+        if (ivm.isIngredientDataReady.value ) {
             TabNavigator(MainTab()) {
                 Scaffold(
                     bottomBar = {

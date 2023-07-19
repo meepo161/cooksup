@@ -4,6 +4,10 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.with
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -13,7 +17,6 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Add
-import androidx.compose.material.icons.rounded.Done
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
@@ -27,8 +30,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
 import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.screens.IngredientDetailScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
@@ -66,7 +69,7 @@ fun IngredientListItem(
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(color = CooksupTheme.colors.brand),
                     onClick = {
-                        lastIndexIngredient = index + 1
+                        ivm.selectedIngredientIdx.value = index + 1
                         navigator.push(IngredientDetailScreen(ingredient))
                     }
                 )
@@ -78,13 +81,22 @@ fun IngredientListItem(
                     .fillMaxWidth()
             ) {
                 val gradientOffset = left - (scroll / 3f)
-                AnimatedContent(targetState = isSelected.value) { targetState ->
+                AnimatedContent(isSelected.value, transitionSpec = {
+                    slideInHorizontally(
+                        animationSpec = tween(300),
+                        initialOffsetX = { if (isSelected.value) it else -it })
+                        .with(
+                            slideOutHorizontally(
+                                animationSpec = tween(300),
+                                targetOffsetX = { if (isSelected.value) -it else it })
+                        )
+                }) { isVisible ->
                     Box(
                         modifier = Modifier
                             .height(100.dp)
                             .fillMaxWidth()
                             .offsetGradientBackground(
-                                if (targetState) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                if (isVisible) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
                                 gradientWidth,
                                 gradientOffset
                             )
@@ -96,8 +108,8 @@ fun IngredientListItem(
                     )
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                         Icon(
-                            imageVector = if (isSelected.value) Icons.Rounded.Remove else Icons.Rounded.Add,
-                            tint = if (isSelected.value) CooksupTheme.colors.uiBackground else CooksupTheme.colors.brand,
+                            imageVector = if (isVisible) Icons.Rounded.Remove else Icons.Rounded.Add,
+                            tint = if (isVisible) CooksupTheme.colors.uiBackground else CooksupTheme.colors.brand,
                             contentDescription = "Favorite",
                             modifier = Modifier
                                 .background(Color.Transparent)

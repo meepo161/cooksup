@@ -1,11 +1,10 @@
 package ru.cooksupteam.cooksup.model
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import kotlinx.serialization.Serializable
 
 class Ingredient(
     val name: String,
+    val id: String? = "",
     val description: String = "",
     val pic: String = "",
     val nutrition: Nutrition = Nutrition(),
@@ -20,6 +19,7 @@ class Ingredient(
 @Serializable
 data class IngredientRemote(
     val name: String,
+    val id: String? = "",
     val description: String = "",
     val pic: String = "",
     val nutrition: Nutrition = Nutrition(),

@@ -1,8 +1,8 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +40,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -54,15 +53,14 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import ru.cooksupteam.cooksup.Singleton.allRecipeFull
-import ru.cooksupteam.cooksup.Singleton.lastIndexRecipe
 import ru.cooksupteam.cooksup.Singleton.navigator
-import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.rvm
+import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
 
 class RecipesTab() : Tab {
     override val options: TabOptions
@@ -85,18 +83,15 @@ class RecipesTab() : Tab {
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
-        val selectedIngredients = selectedIngredients.map { it.name }
         val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = 1)
-        var recipeFullViewModel = remember { RecipeFullViewModel() }
         val searchTextState = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
-//        val items = mutableStateListOf(*allRecipeShort.toTypedArray())
 
         LifecycleEffect(onStarted = {
-            if (selectedIngredients.isNotEmpty() || searchTextState.value.isNotEmpty()) {
-                recipeFullViewModel.load()
+            if (ivm.selectedIngredients.isNotEmpty() || searchTextState.value.isNotEmpty()) {
+                rvm.load()
             } else {
-                recipeFullViewModel.isDataReady.value = true
+                rvm.isDataReady.value = true
             }
         })
 
@@ -153,8 +148,8 @@ class RecipesTab() : Tab {
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
                                     onSearch = {
-                                        if (selectedIngredients.isEmpty()) {
-                                            recipeFullViewModel.load(searchTextState.value)
+                                        if (ivm.selectedIngredients.isEmpty()) {
+                                            rvm.load(searchTextState.value)
                                         }
                                     }
                                 ),
@@ -171,7 +166,7 @@ class RecipesTab() : Tab {
 
                         })
                 }) {
-                if (selectedIngredients.isEmpty() && searchTextState.value.isEmpty()) {
+                if (ivm.selectedIngredients.isEmpty() && searchTextState.value.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -213,13 +208,13 @@ class RecipesTab() : Tab {
                 } else {
                     Column {
                         val items =
-                            if (selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
-                                allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                            if (ivm.selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
+                                rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
                                     it.name.lowercase()
                                         .contains(searchTextState.value.lowercase())
                                 }
                             } else if (searchTextState.value.isNotEmpty()) {
-                                allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
                                     val nameRequest =
                                         searchTextState.value.trim().lowercase().split(' ')
                                             .toSet()
@@ -241,7 +236,7 @@ class RecipesTab() : Tab {
                                     }
                                 }
                             } else {
-                                allRecipeFull
+                                rvm.allRecipeFull
                             }
                         Column(modifier = Modifier.fillMaxSize()) {
                             LazyVerticalGrid(
@@ -275,10 +270,18 @@ class RecipesTab() : Tab {
                                     keyboardController?.hide()
                                 }
                                 itemsIndexed(items) { index, recipe ->
+
+                                    val isFavorite = mutableStateOf(false)
+                                    Log.d("uvm.user.favourite", uvm.user.favourite.size.toString())
+                                    uvm.user.favourite.forEach {
+                                        Log.d("recipefavourite", it)
+                                        if (it == recipe.id) isFavorite.value = true
+                                    }
+
                                     RecipeCard(
                                         recipe = recipe,
                                         onRecipeClick = {
-                                            lastIndexRecipe = index
+                                            rvm.lastIndexRecipe = index
                                             navigator.push(RecipeFullScreen(recipe))
                                         },
                                         index = index,
@@ -295,7 +298,7 @@ class RecipesTab() : Tab {
                                 }
                             }
 
-                            AnimatedVisibility(!recipeFullViewModel.isDataReady.value) {
+                            AnimatedVisibility(!rvm.isDataReady.value) {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(

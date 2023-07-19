@@ -1,7 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
-import android.os.Bundle
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -41,12 +40,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.my.target.ads.MyTargetView
-import com.my.target.ads.MyTargetView.AdSize
-import ru.cooksupteam.cooksup.Singleton.allIngredients
-import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
 import ru.cooksupteam.cooksup.ui.components.SnackCard
@@ -173,14 +169,14 @@ class MainTab : Tab {
                                         .heightIn(min = 56.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    if (allIngredients.isNotEmpty()) {
+                                    if (ivm.allIngredients.isNotEmpty()) {
                                         itemsIndexed(
                                             listOf(
-                                                allIngredients.random(),
-                                                allIngredients.random(),
-                                                allIngredients.random(),
-                                                allIngredients.random(),
-                                                allIngredients.random()
+                                                ivm.allIngredients.random(),
+                                                ivm.allIngredients.random(),
+                                                ivm.allIngredients.random(),
+                                                ivm.allIngredients.random(),
+                                                ivm.allIngredients.random()
                                             )
                                         ) { index, ingredient ->
                                             SnackCard(

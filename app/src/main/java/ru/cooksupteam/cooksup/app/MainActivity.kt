@@ -4,11 +4,9 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.ActivityInfo
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -32,20 +30,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
-import com.my.target.nativeads.NativeAd
-import com.my.target.nativeads.NativeAd.NativeAdListener
-import com.my.target.nativeads.banners.NativePromoBanner
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.screens.MainScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.utils.ConnectionState
 import ru.cooksupteam.cooksup.utils.connectivityState
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
+import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
+import ru.cooksupteam.cooksup.viewmodel.UserViewModel
 import ru.rustore.sdk.appupdate.listener.InstallStateUpdateListener
 import ru.rustore.sdk.appupdate.manager.RuStoreAppUpdateManager
 import ru.rustore.sdk.appupdate.manager.factory.RuStoreAppUpdateManagerFactory
@@ -53,15 +48,18 @@ import ru.rustore.sdk.appupdate.model.AppUpdateOptions
 import ru.rustore.sdk.appupdate.model.AppUpdateType
 import ru.rustore.sdk.appupdate.model.InstallStatus
 import ru.rustore.sdk.appupdate.model.UpdateAvailability
-import java.io.File
 import kotlin.time.Duration.Companion.seconds
+
+lateinit var ivm: IngredientsViewModel
+lateinit var rvm: RecipeFullViewModel
+lateinit var uvm: UserViewModel
 
 class MainActivity : ComponentActivity() {
     val updateType = AppUpdateType.FLEXIBLE
     lateinit var appUpdateManager: RuStoreAppUpdateManager
 
     @SuppressLint("SourceLockedOrientationActivity")
-    @OptIn(ExperimentalAnimationApi::class, ExperimentalCoroutinesApi::class)
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
@@ -71,21 +69,9 @@ class MainActivity : ComponentActivity() {
             appUpdateManager.registerListener(installStateUpdateListener)
         }
         checkForAppUpdates()
-
-        IngredientsViewModel().load()
-        val file = File(appContext.filesDir, "id.txt")
-        var id = ""
-        if (!file.exists()) {
-            file.createNewFile()
-        }
-        id = file.readText()
-        if (id != "") {
-            Singleton.scope.launch {
-                Singleton.user = RESTAPI.fetchAuthPerson(id)
-                Singleton.isAuthorized.value = true
-            }
-        }
-
+        ivm = IngredientsViewModel()
+        rvm = RecipeFullViewModel()
+        uvm = UserViewModel()
         setContent {
             CooksupTheme {
                 val connection by connectivityState()

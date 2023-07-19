@@ -1,13 +1,12 @@
 package ru.cooksupteam.cooksup.viewmodel
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton.allRecipeFull
-import ru.cooksupteam.cooksup.Singleton.lastIngredients
-import ru.cooksupteam.cooksup.Singleton.selectedIngredients
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.RecipeFull
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
 
@@ -15,15 +14,8 @@ class RecipeFullViewModel() {
     var all = listOf<RecipeFullRemote>()
     var isDataReady = mutableStateOf(false)
     private val scope = CoroutineScope(Dispatchers.Default)
-
-//        allRecipeShort.addAll(all.map {
-//            RecipeShort(
-//                name = it.name,
-//                pic = it.pic,
-//                quantityIngredients = it.quantityIngredients
-//            )
-//        }.sortedBy { it.name })
-//    }
+    var allRecipeFull = mutableStateListOf<RecipeFull>()
+    var lastIndexRecipe = 0
 
     fun load(search: String = "") {
         isDataReady.value = false
@@ -33,6 +25,7 @@ class RecipeFullViewModel() {
                 allRecipeFull.clear()
                 allRecipeFull.addAll(all.map {
                     RecipeFull(
+                        id = it.id,
                         name = it.name,
                         description = it.description,
 //                        pic = "http://${ip}:${port}/recipes_pics/" + it.name + ".webp",
@@ -44,12 +37,13 @@ class RecipeFullViewModel() {
                         instructions = it.instructions
                     )
                 })
-            } else if (selectedIngredients.isNotEmpty()) {
-                if (lastIngredients != selectedIngredients.map { it.name }) {
-                    all = RESTAPI.fetchRecipeFiltered(selectedIngredients.map { it.name })
+            } else if (ivm.selectedIngredients.isNotEmpty()) {
+                if (ivm.lastIngredients != ivm.selectedIngredients.map { it.name }) {
+                    all = RESTAPI.fetchRecipeFiltered(ivm.selectedIngredients.map { it.name })
                     allRecipeFull.clear()
                     allRecipeFull.addAll(all.map {
                         RecipeFull(
+                            id = it.id,
                             name = it.name,
                             description = it.description,
                             pic = it.pic,
@@ -60,7 +54,8 @@ class RecipeFullViewModel() {
                             instructions = it.instructions
                         )
                     })
-                    lastIngredients = selectedIngredients.map { it.name }
+
+                    ivm.lastIngredients = ivm.selectedIngredients.map { it.name }
                 }
             }
             isDataReady.value = true

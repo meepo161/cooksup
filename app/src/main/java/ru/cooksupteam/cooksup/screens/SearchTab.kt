@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -28,11 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -40,19 +36,14 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import ru.cooksupteam.cooksup.Singleton
-import ru.cooksupteam.cooksup.Singleton.allIngredients
-import ru.cooksupteam.cooksup.Singleton.lastIndexIngredient
-import ru.cooksupteam.cooksup.Singleton.searchTextStateStored
-import ru.cooksupteam.cooksup.Singleton.selectedIngredients
 import ru.cooksupteam.cooksup.app.R
+import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
@@ -79,24 +70,21 @@ class SearchTab : Tab {
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
-        val listState = rememberLazyListState(initialFirstVisibleItemIndex = lastIndexIngredient)
-        var isNeedSelectedHeader by remember { mutableStateOf(false) }
-        val searchTextState = remember { mutableStateOf(searchTextStateStored) }
+        val searchTextState = remember { mutableStateOf(ivm.searchTextStateStored) }
         val keyboardController = LocalSoftwareKeyboardController.current
         val stateGrid =
-            rememberLazyGridState(initialFirstVisibleItemIndex = Singleton.lastIndexRecipe)
+            rememberLazyGridState(initialFirstVisibleItemIndex = ivm.selectedIngredientIdx.value)
 
-        var items = mutableStateListOf(*allIngredients.toTypedArray())
         if (searchTextState.value != "") {
-            items.clear()
-            var toTypedArray = searchTextState.value.lowercase().split(" ")
+            ivm.items.clear()
+            val toTypedArray = searchTextState.value.lowercase().split(" ")
                 .toTypedArray().toMutableList()
             if (toTypedArray.last() == "") {
                 toTypedArray.removeLast()
             }
             toTypedArray.forEach { s ->
-                items.addAll(
-                    allIngredients.toTypedArray()
+                ivm.items.addAll(
+                    ivm.allIngredients.toTypedArray()
                         .sortedBy { it.name.lowercase() }
                         .filter {
                             it.name.lowercase().contains(
@@ -147,7 +135,7 @@ class SearchTab : Tab {
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
                                                     searchTextState.value = ""
-                                                    searchTextStateStored = ""
+                                                    ivm.searchTextStateStored = ""
                                                 }
                                         )
                                     }
@@ -157,8 +145,8 @@ class SearchTab : Tab {
                                 onValueChange = {
                                     searchTextState.value =
                                         regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
-                                    searchTextStateStored = searchTextState.value
-                                    items.clear()
+                                    ivm.searchTextStateStored = searchTextState.value
+                                    ivm.items.clear()
 
                                     val toTypedArray = searchTextState.value.lowercase().split(" ")
                                         .toTypedArray().toMutableList()
@@ -166,8 +154,8 @@ class SearchTab : Tab {
                                         toTypedArray.removeLast()
                                     }
                                     toTypedArray.forEach { s ->
-                                        items.addAll(
-                                            allIngredients.toTypedArray()
+                                        ivm.items.addAll(
+                                            ivm.allIngredients.toTypedArray()
                                                 .sortedBy { it.name.lowercase() }
                                                 .filter {
                                                     it.name.lowercase().contains(
@@ -208,15 +196,15 @@ class SearchTab : Tab {
                             if (stateGrid.isScrollInProgress) {
                                 keyboardController?.hide()
                             }
-                            itemsIndexed(items.sortedBy { !it.selected }) { index, ingredient ->
-                                if (listState.isScrollInProgress) {
+                            itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
+                                if (stateGrid.isScrollInProgress) {
                                     keyboardController?.hide()
                                 }
                                 IngredientListItem(
                                     ingredient = ingredient,
                                     index = index,
                                     gradient = if (ingredient.selected) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
-                                    gradientWidth = 1800f,
+                                    gradientWidth = 6000f,
                                     scroll = 1,
                                     modifier = if (index % 2 == 0) Modifier.padding(
                                         start = 12.dp,
@@ -225,13 +213,11 @@ class SearchTab : Tab {
 
                                     ) { _, isSelected ->
                                     if (!isSelected) {
-                                        selectedIngredients.add(ingredient)
+                                        ivm.selectedIngredients.add(ingredient)
                                     } else {
-                                        selectedIngredients.remove(ingredient)
+                                        ivm.selectedIngredients.remove(ingredient)
                                     }
-                                    isNeedSelectedHeader = false
                                 }
-
                             }
                         }
                     }

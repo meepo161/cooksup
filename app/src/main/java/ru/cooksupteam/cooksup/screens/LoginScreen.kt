@@ -42,10 +42,8 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton
-import ru.cooksupteam.cooksup.Singleton.isAuthorized
-import ru.cooksupteam.cooksup.Singleton.loginState
 import ru.cooksupteam.cooksup.Singleton.scope
-import ru.cooksupteam.cooksup.Singleton.user
+import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.io.File
 
@@ -175,7 +173,7 @@ fun LoginPage() {
                     enabled = true,
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(color = CooksupTheme.colors.brand),
-                    onClick = { loginState.value = false }),
+                    onClick = { uvm.loginState.value = false }),
                 color = CooksupTheme.colors.brand
             )
         }
@@ -187,11 +185,11 @@ private fun authorize(
     passwordValue: MutableState<String>
 ) {
     scope.launch {
-        user = RESTAPI.fetchPerson(listOf(loginValue.value, passwordValue.value))
-        if (user.email == loginValue.value && user.password == passwordValue.value) {
-            isAuthorized.value = true
+        uvm.user = RESTAPI.fetchPerson(listOf(loginValue.value, passwordValue.value))
+        if (uvm.user.email == loginValue.value && uvm.user.password == passwordValue.value) {
+            uvm.isAuthorized.value = true
             val file = File(Singleton.appContext.filesDir, "id.txt")
-            file.writeText(user.id)
+            file.writeText(uvm.user.id)
         }
     }
 }

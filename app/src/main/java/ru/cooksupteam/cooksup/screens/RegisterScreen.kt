@@ -1,6 +1,5 @@
 package ru.cooksupteam.cooksup.screens
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -43,8 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton.loginState
 import ru.cooksupteam.cooksup.Singleton.scope
+import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.isEmailValid
 import ru.cooksupteam.cooksup.model.Person
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
@@ -266,7 +265,7 @@ fun RegisterPage() {
             ) {
                 Text(
                     text = "Зарегистрироваться",
-                    fontSize = 20.sp,
+                    fontSize = 18.sp,
                     color = CooksupTheme.colors.uiBackground
                 )
             }
@@ -279,7 +278,7 @@ fun RegisterPage() {
                     enabled = true,
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(color = CooksupTheme.colors.brand),
-                    onClick = { loginState.value = true }),
+                    onClick = { uvm.loginState.value = true }),
                 color = CooksupTheme.colors.brand
             )
 
@@ -363,5 +362,5 @@ private fun postPerson(
             )
         )
     }
-    loginState.value = true
+    uvm.loginState.value = true
 }
