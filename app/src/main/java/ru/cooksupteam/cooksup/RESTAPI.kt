@@ -105,4 +105,11 @@ object RESTAPI {
             setBody(recipeId)
         }
     }
+
+    suspend fun fetchFavoriteRecipes(id: String): List<RecipeFullRemote> {
+        val response = client.get {
+            url("http://$ip:$port/favourite/$id")
+        }
+        return response.body()
+    }
 }

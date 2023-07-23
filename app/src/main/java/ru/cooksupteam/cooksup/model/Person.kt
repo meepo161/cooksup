@@ -8,5 +8,5 @@ data class Person(
     val name: String = "",
     val email: String = "",
     val password: String = "",
-    val favourite: List<String> = listOf()
+    val favorite: List<String> = listOf()
 )

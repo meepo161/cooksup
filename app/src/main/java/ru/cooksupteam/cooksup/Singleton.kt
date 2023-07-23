@@ -7,10 +7,9 @@ import kotlinx.coroutines.Dispatchers
 
 
 object Singleton {
-        var ip = "192.168.1.78"
-//    var ip = "192.168.0.17"
-//    var ip = "94.142.141.190"
-    //    var ip = "45.141.100.161"
+//     var ip = "192.168.1.78"
+//     var ip = "192.168.0.17"
+    var ip = "94.142.141.190"
     var port = "80"
     lateinit var appContext: Context
     val scope = CoroutineScope(Dispatchers.Default)

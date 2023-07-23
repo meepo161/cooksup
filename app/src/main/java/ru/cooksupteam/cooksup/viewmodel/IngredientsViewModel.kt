@@ -17,7 +17,6 @@ class IngredientsViewModel {
     var lastIngredients: List<String> = listOf()
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
-    val selectedIngredientsName = mutableStateListOf<String>()
     val selectedIngredientIdx = mutableStateOf<Int>(1)
     var searchTextStateStored = ""
     var items = mutableStateListOf<Ingredient>()

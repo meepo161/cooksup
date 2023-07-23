@@ -57,6 +57,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.cooksupteam.cooksup.Singleton.appContext
+import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
@@ -245,13 +246,22 @@ class ProfileTab() : Tab {
                     interactionSource = remember { MutableInteractionSource() },
                     indication = rememberRipple(color = CooksupTheme.colors.brand),
                     onClick = {
-                        if (item.title == "Выйти") {
-                            File(appContext.filesDir, "id.txt").writeText("")
-                            uvm.isAuthorized.value = false
+                        when (item.title) {
+                            "Выйти" -> {
+                                File(appContext.filesDir, "id.txt").writeText("")
+                                uvm.isAuthorized.value = false
+                            }
+
+                            "Избранные" -> {
+                                navigator.push(RecipesFavoriteScreen())
+                            }
+
+                            else -> {
+                                Toast
+                                    .makeText(context, "В разработке", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
                         }
-                        Toast
-                            .makeText(context, "В разработке", Toast.LENGTH_SHORT)
-                            .show()
                     })
                 .padding(all = 16.dp),
             verticalAlignment = Alignment.CenterVertically

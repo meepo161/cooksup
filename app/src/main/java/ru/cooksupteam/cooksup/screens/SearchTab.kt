@@ -93,6 +93,9 @@ class SearchTab : Tab {
                         }
                 )
             }
+        } else {
+            ivm.items.clear()
+            ivm.items.addAll(ivm.allIngredients)
         }
 
         CooksupTheme {

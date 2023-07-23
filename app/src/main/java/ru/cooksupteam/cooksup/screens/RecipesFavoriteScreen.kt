@@ -20,6 +20,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
@@ -30,8 +31,8 @@ import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
@@ -41,9 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -52,39 +51,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.scope
-import ru.cooksupteam.cooksup.app.R
-import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
-class RecipesTab() : Tab {
-    override val options: TabOptions
-        @Composable
-        get() {
-            val title = stringResource(R.string.recipes)
-            val icon = rememberVectorPainter(Icons.Default.MenuBook)
-
-            return remember {
-                TabOptions(
-                    index = 0u,
-                    title = title,
-                    icon = icon
-                )
-            }
-        }
-
+class RecipesFavoriteScreen() : Screen {
     @OptIn(ExperimentalComposeUiApi::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
     @Composable
@@ -94,18 +75,11 @@ class RecipesTab() : Tab {
         val searchTextState = remember { mutableStateOf("") }
         val keyboardController = LocalSoftwareKeyboardController.current
         val scaffoldState = rememberScaffoldState()
-
-        LifecycleEffect(onStarted = {
-            if (ivm.selectedIngredients.isNotEmpty() || searchTextState.value.isNotEmpty()) {
-                rvm.load()
-            } else {
-                rvm.isAllDataReady.value = true
-            }
-        })
+        rvm.loadFavorite()
 
         CooksupTheme {
             Scaffold(
-                modifier = Modifier.padding(bottom = 56.dp),
+                modifier = Modifier.fillMaxSize(),
                 scaffoldState = scaffoldState,
                 snackbarHost = {
                     SnackbarHost(it) { data ->
@@ -123,6 +97,17 @@ class RecipesTab() : Tab {
                         modifier = Modifier.fillMaxWidth(),
                         backgroundColor = CooksupTheme.colors.uiBackground,
                         title = {
+                            IconButton(
+                                onClick = { navigator.pop() },
+                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.ArrowBack,
+                                    tint = CooksupTheme.colors.brand,
+                                    contentDescription = "Back",
+                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                )
+                            }
                             TextField(
                                 leadingIcon = {
                                     Icon(
@@ -134,7 +119,7 @@ class RecipesTab() : Tab {
                                 },
                                 placeholder = {
                                     Text(
-                                        text = "Поиск рецептов",
+                                        text = "Фильтр избранных",
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(horizontal = 12.dp),
@@ -165,11 +150,7 @@ class RecipesTab() : Tab {
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
-                                    onSearch = {
-                                        if (ivm.selectedIngredients.isEmpty()) {
-                                            rvm.load(searchTextState.value)
-                                        }
-                                    }
+                                    onSearch = { }
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -184,7 +165,7 @@ class RecipesTab() : Tab {
 
                         })
                 }) {
-                if (ivm.selectedIngredients.isEmpty() && searchTextState.value.isEmpty()) {
+                if (rvm.favoriteRecipeFull.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -205,7 +186,7 @@ class RecipesTab() : Tab {
                                 modifier = Modifier.size(300.dp)
                             )
                             Text(
-                                text = "Начните поиск",
+                                text = "Добавьте рецепты в избранное",
                                 color = CooksupTheme.colors.brand,
                                 style = TextStyle(
                                     fontSize = 28.sp,
@@ -214,7 +195,7 @@ class RecipesTab() : Tab {
                                 )
                             )
                             Text(
-                                text = "Выберите ингредиенты или введите название рецепта",
+                                text = "Выберите ингредиенты или введите название рецепта и добавляйте их",
                                 style = TextStyle(
                                     fontSize = 18.sp,
                                     color = Color.Gray,
@@ -226,36 +207,28 @@ class RecipesTab() : Tab {
                 } else {
                     Column {
                         val items =
-                            if (ivm.selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
-                                rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
-                                    it.name.lowercase()
-                                        .contains(searchTextState.value.lowercase())
-                                }
-                            } else if (searchTextState.value.isNotEmpty()) {
-                                rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
-                                    val nameRequest =
-                                        searchTextState.value.trim().lowercase().split(' ')
-                                            .toSet()
-                                    val nameRecipe = it.name.lowercase().split(' ').toSet()
-                                    if (nameRequest.size == 1) {
-                                        if (searchTextState.value.length > 2) {
-                                            it.name.trim().lowercase().contains(
-                                                searchTextState.value.removeRange(
-                                                    3,
-                                                    searchTextState.value.length
-                                                ).trim().lowercase()
-                                            )
-                                        } else {
-                                            it.name.trim().lowercase()
-                                                .contains(searchTextState.value.trim().lowercase())
-                                        }
+                            rvm.favoriteRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                val nameRequest =
+                                    searchTextState.value.trim().lowercase().split(' ')
+                                        .toSet()
+                                val nameRecipe = it.name.lowercase().split(' ').toSet()
+                                if (nameRequest.size == 1) {
+                                    if (searchTextState.value.length > 2) {
+                                        it.name.trim().lowercase().contains(
+                                            searchTextState.value.removeRange(
+                                                3,
+                                                searchTextState.value.length
+                                            ).trim().lowercase()
+                                        )
                                     } else {
-                                        (nameRequest subtract nameRecipe).isEmpty()
+                                        it.name.trim().lowercase()
+                                            .contains(searchTextState.value.trim().lowercase())
                                     }
+                                } else {
+                                    (nameRequest subtract nameRecipe).isEmpty()
                                 }
-                            } else {
-                                rvm.allRecipeFull
                             }
+
                         Column(modifier = Modifier.fillMaxSize()) {
                             LazyVerticalGrid(
                                 state = stateGrid,
@@ -288,7 +261,8 @@ class RecipesTab() : Tab {
                                     keyboardController?.hide()
                                 }
                                 itemsIndexed(items) { index, recipe ->
-                                    val isFavorite = remember {mutableStateOf(uvm.favorite.contains(recipe.id))}
+                                    val isFavorite =
+                                        mutableStateOf(uvm.favorite.contains(recipe.id))
                                     RecipeCard(
                                         recipe = recipe,
                                         onRecipeClick = {
@@ -337,7 +311,7 @@ class RecipesTab() : Tab {
                                 }
                             }
 
-                            AnimatedVisibility(!rvm.isAllDataReady.value) {
+                            AnimatedVisibility(!rvm.isFavoriteDataReady.value) {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(
