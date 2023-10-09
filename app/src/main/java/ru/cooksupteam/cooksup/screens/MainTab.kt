@@ -44,6 +44,7 @@ import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.model.Filter
+import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
 import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.components.diagonalGradientBorder
@@ -113,41 +114,73 @@ class MainTab : Tab {
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    item {
-                        LazyRow(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                            contentPadding = PaddingValues(start = 12.dp, end = 8.dp),
-                            modifier = Modifier
-                                .heightIn(min = 56.dp)
-                                .fillMaxWidth()
-                        ) {
-                            item {
-                                IconButton(onClick = { /*TODO*/ }) {
-                                    Icon(
-                                        imageVector = Icons.Rounded.FilterList,
-                                        tint = CooksupTheme.colors.brand,
-                                        contentDescription = stringResource(R.string.label_filters),
-                                        modifier = Modifier.diagonalGradientBorder(
-                                            colors = CooksupTheme.colors.interactiveSecondary,
-                                            shape = CircleShape
-                                        )
-                                    )
-                                }
-                            }
-                            item {
-                                CooksupFilterChip(Filter("Низкокалорийные"))
-                            }
-                            item {
-                                CooksupFilterChip(Filter("Безлактозные"))
-                            }
-                        }
-                    }
+//                    item {
+//                        LazyRow(
+//                            verticalAlignment = Alignment.CenterVertically,
+//                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+//                            contentPadding = PaddingValues(start = 12.dp, end = 8.dp),
+//                            modifier = Modifier
+//                                .heightIn(min = 56.dp)
+//                                .fillMaxWidth()
+//                        ) {
+//                            item {
+//                                IconButton(onClick = { /*TODO*/ }) {
+//                                    Icon(
+//                                        imageVector = Icons.Rounded.FilterList,
+//                                        tint = CooksupTheme.colors.brand,
+//                                        contentDescription = stringResource(R.string.label_filters),
+//                                        modifier = Modifier.diagonalGradientBorder(
+//                                            colors = CooksupTheme.colors.interactiveSecondary,
+//                                            shape = CircleShape
+//                                        )
+//                                    )
+//                                }
+//                            }
+//                            item {
+//                                CooksupFilterChip(Filter("Низкокалорийные"))
+//                            }
+//                            item {
+//                                CooksupFilterChip(Filter("Безлактозные"))
+//                            }
+//                        }
+//                    }
                     item {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             repeat(5) { repeat ->
+                                var text = ""
+                                when (repeat) {
+                                    0 -> {
+                                        text = "Фрукты"
+                                        ivm.listFilteredTags =
+                                            ivm.allIngredients.filter { it.tags.contains("фрукт") }
+                                    }
+
+                                    1 -> {
+                                        text = "Овощи"
+                                        ivm.listFilteredTags =
+                                            ivm.allIngredients.filter { it.tags.contains("овощ") }
+                                    }
+
+                                    2 -> {
+                                        text = "Ягоды"
+                                        ivm.listFilteredTags =
+                                            ivm.allIngredients.filter { it.tags.contains("ягода") }
+                                    }
+
+                                    3 -> {
+                                        text = "Мясо"
+                                        ivm.listFilteredTags =
+                                            ivm.allIngredients.filter { it.tags.contains("мясо") }
+                                    }
+
+                                    4 -> {
+                                        text = "Морепродукты"
+                                        ivm.listFilteredTags =
+                                            ivm.allIngredients.filter { it.tags.contains("морепродукты") }
+                                    }
+                                }
                                 Text(
-                                    text = if (repeat == 0) "Избранные" else if (repeat == 1) "Популярные" else if (repeat == 2) "Новые" else if (repeat == 3) "ПИР рекомендует" else "Интересные",
+                                    text = text,
                                     maxLines = 1,
                                     overflow = TextOverflow.Ellipsis,
                                     style = MaterialTheme.typography.h6,
@@ -161,28 +194,19 @@ class MainTab : Tab {
                                         8.dp,
                                         Alignment.Start
                                     ),
-                                    contentPadding = PaddingValues(
-                                        start = 12.dp,
-                                        end = 8.dp
-                                    ),
+                                    contentPadding = PaddingValues(start = 12.dp, end = 8.dp),
                                     modifier = Modifier
                                         .heightIn(min = 56.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    if (ivm.allIngredients.isNotEmpty()) {
-                                        itemsIndexed(
-                                            listOf(
-                                                ivm.allIngredients.random(),
-                                                ivm.allIngredients.random(),
-                                                ivm.allIngredients.random(),
-                                                ivm.allIngredients.random(),
-                                                ivm.allIngredients.random()
-                                            )
-                                        ) { index, ingredient ->
+                                    if (ivm.listFilteredTags.isNotEmpty()) {
+                                        itemsIndexed(ivm.listFilteredTags.shuffled()) { index, ingredient ->
                                             SnackCard(
                                                 ingredient = ingredient,
                                                 onSnackClick = {
-                                                    navigator.push(IngredientDetailScreen(ingredient))
+                                                    navigator.push(
+                                                        IngredientDetailScreen(ingredient)
+                                                    )
                                                 },
                                                 index = index,
                                                 gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,

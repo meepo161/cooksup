@@ -13,6 +13,7 @@ class Ingredient(
     val taste: String = "",
     val howTo: String = "",
     val howLong: String = "",
+    val tags: List<String> = listOf(),
     var selected: Boolean = false
 )
 
@@ -27,5 +28,6 @@ data class IngredientRemote(
     val benefitAndHarm: String = "",
     val taste: String = "",
     val howTo: String = "",
+    val tags: List<String> = listOf(),
     val howLong: String = ""
 )

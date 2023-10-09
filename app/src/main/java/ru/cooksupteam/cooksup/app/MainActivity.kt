@@ -64,11 +64,14 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         appContext = applicationContext
-        appUpdateManager = RuStoreAppUpdateManagerFactory.create(applicationContext)
-        if (updateType == AppUpdateType.FLEXIBLE) {
-            appUpdateManager.registerListener(installStateUpdateListener)
+        try {
+            appUpdateManager = RuStoreAppUpdateManagerFactory.create(applicationContext)
+            if (updateType == AppUpdateType.FLEXIBLE) {
+                appUpdateManager.registerListener(installStateUpdateListener)
+            }
+            checkForAppUpdates()
+        } catch (e: Exception) {
         }
-        checkForAppUpdates()
         ivm = IngredientsViewModel()
         rvm = RecipeFullViewModel()
         uvm = UserViewModel()
@@ -89,7 +92,7 @@ class MainActivity : ComponentActivity() {
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Center)
-                                .offset(y = -50.dp),
+                                .offset(y = (-50).dp),
                             horizontalAlignment = Alignment.CenterHorizontally
                         ) {
                             Image(
@@ -180,11 +183,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
             .addOnFailureListener { error ->
-                Toast.makeText(
-                    applicationContext,
-                    "Что-то пошло не так: $error",
-                    Toast.LENGTH_LONG
-                ).show()
+//                Toast.makeText(
+//                    applicationContext,
+//                    "Что-то пошло не так: $error",
+//                    Toast.LENGTH_LONG
+//                ).show()
             }
     }
 }

@@ -21,6 +21,8 @@ class IngredientsViewModel {
     var searchTextStateStored = ""
     var items = mutableStateListOf<Ingredient>()
 
+    var listFilteredTags = listOf<Ingredient>()
+
     init {
         load()
     }
@@ -51,6 +53,7 @@ class IngredientsViewModel {
                 taste = it.taste,
                 howTo = it.howTo,
                 howLong = it.howLong,
+                tags = it.tags,
             )
         }.sortedBy { it.name })
     }

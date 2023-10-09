@@ -16,14 +16,19 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Remove
+import androidx.compose.material.icons.sharp.Add
+import androidx.compose.material.icons.sharp.Remove
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
@@ -109,7 +114,7 @@ fun IngredientListItem(
                     Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
                         Icon(
                             imageVector = if (isVisible) Icons.Rounded.Remove else Icons.Rounded.Add,
-                            tint = if (isVisible) CooksupTheme.colors.uiBackground else CooksupTheme.colors.brand,
+                            tint = if (isVisible) CooksupTheme.colors.uiBackground else CooksupTheme.colors.uiBackground,
                             contentDescription = "Favorite",
                             modifier = Modifier
                                 .background(Color.Transparent)
