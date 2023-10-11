@@ -29,6 +29,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.rounded.FilterList
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,6 +37,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -148,35 +150,31 @@ class MainTab : Tab {
                         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                             repeat(5) { repeat ->
                                 var text = ""
+                                var tag = ""
                                 when (repeat) {
                                     0 -> {
                                         text = "Фрукты"
-                                        ivm.listFilteredTags =
-                                            ivm.allIngredients.filter { it.tags.contains("фрукт") }
+                                        tag = "фрукт"
                                     }
 
                                     1 -> {
                                         text = "Овощи"
-                                        ivm.listFilteredTags =
-                                            ivm.allIngredients.filter { it.tags.contains("овощ") }
+                                        tag = "овощ"
                                     }
 
                                     2 -> {
                                         text = "Ягоды"
-                                        ivm.listFilteredTags =
-                                            ivm.allIngredients.filter { it.tags.contains("ягода") }
+                                        tag = "ягода"
                                     }
 
                                     3 -> {
                                         text = "Мясо"
-                                        ivm.listFilteredTags =
-                                            ivm.allIngredients.filter { it.tags.contains("мясо") }
+                                        tag = "мясо"
                                     }
 
                                     4 -> {
                                         text = "Морепродукты"
-                                        ivm.listFilteredTags =
-                                            ivm.allIngredients.filter { it.tags.contains("морепродукты") }
+                                        tag = "морепродукты"
                                     }
                                 }
                                 Text(
@@ -199,22 +197,20 @@ class MainTab : Tab {
                                         .heightIn(min = 56.dp)
                                         .fillMaxWidth()
                                 ) {
-                                    if (ivm.listFilteredTags.isNotEmpty()) {
-                                        itemsIndexed(ivm.listFilteredTags.shuffled()) { index, ingredient ->
-                                            SnackCard(
-                                                ingredient = ingredient,
-                                                onSnackClick = {
-                                                    navigator.push(
-                                                        IngredientDetailScreen(ingredient)
-                                                    )
-                                                },
-                                                index = index,
-                                                gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
-                                                gradientWidth = 1800f,
-                                                scroll = 1,
-                                                modifier = Modifier
-                                            )
-                                        }
+                                    itemsIndexed(ivm.allIngredients.filter { it.tags.contains(tag) }.shuffled()) { index, ingredient ->
+                                        SnackCard(
+                                            ingredient = ingredient,
+                                            onSnackClick = {
+                                                navigator.push(
+                                                    IngredientDetailScreen(ingredient)
+                                                )
+                                            },
+                                            index = index,
+                                            gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                            gradientWidth = 1800f,
+                                            scroll = 1,
+                                            modifier = Modifier
+                                        )
                                     }
                                 }
                             }

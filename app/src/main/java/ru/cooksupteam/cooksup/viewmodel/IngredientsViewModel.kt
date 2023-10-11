@@ -1,14 +1,19 @@
 package ru.cooksupteam.cooksup.viewmodel
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.Singleton
+import ru.cooksupteam.cooksup.model.Field
+import ru.cooksupteam.cooksup.model.FieldRemote
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.IngredientRemote
+import java.io.File
 
 class IngredientsViewModel {
     var all = listOf<IngredientRemote>()
@@ -20,8 +25,9 @@ class IngredientsViewModel {
     val selectedIngredientIdx = mutableStateOf<Int>(1)
     var searchTextStateStored = ""
     var items = mutableStateListOf<Ingredient>()
-
-    var listFilteredTags = listOf<Ingredient>()
+    var fieldRemote = listOf<FieldRemote>()
+    var fieldObject = Field()
+    val fileFields = File(Singleton.appContext.filesDir, "fields.json")
 
     init {
         load()
@@ -31,10 +37,20 @@ class IngredientsViewModel {
         if (all.isEmpty()) {
             scope.launch {
                 isIngredientDataReady.value = false
+                if (!fileFields.exists()) {
+                    withContext(Dispatchers.IO) {
+                        fileFields.createNewFile()
+                    }
+                }
+                fieldRemote = RESTAPI.fetchVersionDB()
+                fieldObject = Field(fields = fieldRemote[0].fields)
+                Log.d("fields", fieldObject.fields[0])
+                Log.d("fields", fileFields.readText())
                 all = RESTAPI.fetchIngredients()
                 appendToAllIngredients()
-                items = mutableStateListOf(*ivm.allIngredients.toTypedArray())
+                items = mutableStateListOf(*allIngredients.toTypedArray())
                 isIngredientDataReady.value = true
+                fileFields.writeText(fieldObject.fields[0])
             }
         }
     }

@@ -20,6 +20,7 @@ import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
 import ru.cooksupteam.cooksup.Singleton.port
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.model.FieldRemote
 import ru.cooksupteam.cooksup.model.IngredientRemote
 import ru.cooksupteam.cooksup.model.Person
 import ru.cooksupteam.cooksup.model.RecipeFullRemote
@@ -38,24 +39,26 @@ object RESTAPI {
         }
     }
 
+    suspend fun fetchVersionDB(): List<FieldRemote> {
+        val response = client.get("http://$ip:$port/fields")
+        return response.body()
+    }
+
     suspend fun fetchIngredients(): List<IngredientRemote> {
-        try {
-            val file = File(appContext.filesDir, "ingredients.json")
-            if (!file.exists()) {
-                withContext(Dispatchers.IO) {
-                    file.createNewFile()
-                    val response = client.get("http://$ip:$port/ingredients")
-                    file.writeText(response.body())
-                }
+        val file = File(appContext.filesDir, "ingredients.json")
+        if (!file.exists() || ivm.fieldObject.fields[0] != ivm.fileFields.readText()) {
+            withContext(Dispatchers.IO) {
+                file.createNewFile()
+                val response = client.get("http://$ip:$port/ingredients")
+                file.writeText(response.body())
             }
             ivm.isIngredientDataReady.value = true
             return Json.decodeFromString(string = file.readText())
-        } catch (e: Exception) {
-            val response = client.get("http://$ip:$port/ingredients")
-            ivm.isIngredientDataReady.value = true
-            return response.body()
+        } else {
+            return Json.decodeFromString(string = file.readText())
         }
     }
+
 
     suspend fun fetchRecipeFilteredFromText(name: String): List<RecipeFullRemote> {
         val response = client.get {
