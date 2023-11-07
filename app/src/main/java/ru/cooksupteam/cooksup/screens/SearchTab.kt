@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -70,14 +71,13 @@ class SearchTab : Tab {
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
-        val searchTextState = remember { mutableStateOf(ivm.searchTextStateStored) }
         val keyboardController = LocalSoftwareKeyboardController.current
         val stateGrid =
             rememberLazyGridState(initialFirstVisibleItemIndex = ivm.selectedIngredientIdx.value)
 
-        if (searchTextState.value != "") {
+        if (ivm.searchTextState.value != "") {
             ivm.items.clear()
-            val toTypedArray = searchTextState.value.lowercase().split(" ")
+            val toTypedArray = ivm.searchTextState.value.lowercase().split(" ")
                 .toTypedArray().toMutableList()
             if (toTypedArray.last() == "") {
                 toTypedArray.removeLast()
@@ -129,7 +129,7 @@ class SearchTab : Tab {
                                     )
                                 },
                                 trailingIcon = {
-                                    if (searchTextState.value !== "") {
+                                    if (ivm.searchTextState.value !== "") {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Close Icon",
@@ -137,22 +137,21 @@ class SearchTab : Tab {
                                             modifier = Modifier
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
-                                                    searchTextState.value = ""
-                                                    ivm.searchTextStateStored = ""
+                                                    ivm.searchTextState.value = ""
                                                 }
                                         )
                                     }
                                 },
                                 textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
-                                value = searchTextState.value,
+                                value = ivm.searchTextState.value,
                                 onValueChange = {
-                                    searchTextState.value =
+                                    ivm.searchTextState.value =
                                         regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
-                                    ivm.searchTextStateStored = searchTextState.value
                                     ivm.items.clear()
 
-                                    val toTypedArray = searchTextState.value.lowercase().split(" ")
-                                        .toTypedArray().toMutableList()
+                                    val toTypedArray =
+                                        ivm.searchTextState.value.lowercase().split(" ")
+                                            .toTypedArray().toMutableList()
                                     if (toTypedArray.last() == "") {
                                         toTypedArray.removeLast()
                                     }
@@ -185,41 +184,72 @@ class SearchTab : Tab {
 
                         })
                 }) {
-                Row() {
-                    Column {
-                        Spacer(modifier = Modifier.size(8.dp))
-                        LazyVerticalGrid(
-                            state = stateGrid,
-                            columns = GridCells.Fixed(2),
-                            modifier = Modifier
-                                .background(CooksupTheme.colors.uiBackground)
-                                .fillMaxWidth(),
-                            verticalArrangement = Arrangement.spacedBy(8.dp),
-                        ) {
+                Column {
+                    Spacer(modifier = Modifier.size(8.dp))
+                    LazyVerticalGrid(
+                        state = stateGrid,
+                        columns = GridCells.Fixed(2),
+                        modifier = Modifier
+                            .background(CooksupTheme.colors.uiBackground)
+                            .fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        item {
+                            Text(
+                                text = "Ингредиентов",
+                                textAlign = TextAlign.End,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.h6,
+                                softWrap = false,
+                                color = CooksupTheme.colors.textSecondary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = 16.dp,
+                                        vertical = 4.dp
+                                    )
+                            )
+                        }
+                        item {
+                            Text(
+                                text = "${ivm.items.size}",
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.h6,
+                                softWrap = false,
+                                color = CooksupTheme.colors.textSecondary,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        horizontal = 16.dp,
+                                        vertical = 4.dp
+                                    )
+                            )
+                        }
+                        if (stateGrid.isScrollInProgress) {
+                            keyboardController?.hide()
+                        }
+                        itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
                             if (stateGrid.isScrollInProgress) {
                                 keyboardController?.hide()
                             }
-                            itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
-                                if (stateGrid.isScrollInProgress) {
-                                    keyboardController?.hide()
-                                }
-                                IngredientListItem(
-                                    ingredient = ingredient,
-                                    index = index,
-                                    gradient = if (ingredient.selected) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
-                                    gradientWidth = 6000f,
-                                    scroll = 1,
-                                    modifier = if (index % 2 == 0) Modifier.padding(
-                                        start = 12.dp,
-                                        end = 4.dp
-                                    ) else Modifier.padding(start = 4.dp, end = 12.dp),
+                            IngredientListItem(
+                                ingredient = ingredient,
+                                index = index,
+                                gradient = if (ingredient.selected) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                gradientWidth = 6000f,
+                                scroll = 1,
+                                modifier = if (index % 2 == 0) Modifier.padding(
+                                    start = 12.dp,
+                                    end = 4.dp
+                                ) else Modifier.padding(start = 4.dp, end = 12.dp),
 
-                                    ) { _, isSelected ->
-                                    if (!isSelected) {
-                                        ivm.selectedIngredients.add(ingredient)
-                                    } else {
-                                        ivm.selectedIngredients.remove(ingredient)
-                                    }
+                                ) { _, isSelected ->
+                                if (!isSelected) {
+                                    ivm.selectedIngredients.add(ingredient)
+                                } else {
+                                    ivm.selectedIngredients.remove(ingredient)
                                 }
                             }
                         }

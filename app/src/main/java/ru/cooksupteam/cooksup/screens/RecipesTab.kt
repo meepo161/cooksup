@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -90,13 +91,12 @@ class RecipesTab() : Tab {
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
-        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = 1)
-        val searchTextState = remember { mutableStateOf("") }
+        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = rvm.lastIndexRecipe + 1)
         val keyboardController = LocalSoftwareKeyboardController.current
         val scaffoldState = rememberScaffoldState()
 
         LifecycleEffect(onStarted = {
-            if (ivm.selectedIngredients.isNotEmpty() || searchTextState.value.isNotEmpty()) {
+            if (ivm.selectedIngredients.isNotEmpty() || rvm.searchTextState.value.isNotEmpty()) {
                 rvm.load()
             } else {
                 rvm.isAllDataReady.value = true
@@ -144,7 +144,7 @@ class RecipesTab() : Tab {
                                     )
                                 },
                                 trailingIcon = {
-                                    if (searchTextState.value !== "") {
+                                    if (rvm.searchTextState.value !== "") {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Close Icon",
@@ -152,22 +152,22 @@ class RecipesTab() : Tab {
                                             modifier = Modifier
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
-                                                    searchTextState.value = ""
+                                                    rvm.searchTextState.value = ""
                                                 }
                                         )
                                     }
                                 },
                                 textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
-                                value = searchTextState.value,
+                                value = rvm.searchTextState.value,
                                 onValueChange = {
-                                    searchTextState.value =
+                                    rvm.searchTextState.value =
                                         regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
                                     onSearch = {
                                         if (ivm.selectedIngredients.isEmpty()) {
-                                            rvm.load(searchTextState.value)
+                                            rvm.load(rvm.searchTextState.value)
                                         }
                                     }
                                 ),
@@ -184,7 +184,7 @@ class RecipesTab() : Tab {
 
                         })
                 }) {
-                if (ivm.selectedIngredients.isEmpty() && searchTextState.value.isEmpty()) {
+                if (ivm.selectedIngredients.isEmpty() && rvm.searchTextState.value.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -226,28 +226,30 @@ class RecipesTab() : Tab {
                 } else {
                     Column {
                         val items =
-                            if (ivm.selectedIngredients.isNotEmpty() && searchTextState.value.isNotEmpty()) {
+                            if (ivm.selectedIngredients.isNotEmpty() && rvm.searchTextState.value.isNotEmpty()) {
                                 rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
                                     it.name.lowercase()
-                                        .contains(searchTextState.value.lowercase())
+                                        .contains(rvm.searchTextState.value.lowercase())
                                 }
-                            } else if (searchTextState.value.isNotEmpty()) {
+                            } else if (rvm.searchTextState.value.isNotEmpty()) {
                                 rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
                                     val nameRequest =
-                                        searchTextState.value.trim().lowercase().split(' ')
+                                        rvm.searchTextState.value.trim().lowercase().split(' ')
                                             .toSet()
                                     val nameRecipe = it.name.lowercase().split(' ').toSet()
                                     if (nameRequest.size == 1) {
-                                        if (searchTextState.value.length > 2) {
+                                        if (rvm.searchTextState.value.length > 2) {
                                             it.name.trim().lowercase().contains(
-                                                searchTextState.value.removeRange(
+                                                rvm.searchTextState.value.removeRange(
                                                     3,
-                                                    searchTextState.value.length
+                                                    rvm.searchTextState.value.length
                                                 ).trim().lowercase()
                                             )
                                         } else {
                                             it.name.trim().lowercase()
-                                                .contains(searchTextState.value.trim().lowercase())
+                                                .contains(
+                                                    rvm.searchTextState.value.trim().lowercase()
+                                                )
                                         }
                                     } else {
                                         (nameRequest subtract nameRecipe).isEmpty()
@@ -257,6 +259,7 @@ class RecipesTab() : Tab {
                                 rvm.allRecipeFull
                             }
                         Column(modifier = Modifier.fillMaxSize()) {
+                            Spacer(modifier = Modifier.size(8.dp))
                             LazyVerticalGrid(
                                 state = stateGrid,
                                 columns = GridCells.Fixed(2),
@@ -268,7 +271,8 @@ class RecipesTab() : Tab {
                             ) {
                                 item {
                                     Text(
-                                        text = "Рецептов ${if (items.size == 200) "200+" else items.size}",
+                                        text = "Рецептов",
+                                        textAlign = TextAlign.End,
                                         maxLines = 1,
                                         overflow = TextOverflow.Ellipsis,
                                         style = MaterialTheme.typography.h6,
@@ -283,12 +287,27 @@ class RecipesTab() : Tab {
                                     )
                                 }
                                 item {
+                                    Text(
+                                        text = "${if (items.size == 200) "200+" else items.size}",
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        style = MaterialTheme.typography.h6,
+                                        softWrap = false,
+                                        color = CooksupTheme.colors.textSecondary,
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                horizontal = 16.dp,
+                                                vertical = 4.dp
+                                            )
+                                    )
                                 }
                                 if (stateGrid.isScrollInProgress) {
                                     keyboardController?.hide()
                                 }
                                 itemsIndexed(items) { index, recipe ->
-                                    val isFavorite = remember {mutableStateOf(uvm.favorite.contains(recipe.id))}
+                                    val isFavorite =
+                                        remember { mutableStateOf(uvm.favorite.contains(recipe.id)) }
                                     RecipeCard(
                                         recipe = recipe,
                                         onRecipeClick = {

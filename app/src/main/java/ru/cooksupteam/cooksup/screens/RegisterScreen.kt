@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.indication
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
@@ -45,7 +47,9 @@ import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.isEmailValid
+import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.model.Person
+import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
@@ -68,7 +72,7 @@ fun RegisterPage() {
             .background(CooksupTheme.colors.uiBackground)
             .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Top
     ) {
         Text(
             text = "Регистрация",
@@ -148,7 +152,7 @@ fun RegisterPage() {
                     )
                 },
                 keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Password,
+                    keyboardType = KeyboardType.Text,
                     imeAction = ImeAction.Next
                 ),
                 keyboardActions = KeyboardActions(
@@ -363,4 +367,14 @@ private fun postPerson(
         )
     }
     uvm.loginState.value = true
+}
+
+@Preview("default")
+@Preview("dark theme", uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview("large font", fontScale = 2f)
+@Composable
+private fun FilterEnabledPreview() {
+    CooksupTheme {
+        RegisterPage()
+    }
 }

@@ -23,9 +23,9 @@ class IngredientsViewModel {
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredientIdx = mutableStateOf<Int>(1)
-    var searchTextStateStored = ""
+    var searchTextState = mutableStateOf("")
     var items = mutableStateListOf<Ingredient>()
-    var fieldRemote = listOf<FieldRemote>()
+    var fieldsRemote = listOf<FieldRemote>()
     var fieldObject = Field()
     val fileFields = File(Singleton.appContext.filesDir, "fields.json")
 
@@ -42,8 +42,8 @@ class IngredientsViewModel {
                         fileFields.createNewFile()
                     }
                 }
-                fieldRemote = RESTAPI.fetchVersionDB()
-                fieldObject = Field(fields = fieldRemote[0].fields)
+                fieldsRemote = RESTAPI.fetchVersionDB()
+                fieldObject = Field(fields = fieldsRemote[0].fields)
                 Log.d("fields", fieldObject.fields[0])
                 Log.d("fields", fileFields.readText())
                 all = RESTAPI.fetchIngredients()

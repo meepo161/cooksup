@@ -18,6 +18,7 @@ class RecipeFullViewModel {
     private var favoriteRecipeRemote = listOf<RecipeFullRemote>()
     var favoriteRecipeFull = mutableStateListOf<RecipeFull>()
     var lastIndexRecipe = 0
+    var searchTextState = mutableStateOf("")
 
     fun loadFavorite() {
         isFavoriteDataReady.value = false

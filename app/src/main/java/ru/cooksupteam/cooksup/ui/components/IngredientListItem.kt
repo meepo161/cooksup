@@ -9,10 +9,14 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.with
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -28,6 +32,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -66,7 +71,6 @@ fun IngredientListItem(
                 width = 170.dp,
                 height = 250.dp
             )
-            .padding(bottom = 16.dp)
     ) {
         Column(
             modifier = Modifier
@@ -111,14 +115,28 @@ fun IngredientListItem(
                                 ingredient.selected = isSelected.value
                             }
                     )
-                    Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 6.dp, end = 6.dp),
+                        contentAlignment = Alignment.TopEnd
+                    ) {
                         Icon(
                             imageVector = if (isVisible) Icons.Rounded.Remove else Icons.Rounded.Add,
-                            tint = if (isVisible) CooksupTheme.colors.uiBackground else CooksupTheme.colors.uiBackground,
-                            contentDescription = "Favorite",
+                            tint = Color.Black,
+                            contentDescription = "",
                             modifier = Modifier
-                                .background(Color.Transparent)
+                                .background(
+                                    if (isVisible) CooksupTheme.colors.brandSecondary else CooksupTheme.colors.brandSecondary,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
+                                .border(
+                                    width = 2.dp,
+                                    color = Color.Black,
+                                    shape = RoundedCornerShape(16.dp)
+                                )
                                 .padding(4.dp)
+                                .size(16.dp)
                         )
                     }
                 }
