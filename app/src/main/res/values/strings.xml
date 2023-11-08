@@ -13,7 +13,7 @@
   the License.
   -->
 <resources>
-    <string name="app_name">Пир</string>
+    <string name="app_name">Рецепты Пир</string>
     <string name="label_back">Назад</string>
 
     <!-- Home Tabs -->

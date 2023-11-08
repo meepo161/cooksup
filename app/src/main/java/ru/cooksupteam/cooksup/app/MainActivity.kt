@@ -39,7 +39,7 @@ import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.utils.ConnectionState
 import ru.cooksupteam.cooksup.utils.connectivityState
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
-import ru.cooksupteam.cooksup.viewmodel.RecipeFullViewModel
+import ru.cooksupteam.cooksup.viewmodel.RecipeViewModel
 import ru.cooksupteam.cooksup.viewmodel.UserViewModel
 import ru.rustore.sdk.appupdate.listener.InstallStateUpdateListener
 import ru.rustore.sdk.appupdate.manager.RuStoreAppUpdateManager
@@ -51,15 +51,15 @@ import ru.rustore.sdk.appupdate.model.UpdateAvailability
 import kotlin.time.Duration.Companion.seconds
 
 lateinit var ivm: IngredientsViewModel
-lateinit var rvm: RecipeFullViewModel
+lateinit var rvm: RecipeViewModel
 lateinit var uvm: UserViewModel
+var firstStart = true
 
 class MainActivity : ComponentActivity() {
     val updateType = AppUpdateType.FLEXIBLE
     lateinit var appUpdateManager: RuStoreAppUpdateManager
 
     @SuppressLint("SourceLockedOrientationActivity")
-    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
@@ -70,62 +70,15 @@ class MainActivity : ComponentActivity() {
                 appUpdateManager.registerListener(installStateUpdateListener)
             }
             checkForAppUpdates()
-        } catch (e: Exception) {
+        } catch (_: Exception) {
         }
+
         ivm = IngredientsViewModel()
-        rvm = RecipeFullViewModel()
+        rvm = RecipeViewModel()
         uvm = UserViewModel()
         setContent {
             CooksupTheme {
-                val connection by connectivityState()
-                val isConnected = connection === ConnectionState.Available
-                if (isConnected) {
-                    Navigator(MainScreen())
-                } else {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .background(CooksupTheme.colors.uiBackground)
-                            .padding(horizontal = 8.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Center)
-                                .offset(y = (-50).dp),
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.nosignal),
-                                contentDescription = "logo",
-                                alignment = Center,
-                                modifier = Modifier.size(300.dp)
-                            )
-//                            Icon(
-//                                imageVector = Icons.Outlined.SignalWifiStatusbarConnectedNoInternet4,
-//                                contentDescription = "logo",
-//                                modifier = Modifier.size(300.dp)
-//                            )
-                            Text(
-                                text = "Отсутствует интернет соединение",
-                                color = CooksupTheme.colors.brand,
-                                style = TextStyle(
-                                    fontSize = 28.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    textAlign = TextAlign.Center
-                                )
-                            )
-                            Text(
-                                text = "Уупс, видимо что-то со связью",
-                                style = TextStyle(
-                                    fontSize = 18.sp,
-                                    color = Color.Gray,
-                                    textAlign = TextAlign.Center
-                                )
-                            )
-                        }
-                    }
-                }
+                Navigator(MainScreen())
             }
         }
     }

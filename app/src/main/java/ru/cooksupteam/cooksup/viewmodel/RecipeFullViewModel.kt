@@ -2,31 +2,55 @@ package ru.cooksupteam.cooksup.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
-import ru.cooksupteam.cooksup.model.RecipeFull
-import ru.cooksupteam.cooksup.model.RecipeFullRemote
+import ru.cooksupteam.cooksup.model.Recipe
 
-class RecipeFullViewModel {
+class RecipeViewModel {
+    lateinit var selectedRecipe: Recipe
     var isAllDataReady = mutableStateOf(false)
-    private var all = listOf<RecipeFullRemote>()
-    var allRecipeFull = mutableStateListOf<RecipeFull>()
+    var allRecipes = mutableStateListOf<Recipe>()
+    var recipeFiltered = mutableStateListOf<Recipe>()
     var isFavoriteDataReady = mutableStateOf(false)
-    private var favoriteRecipeRemote = listOf<RecipeFullRemote>()
-    var favoriteRecipeFull = mutableStateListOf<RecipeFull>()
+    private var favoriteRecipeRemote = listOf<Recipe>()
+    var favoriteRecipe = mutableStateListOf<Recipe>()
     var lastIndexRecipe = 0
     var searchTextState = mutableStateOf("")
+
+    fun load(search: String = "") {
+        isAllDataReady.value = false
+        scope.launch {
+            while (rvm.allRecipes.isEmpty()) {
+                delay(10)
+            }
+            if (search.isNotEmpty()) {
+                recipeFiltered.addAll(
+                    RESTAPI.fetchRecipeFilteredFromText(
+                        search.replace("ё", "е").trim()
+                    )
+                )
+            } else if (ivm.selectedIngredients.isNotEmpty()) {
+                if (ivm.lastIngredients != ivm.selectedIngredients.map { it.name }) {
+                    recipeFiltered.addAll(RESTAPI.fetchRecipeFiltered(ivm.selectedIngredients.map { it }))
+                    ivm.lastIngredients = ivm.selectedIngredients.map { it.name }
+                }
+            }
+            isAllDataReady.value = true
+        }
+    }
 
     fun loadFavorite() {
         isFavoriteDataReady.value = false
         scope.launch {
             favoriteRecipeRemote = RESTAPI.fetchFavoriteRecipes(uvm.user.id)
-            favoriteRecipeFull.clear()
-            favoriteRecipeFull.addAll(favoriteRecipeRemote.map {
-                RecipeFull(
+            favoriteRecipe.clear()
+            favoriteRecipe.addAll(favoriteRecipeRemote.map {
+                Recipe(
                     id = it.id,
                     name = it.name,
                     description = it.description,
@@ -40,50 +64,5 @@ class RecipeFullViewModel {
             })
         }
         isFavoriteDataReady.value = true
-    }
-
-    fun load(search: String = "") {
-        isAllDataReady.value = false
-        scope.launch {
-            if (search.isNotEmpty()) {
-                all = RESTAPI.fetchRecipeFilteredFromText(search.replace("ё", "е").trim())
-                allRecipeFull.clear()
-                allRecipeFull.addAll(all.map {
-                    RecipeFull(
-                        id = it.id,
-                        name = it.name,
-                        description = it.description,
-//                        pic = "http://${ip}:${port}/recipes_pics/" + it.name + ".webp",
-                        pic = it.pic,
-                        nutrition = it.nutrition,
-                        time = it.time,
-                        servings = it.servings,
-                        quantityIngredients = it.quantityIngredients,
-                        instructions = it.instructions
-                    )
-                })
-            } else if (ivm.selectedIngredients.isNotEmpty()) {
-                if (ivm.lastIngredients != ivm.selectedIngredients.map { it.name }) {
-                    all = RESTAPI.fetchRecipeFiltered(ivm.selectedIngredients.map { it.name })
-                    allRecipeFull.clear()
-                    allRecipeFull.addAll(all.map {
-                        RecipeFull(
-                            id = it.id,
-                            name = it.name,
-                            description = it.description,
-                            pic = it.pic,
-                            nutrition = it.nutrition,
-                            time = it.time,
-                            servings = it.servings,
-                            quantityIngredients = it.quantityIngredients,
-                            instructions = it.instructions
-                        )
-                    })
-
-                    ivm.lastIngredients = ivm.selectedIngredients.map { it.name }
-                }
-            }
-            isAllDataReady.value = true
-        }
     }
 }

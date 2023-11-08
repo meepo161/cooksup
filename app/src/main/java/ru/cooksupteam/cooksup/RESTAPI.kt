@@ -12,19 +12,17 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.ip
 import ru.cooksupteam.cooksup.Singleton.port
-import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.FieldRemote
-import ru.cooksupteam.cooksup.model.IngredientRemote
+import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.Person
-import ru.cooksupteam.cooksup.model.RecipeFullRemote
-import java.io.File
+import ru.cooksupteam.cooksup.model.Recipe
 
 
 object RESTAPI {
@@ -39,39 +37,36 @@ object RESTAPI {
         }
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
+    var ingredients =
+        Json.decodeFromStream<List<Ingredient>>(stream = appContext.assets.open("ingredients.json"))
+
     suspend fun fetchVersionDB(): List<FieldRemote> {
         val response = client.get("http://$ip:$port/fields")
         return response.body()
     }
 
-    suspend fun fetchIngredients(): List<IngredientRemote> {
-        val file = File(appContext.filesDir, "ingredients.json")
-        if (!file.exists() || ivm.fieldObject.fields[0] != ivm.fileFields.readText()) {
-            withContext(Dispatchers.IO) {
-                file.createNewFile()
-                val response = client.get("http://$ip:$port/ingredients")
-                file.writeText(response.body())
+    fun fetchIngredients(): List<Ingredient> {
+        return ingredients
+    }
+
+    fun fetchRecipeFilteredFromText(name: String): List<Recipe> {
+        return rvm.allRecipes.filter {
+            it.name.contains(name)
+        }
+    }
+
+    fun fetchRecipeFiltered(ingredientsList: List<Ingredient>): List<Recipe> {
+        val list = mutableListOf<Recipe>()
+        val variations = generateVariations(ingredientsList)
+        variations.forEach { variation ->
+            rvm.allRecipes.filter { recipe ->
+                recipe.ingredients.map(Ingredient::name).containsAll(variation.map { it.name })
+            }.forEach {
+                list.add(it)
             }
-            ivm.isIngredientDataReady.value = true
-            return Json.decodeFromString(string = file.readText())
-        } else {
-            return Json.decodeFromString(string = file.readText())
         }
-    }
-
-
-    suspend fun fetchRecipeFilteredFromText(name: String): List<RecipeFullRemote> {
-        val response = client.get {
-            url("http://$ip:$port/recipe_filtered_from_text/$name")
-        }
-        return response.body()
-    }
-
-    suspend fun fetchRecipeFiltered(list: List<String>): List<RecipeFullRemote> {
-        val response = client.get {
-            url("http://$ip:$port/recipe_filtered/$list")
-        }
-        return response.body()
+        return list
     }
 
     suspend fun postPerson(person: Person) {
@@ -109,10 +104,26 @@ object RESTAPI {
         }
     }
 
-    suspend fun fetchFavoriteRecipes(id: String): List<RecipeFullRemote> {
+    suspend fun fetchFavoriteRecipes(id: String): List<Recipe> {
         val response = client.get {
             url("http://$ip:$port/favourite/$id")
         }
         return response.body()
+    }
+
+    fun generateVariations(ingredients: List<Ingredient>): List<List<Ingredient>> {
+        val variations = mutableListOf<List<Ingredient>>()
+        if (ingredients.isNotEmpty()) {
+            for (i in ingredients.indices) {
+                val variation = mutableListOf<Ingredient>()
+                for (j in i until (i + ingredients.size)) {
+                    val index = j % ingredients.size
+                    variation.add(ingredients[index])
+                    variations.add(variation.toList())
+                }
+            }
+        }
+
+        return variations.sortedBy { it.size }.reversed()
     }
 }

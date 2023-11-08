@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.FilterQuality
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
@@ -37,6 +38,7 @@ fun IngredientImage(
                 .diskCachePolicy(CachePolicy.ENABLED)
                 .memoryCachePolicy(CachePolicy.ENABLED)
                 .build(),
+            filterQuality = FilterQuality.None,
             contentDescription = "",
             modifier = Modifier
                 .width(400.dp)
@@ -44,11 +46,6 @@ fun IngredientImage(
             contentScale = ContentScale.Crop,
         ) {
             if (painter.state is AsyncImagePainter.State.Loading || painter.state is AsyncImagePainter.State.Error) {
-//                CircularProgressIndicator(
-//                    modifier = Modifier.fillMaxSize().background(Color.White),
-//                    color = CooksupTheme.colors.brand
-//                )
-
                 AnimatedShimmer()
             } else {
                 SubcomposeAsyncImageContent()

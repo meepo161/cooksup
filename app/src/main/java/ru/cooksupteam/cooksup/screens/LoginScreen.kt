@@ -129,7 +129,9 @@ fun LoginPage() {
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = { authorize(loginValue, passwordValue) }
+                    onDone = {
+//                        authorize(loginValue, passwordValue)
+                    }
                 ),
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None
                 else PasswordVisualTransformation(),
@@ -149,7 +151,7 @@ fun LoginPage() {
             Spacer(modifier = Modifier.padding(12.dp))
             Button(
                 onClick = {
-                    authorize(loginValue, passwordValue)
+//                    authorize(loginValue, passwordValue)
                 },
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
@@ -176,20 +178,6 @@ fun LoginPage() {
                     onClick = { uvm.loginState.value = false }),
                 color = CooksupTheme.colors.brand
             )
-        }
-    }
-}
-
-private fun authorize(
-    loginValue: MutableState<String>,
-    passwordValue: MutableState<String>
-) {
-    scope.launch {
-        uvm.user = RESTAPI.fetchPerson(listOf(loginValue.value, passwordValue.value))
-        if (uvm.user.email == loginValue.value && uvm.user.password == passwordValue.value) {
-            uvm.isAuthorized.value = true
-            val file = File(Singleton.appContext.filesDir, "id.txt")
-            file.writeText(uvm.user.id)
         }
     }
 }

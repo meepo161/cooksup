@@ -143,7 +143,7 @@ fun IngredientListItem(
                 IngredientImage(
                     imageUrl = ingredient.pic,
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(140.dp)
                         .align(Alignment.BottomCenter)
                 )
             }

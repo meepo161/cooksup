@@ -165,7 +165,7 @@ class RecipesFavoriteScreen() : Screen {
 
                         })
                 }) {
-                if (rvm.favoriteRecipeFull.isEmpty()) {
+                if (rvm.favoriteRecipe.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -207,7 +207,7 @@ class RecipesFavoriteScreen() : Screen {
                 } else {
                     Column {
                         val items =
-                            rvm.favoriteRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                            rvm.favoriteRecipe.sortedBy { it.name.lowercase() }.filter {
                                 val nameRequest =
                                     searchTextState.value.trim().lowercase().split(' ')
                                         .toSet()
@@ -258,7 +258,7 @@ class RecipesFavoriteScreen() : Screen {
                                 item {
                                 }
                                 if (stateGrid.isScrollInProgress) {
-                                    keyboardController?.hide()
+//                                    keyboardController?.hide()
                                 }
                                 itemsIndexed(items) { index, recipe ->
                                     val isFavorite =
@@ -267,7 +267,7 @@ class RecipesFavoriteScreen() : Screen {
                                         recipe = recipe,
                                         onRecipeClick = {
                                             rvm.lastIndexRecipe = index
-                                            navigator.push(RecipeFullScreen(recipe))
+                                            navigator.push(RecipeScreen())
                                         },
                                         onFavoriteClick = {
                                             if (uvm.isAuthorized.value) {

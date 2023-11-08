@@ -228,11 +228,11 @@ class SearchTab : Tab {
                             )
                         }
                         if (stateGrid.isScrollInProgress) {
-                            keyboardController?.hide()
+//                            keyboardController?.hide()
                         }
                         itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
                             if (stateGrid.isScrollInProgress) {
-                                keyboardController?.hide()
+//                                keyboardController?.hide()
                             }
                             IngredientListItem(
                                 ingredient = ingredient,

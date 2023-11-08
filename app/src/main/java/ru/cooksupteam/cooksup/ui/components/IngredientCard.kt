@@ -55,7 +55,7 @@ fun IngredientCard(
                 IngredientImage(
                     imageUrl = ingredient.pic,
                     modifier = Modifier
-                        .size(128.dp)
+                        .size(140.dp)
                 )
                 Text(
                     text = ingredient.name,

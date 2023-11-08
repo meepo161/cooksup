@@ -15,6 +15,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -27,9 +28,16 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
+import ru.cooksupteam.cooksup.RESTAPI
+import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Serializable
@@ -39,7 +47,7 @@ class MainScreen() :
     @Composable
     override fun Content() {
         navigator = LocalNavigator.currentOrThrow
-        if (ivm.isIngredientDataReady.value ) {
+        if (ivm.isIngredientDataReady.value) {
             TabNavigator(MainTab()) {
                 Scaffold(
                     bottomBar = {
@@ -52,14 +60,14 @@ class MainScreen() :
                                 TabNavigationItem(tab = SearchTab())
 //                            TabNavigationItem(tab = FridgeTab())
                                 TabNavigationItem(tab = RecipesTab())
-                                TabNavigationItem(tab = ProfileTab())
+//                                TabNavigationItem(tab = ProfileTab())
                             }
                         }
                     }) {
                     CurrentTab()
                 }
             }
-        } else  {
+        } else {
             CooksupTheme {
                 Column(
                     modifier = Modifier

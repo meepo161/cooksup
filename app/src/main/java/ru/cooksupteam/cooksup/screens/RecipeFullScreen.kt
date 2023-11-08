@@ -32,11 +32,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,14 +49,15 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.autoformat
-import ru.cooksupteam.cooksup.model.RecipeFull
+import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.toIntOrDefault
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.RecipeImage
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
-class RecipeFullScreen(var recipe: RecipeFull) : Screen {
+class RecipeScreen() : Screen {
     @SuppressLint(
         "UnusedMaterialScaffoldPaddingParameter", "MutableCollectionMutableState",
         "UnrememberedMutableState"
@@ -61,33 +65,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val servingsState = remember { mutableStateOf(recipe.servings.toString()) }
-
-        Log.d("MyLog", recipe.name)
-        Log.d("MyLog", recipe.description)
-        Log.d("MyLog", recipe.pic)
-        Log.d("MyLog", recipe.nutrition.fats.toString())
-        Log.d("MyLog", recipe.nutrition.calories.toString())
-        Log.d("MyLog", recipe.nutrition.proteins.toString())
-        Log.d("MyLog", recipe.nutrition.carbohydrates.toString())
-        Log.d("MyLog", recipe.time)
-        Log.d("MyLog", recipe.servings.toString())
-        recipe.quantityIngredients.forEach {
-            Log.d("MyLog", it.ingredient.name)
-            Log.d("MyLog", it.unit)
-            Log.d("MyLog", it.amount.toString())
-            Log.d("MyLog", it.toTaste.toString())
-        }
-
-        recipe.ingredients.forEach {
-            Log.d("MyLog", it.name)
-        }
-
-        recipe.instructions.forEach {
-            Log.d("MyLog", it.pic)
-            Log.d("MyLog", it.text)
-        }
-
+        val servingsState = remember { mutableStateOf(rvm.selectedRecipe.servings.toString()) }
         CooksupTheme {
             Scaffold(
                 backgroundColor = CooksupTheme.colors.uiBackground,
@@ -107,7 +85,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                 )
                             }
                             Text(
-                                text = recipe.name,
+                                text = rvm.selectedRecipe.name,
                                 color = CooksupTheme.colors.brand,
                                 maxLines = 2,
                                 modifier = Modifier.background(CooksupTheme.colors.uiBackground)
@@ -124,11 +102,11 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                 ) {
                     item {
                         RecipeImage(
-                            imageUrl = recipe.pic,
+                            imageUrl = rvm.selectedRecipe.pic,
                             modifier = Modifier
                                 .width(400.dp)
                                 .height(400.dp),
-                            shape = RoundedCornerShape(8.dp)
+                            shape = RectangleShape
                         )
                         Box(
                             modifier = Modifier
@@ -137,7 +115,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                         ) {
                             Text(
                                 modifier = Modifier,
-                                text = recipe.description,
+                                text = rvm.selectedRecipe.description,
                                 color = CooksupTheme.colors.textPrimary
                             )
                         }
@@ -167,7 +145,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                         color = CooksupTheme.colors.textLink
                                     )
                                     Text(
-                                        text = recipe.nutrition.calories.toString(),
+                                        text = rvm.selectedRecipe.nutrition.calories.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
@@ -191,7 +169,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                         color = CooksupTheme.colors.textLink
                                     )
                                     Text(
-                                        text = recipe.nutrition.proteins.toString(),
+                                        text = rvm.selectedRecipe.nutrition.proteins.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
@@ -215,7 +193,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                         color = CooksupTheme.colors.textLink
                                     )
                                     Text(
-                                        text = recipe.nutrition.fats.toString(),
+                                        text = rvm.selectedRecipe.nutrition.fats.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
@@ -239,7 +217,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                         color = CooksupTheme.colors.textLink
                                     )
                                     Text(
-                                        text = recipe.nutrition.carbohydrates.toString(),
+                                        text = rvm.selectedRecipe.nutrition.carbohydrates.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
                                         color = CooksupTheme.colors.textLink
@@ -264,7 +242,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                     color = CooksupTheme.colors.textLink
                                 )
                                 Text(
-                                    text = recipe.time,
+                                    text = rvm.selectedRecipe.time,
                                     style = MaterialTheme.typography.button,
                                     textAlign = TextAlign.Center,
                                     color = CooksupTheme.colors.textLink
@@ -339,7 +317,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                 )
                             }
                             Spacer(modifier = Modifier.size(8.dp))
-                            recipe.quantityIngredients.forEach { measure ->
+                            rvm.selectedRecipe.quantityIngredients.forEach { measure ->
                                 val ingredient =
                                     ivm.allIngredients.find { it.name == measure.ingredient.name }!!
                                 Column {
@@ -374,7 +352,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                         )
                                         Text(
                                             text = "${
-                                                (measure.amount / recipe.servings * servingsState.value.toIntOrDefault(
+                                                (measure.amount / rvm.selectedRecipe.servings * servingsState.value.toIntOrDefault(
                                                     0
                                                 )).autoformat()
                                             } г.",
@@ -390,7 +368,7 @@ class RecipeFullScreen(var recipe: RecipeFull) : Screen {
                                 .padding(16.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            recipe.instructions.forEachIndexed { i, step ->
+                            rvm.selectedRecipe.instructions.forEachIndexed { i, step ->
                                 Card(
                                     modifier = Modifier
                                         .padding(top = 8.dp)

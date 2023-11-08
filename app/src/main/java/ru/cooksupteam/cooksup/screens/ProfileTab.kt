@@ -178,7 +178,7 @@ class ProfileTab() : Tab {
                 modifier = Modifier
                     .size(72.dp)
                     .clip(shape = CircleShape),
-                painter = painterResource(id = R.drawable.moustache),
+                painter = painterResource(id = R.drawable.logo),
                 contentDescription = "Your Image"
             )
             Row(

@@ -16,6 +16,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
@@ -54,7 +55,7 @@ fun ShimmerGridItem(brush: Brush) {
         Spacer(
             modifier = Modifier
                 .size(400.dp)
-                .clip(CircleShape)
+                .clip(RectangleShape)
                 .background(brush)
         )
 }

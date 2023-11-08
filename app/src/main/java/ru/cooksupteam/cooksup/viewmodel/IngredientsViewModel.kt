@@ -9,14 +9,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton
-import ru.cooksupteam.cooksup.model.Field
-import ru.cooksupteam.cooksup.model.FieldRemote
 import ru.cooksupteam.cooksup.model.Ingredient
-import ru.cooksupteam.cooksup.model.IngredientRemote
 import java.io.File
 
 class IngredientsViewModel {
-    var all = listOf<IngredientRemote>()
+    var all = listOf<Ingredient>()
     private val scope = CoroutineScope(Dispatchers.Default)
     var isIngredientDataReady = mutableStateOf(true)
     var lastIngredients: List<String> = listOf()
@@ -25,8 +22,6 @@ class IngredientsViewModel {
     val selectedIngredientIdx = mutableStateOf<Int>(1)
     var searchTextState = mutableStateOf("")
     var items = mutableStateListOf<Ingredient>()
-    var fieldsRemote = listOf<FieldRemote>()
-    var fieldObject = Field()
     val fileFields = File(Singleton.appContext.filesDir, "fields.json")
 
     init {
@@ -42,15 +37,11 @@ class IngredientsViewModel {
                         fileFields.createNewFile()
                     }
                 }
-                fieldsRemote = RESTAPI.fetchVersionDB()
-                fieldObject = Field(fields = fieldsRemote[0].fields)
-                Log.d("fields", fieldObject.fields[0])
                 Log.d("fields", fileFields.readText())
                 all = RESTAPI.fetchIngredients()
                 appendToAllIngredients()
                 items = mutableStateListOf(*allIngredients.toTypedArray())
                 isIngredientDataReady.value = true
-                fileFields.writeText(fieldObject.fields[0])
             }
         }
     }

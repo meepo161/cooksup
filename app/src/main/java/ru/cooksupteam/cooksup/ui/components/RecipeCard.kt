@@ -33,7 +33,7 @@ import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.uvm
-import ru.cooksupteam.cooksup.model.RecipeFull
+import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.time.Duration
 
@@ -43,7 +43,7 @@ private val HighlightCardPadding = 16.dp
 @SuppressLint("UnrememberedMutableState")
 @Composable
 fun RecipeCard(
-    recipe: RecipeFull,
+    recipe: Recipe,
     onRecipeClick: (String) -> Unit,
     onFavoriteClick: () -> Unit,
     isFavorite: MutableState<Boolean>,
@@ -80,23 +80,23 @@ fun RecipeCard(
                         .fillMaxWidth()
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
-                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
-                    Icon(
-                        imageVector = if (isFavorite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-                        tint = if (isFavorite.value) Color.Red else CooksupTheme.colors.uiBackground,
-                        contentDescription = "Favorite",
-                        modifier = Modifier
-                            .background(Color.Transparent)
-                            .padding(4.dp)
-                            .clickable {
-                                onFavoriteClick()
-                            }
-                    )
-                }
+//                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
+//                    Icon(
+//                        imageVector = if (isFavorite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+//                        tint = if (isFavorite.value) Color.Red else CooksupTheme.colors.uiBackground,
+//                        contentDescription = "Favorite",
+//                        modifier = Modifier
+//                            .background(Color.Transparent)
+//                            .padding(4.dp)
+//                            .clickable {
+//                                onFavoriteClick()
+//                            }
+//                    )
+//                }
                 RecipeImage(
                     imageUrl = recipe.pic,
                     modifier = Modifier
-                        .size(120.dp)
+                        .size(140.dp)
                         .align(Alignment.BottomCenter)
                 )
             }

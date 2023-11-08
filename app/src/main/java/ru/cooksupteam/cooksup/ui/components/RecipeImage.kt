@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.FilterQuality
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
@@ -26,7 +27,7 @@ fun RecipeImage(
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
     background: Color = CooksupTheme.colors.uiBackground,
-    shape: RoundedCornerShape = CircleShape
+    shape: Shape = CircleShape
 ) {
     CooksupSurface(
         color = CooksupTheme.colors.uiBackground,
@@ -49,23 +50,9 @@ fun RecipeImage(
                 .height(400.dp),
             contentScale = ContentScale.Crop,
         ) {
-            val state = painter.state
-            if (state is AsyncImagePainter.State.Loading || state is AsyncImagePainter.State.Error || state is AsyncImagePainter.State.Empty) {
-//                Image(
-//                    painter = painterResource(id = R.drawable.placeholder),
-//                    contentDescription = stringResource(id = R.string.downloading),
-//                    contentScale = ContentScale.FillHeight
-//                )
-
-//                Icon(
-//                    Icons.Rounded.WifiOff,
-//                    contentDescription = null,
-//                    tint = Color.Gray
-//                    )
+            if (painter.state is AsyncImagePainter.State.Loading || painter.state is AsyncImagePainter.State.Error) {
                 AnimatedShimmer()
-//                CircularProgressIndicator(color = CooksupTheme.colors.brand)
             } else {
-
                 SubcomposeAsyncImageContent()
             }
         }

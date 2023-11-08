@@ -19,6 +19,8 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.Button
+import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -91,7 +93,8 @@ class RecipesTab() : Tab {
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
-        val stateGrid = rememberLazyGridState(initialFirstVisibleItemIndex = rvm.lastIndexRecipe + 1)
+        val stateGrid =
+            rememberLazyGridState(initialFirstVisibleItemIndex = rvm.lastIndexRecipe + 1)
         val keyboardController = LocalSoftwareKeyboardController.current
         val scaffoldState = rememberScaffoldState()
 
@@ -221,18 +224,41 @@ class RecipesTab() : Tab {
                                     textAlign = TextAlign.Center
                                 )
                             )
+                            Button(
+                                onClick = {
+                                    if (rvm.allRecipes.isNotEmpty()) {
+                                        rvm.selectedRecipe = rvm.allRecipes.random()
+                                        navigator.push(RecipeScreen())
+                                    }
+                                },
+                                modifier = Modifier,
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = CooksupTheme.colors.uiFloated,
+                                    contentColor = CooksupTheme.colors.brand
+                                )
+                            ) {
+                                Text(
+                                    text = if (rvm.allRecipes.isEmpty()) "Загрузка..." else "Случайный рецепт",
+                                    color = CooksupTheme.colors.textPrimary,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(CooksupTheme.colors.uiFloated),
+                                    textAlign = TextAlign.Center,
+                                    maxLines = 1
+                                )
+                            }
                         }
                     }
                 } else {
                     Column {
                         val items =
                             if (ivm.selectedIngredients.isNotEmpty() && rvm.searchTextState.value.isNotEmpty()) {
-                                rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                rvm.recipeFiltered.sortedBy { it.name.lowercase() }.filter {
                                     it.name.lowercase()
                                         .contains(rvm.searchTextState.value.lowercase())
                                 }
                             } else if (rvm.searchTextState.value.isNotEmpty()) {
-                                rvm.allRecipeFull.sortedBy { it.name.lowercase() }.filter {
+                                rvm.recipeFiltered.sortedBy { it.name.lowercase() }.filter {
                                     val nameRequest =
                                         rvm.searchTextState.value.trim().lowercase().split(' ')
                                             .toSet()
@@ -256,7 +282,7 @@ class RecipesTab() : Tab {
                                     }
                                 }
                             } else {
-                                rvm.allRecipeFull
+                                rvm.recipeFiltered
                             }
                         Column(modifier = Modifier.fillMaxSize()) {
                             Spacer(modifier = Modifier.size(8.dp))
@@ -303,7 +329,7 @@ class RecipesTab() : Tab {
                                     )
                                 }
                                 if (stateGrid.isScrollInProgress) {
-                                    keyboardController?.hide()
+//                                    keyboardController?.hide()
                                 }
                                 itemsIndexed(items) { index, recipe ->
                                     val isFavorite =
@@ -312,7 +338,8 @@ class RecipesTab() : Tab {
                                         recipe = recipe,
                                         onRecipeClick = {
                                             rvm.lastIndexRecipe = index
-                                            navigator.push(RecipeFullScreen(recipe))
+                                            rvm.selectedRecipe = recipe
+                                            navigator.push(RecipeScreen())
                                         },
                                         onFavoriteClick = {
                                             if (uvm.isAuthorized.value) {
