@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -32,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -83,10 +86,12 @@ class MainTab : Tab {
                 if (firstStart) {
                     Log.d("firstStart", "22222222222222")
                     firstStart = false
-                    rvm.allRecipes.addAll(Json.decodeFromStream<List<Recipe>>(
-                        stream = Singleton.appContext.assets.open(
-                            "recipes.json"
-                        ))
+                    rvm.allRecipes.addAll(
+                        Json.decodeFromStream<List<Recipe>>(
+                            stream = Singleton.appContext.assets.open(
+                                "recipes.json"
+                            )
+                        )
                     )
                 }
             }
@@ -95,17 +100,17 @@ class MainTab : Tab {
         CooksupTheme {
             Scaffold(
                 scaffoldState = scaffoldState,
+                modifier = Modifier.fillMaxWidth(),
+                backgroundColor = CooksupTheme.colors.uiBackground,
                 topBar = {
                     TopAppBar(
-                        modifier = Modifier
-                            .heightIn(max = 32.dp)
-                            .background(CooksupTheme.colors.uiBackground)
-                            .fillMaxWidth(),
+                        elevation = 0.dp,
+                        modifier = Modifier.fillMaxWidth(),
+                        backgroundColor = CooksupTheme.colors.uiBackground,
                         title = {
                             Row(
                                 modifier = Modifier
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .fillMaxWidth(),
+                                    .background(CooksupTheme.colors.uiBackground),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Image(
@@ -122,7 +127,7 @@ class MainTab : Tab {
                                     fontSize = 22.sp
                                 )
                             }
-                        }, backgroundColor = CooksupTheme.colors.uiBackground
+                        }
                     )
                 },
             ) {
@@ -134,42 +139,12 @@ class MainTab : Tab {
                     LazyColumn(
                         state = scrollState,
                         modifier = Modifier
-                            .padding(bottom = 56.dp, top = 16.dp)
+                            .padding(bottom = 56.dp, top = 8.dp)
                             .fillMaxSize()
                             .background(CooksupTheme.colors.uiBackground),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-//                    item {
-//                        LazyRow(
-//                            verticalAlignment = Alignment.CenterVertically,
-//                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-//                            contentPadding = PaddingValues(start = 12.dp, end = 8.dp),
-//                            modifier = Modifier
-//                                .heightIn(min = 56.dp)
-//                                .fillMaxWidth()
-//                        ) {
-//                            item {
-//                                IconButton(onClick = { /*TODO*/ }) {
-//                                    Icon(
-//                                        imageVector = Icons.Rounded.FilterList,
-//                                        tint = CooksupTheme.colors.brand,
-//                                        contentDescription = stringResource(R.string.label_filters),
-//                                        modifier = Modifier.diagonalGradientBorder(
-//                                            colors = CooksupTheme.colors.interactiveSecondary,
-//                                            shape = CircleShape
-//                                        )
-//                                    )
-//                                }
-//                            }
-//                            item {
-//                                CooksupFilterChip(Filter("Низкокалорийные"))
-//                            }
-//                            item {
-//                                CooksupFilterChip(Filter("Безлактозные"))
-//                            }
-//                        }
-//                    }
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 repeat(5) { repeat ->

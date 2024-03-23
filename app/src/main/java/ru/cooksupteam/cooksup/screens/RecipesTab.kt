@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +39,7 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -68,7 +70,9 @@ import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
+import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.regex
+import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -97,6 +101,7 @@ class RecipesTab() : Tab {
             rememberLazyGridState(initialFirstVisibleItemIndex = rvm.lastIndexRecipe + 1)
         val keyboardController = LocalSoftwareKeyboardController.current
         val scaffoldState = rememberScaffoldState()
+
 
         LifecycleEffect(onStarted = {
             if (ivm.selectedIngredients.isNotEmpty() || rvm.searchTextState.value.isNotEmpty()) {
@@ -165,6 +170,17 @@ class RecipesTab() : Tab {
                                 onValueChange = {
                                     rvm.searchTextState.value =
                                         regex.replace(it, "").replace("Ё", "Е").replace("ё", "е")
+
+                                    scope.launch {
+                                        rvm.recipeFiltered.clear()
+                                        if (rvm.searchTextState.value.length > 1) {
+                                            rvm.recipeFiltered.addAll(
+                                                RESTAPI.fetchRecipeFilteredFromText(
+                                                    rvm.searchTextState.value
+                                                )
+                                            )
+                                        }
+                                    }
                                 },
                                 keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
                                 keyboardActions = KeyboardActions(
@@ -285,7 +301,16 @@ class RecipesTab() : Tab {
                                 rvm.recipeFiltered
                             }
                         Column(modifier = Modifier.fillMaxSize()) {
-                            Spacer(modifier = Modifier.size(8.dp))
+                            Text(
+                                text = if (!rvm.isAllDataReady.value) "" else if (items.size == 200) "Рецептов 200+" else "Рецептов ${items.size}",
+                                textAlign = TextAlign.Start,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.h6,
+                                softWrap = false,
+                                color = CooksupTheme.colors.textSecondary,
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            )
                             LazyVerticalGrid(
                                 state = stateGrid,
                                 columns = GridCells.Fixed(2),
@@ -295,39 +320,6 @@ class RecipesTab() : Tab {
                                     .weight(0.8f),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                item {
-                                    Text(
-                                        text = "Рецептов",
-                                        textAlign = TextAlign.End,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.h6,
-                                        softWrap = false,
-                                        color = CooksupTheme.colors.textSecondary,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                horizontal = 16.dp,
-                                                vertical = 4.dp
-                                            )
-                                    )
-                                }
-                                item {
-                                    Text(
-                                        text = "${if (items.size == 200) "200+" else items.size}",
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.h6,
-                                        softWrap = false,
-                                        color = CooksupTheme.colors.textSecondary,
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .padding(
-                                                horizontal = 16.dp,
-                                                vertical = 4.dp
-                                            )
-                                    )
-                                }
                                 if (stateGrid.isScrollInProgress) {
 //                                    keyboardController?.hide()
                                 }

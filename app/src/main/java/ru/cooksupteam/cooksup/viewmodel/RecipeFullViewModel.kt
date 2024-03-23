@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
@@ -9,6 +10,7 @@ import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
+import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.model.Recipe
 
 class RecipeViewModel {
@@ -29,6 +31,7 @@ class RecipeViewModel {
                 delay(10)
             }
             if (search.isNotEmpty()) {
+                recipeFiltered.clear()
                 recipeFiltered.addAll(
                     RESTAPI.fetchRecipeFilteredFromText(
                         search.replace("ё", "е").trim()
@@ -36,6 +39,7 @@ class RecipeViewModel {
                 )
             } else if (ivm.selectedIngredients.isNotEmpty()) {
                 if (ivm.lastIngredients != ivm.selectedIngredients.map { it.name }) {
+                    recipeFiltered.clear()
                     recipeFiltered.addAll(RESTAPI.fetchRecipeFiltered(ivm.selectedIngredients.map { it }))
                     ivm.lastIngredients = ivm.selectedIngredients.map { it.name }
                 }

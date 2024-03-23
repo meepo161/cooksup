@@ -47,9 +47,7 @@ import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.isEmailValid
-import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.model.Person
-import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
