@@ -112,8 +112,6 @@ class RecipesTab() : Tab {
         LifecycleEffect(onStarted = {
             if (ivm.selectedIngredients.isNotEmpty() || rvm.searchTextState.value.isNotEmpty()) {
                 rvm.load()
-            } else {
-                rvm.isAllDataReady.value = true
             }
         })
 
@@ -215,7 +213,7 @@ class RecipesTab() : Tab {
                                 IconButton(
                                     modifier = Modifier.weight(0.1f),
                                     onClick = {
-                                        if (!rvm.isAllDataReady.value) {
+                                        if (!rvm.allRecipes.isEmpty()) {
                                             navigator.push(RecipesFavoriteScreen())
                                         } else {
                                             Toast.makeText(
@@ -236,7 +234,7 @@ class RecipesTab() : Tab {
 
                         })
                 }) {
-                if (rvm.isAllDataReady.value && ivm.selectedIngredients.isEmpty() && rvm.searchTextState.value.isEmpty()) {
+                if (ivm.selectedIngredients.isEmpty() && rvm.searchTextState.value.isEmpty()) {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -334,7 +332,7 @@ class RecipesTab() : Tab {
                             }
                         Column(modifier = Modifier.fillMaxSize()) {
                             Text(
-                                text = if (!rvm.isAllDataReady.value) "" else if (items.size == 200) "Рецептов 200+" else "Рецептов ${items.size}",
+                                text = if (rvm.allRecipes.isEmpty()) "" else if (items.size == 200) "Рецептов 200+" else "Рецептов ${items.size}",
                                 textAlign = TextAlign.Start,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
@@ -358,7 +356,7 @@ class RecipesTab() : Tab {
                                 }
                             }
 
-                            AnimatedVisibility(!rvm.isAllDataReady.value) {
+                            AnimatedVisibility(!rvm.allRecipes.isEmpty()) {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(

@@ -25,12 +25,10 @@ import java.io.FileWriter
 import java.io.InputStreamReader
 
 
+@OptIn(ExperimentalSerializationApi::class)
 class RecipeViewModel {
-    lateinit var selectedRecipe: Recipe
-    var isAllDataReady = mutableStateOf(false)
     var allRecipes = mutableStateListOf<Recipe>()
     var recipeFiltered = mutableStateListOf<Recipe>()
-    private var favoriteRecipeRemote = listOf<Recipe>()
     var favoriteRecipe = mutableStateListOf<Recipe>()
     var lastIndexRecipe = 0
     var searchTextState = mutableStateOf("")
@@ -38,25 +36,25 @@ class RecipeViewModel {
         Environment.DIRECTORY_DOCUMENTS
     )
 
-    @OptIn(ExperimentalSerializationApi::class)
+    init {
+        if (allRecipes.isEmpty()) {
+            for (i in 1..8) {
+                scope.launch {
+                    Json.decodeFromStream<List<Recipe>>(
+                        stream = appContext.assets.open("recipes$i.json")
+                    ).asFlow().collect { recipe ->
+                        rvm.allRecipes.add(recipe)
+                    }
+                }
+            }
+        }
+    }
+
     fun load(search: String = "") {
-        isAllDataReady.value = false
         scope.launch {
             val file = File(path, "favorites.json")
             if (!file.exists()) {
                 file.createNewFile()
-            }
-            if (allRecipes.isEmpty()) {
-                for (i in 1..8) {
-                    scope.launch {
-                        Json.decodeFromStream<List<Recipe>>(
-                            stream = appContext.assets.open("recipes$i.json")
-                        ).asFlow().collect { recipe ->
-                            rvm.allRecipes.add(recipe)
-                        }
-                        load()
-                    }
-                }
             }
 
             if (search.isNotEmpty()) {
@@ -77,7 +75,6 @@ class RecipeViewModel {
                 delay(10)
             }
             loadFavorite()
-            isAllDataReady.value = true
         }
     }
 
@@ -107,6 +104,7 @@ class RecipeViewModel {
         val outputStream = File(path, "favorites.json").outputStream()
         outputStream.write(jsonString.toByteArray())
         outputStream.close()
+        loadFavorite()
         Toast.makeText(
             appContext,
             "Рецепт удален из избранного",
@@ -129,6 +127,7 @@ class RecipeViewModel {
         val outputStream = File(path, "favorites.json").outputStream()
         outputStream.write(jsonString.toByteArray())
         outputStream.close()
+        loadFavorite()
         Toast.makeText(
             appContext,
             "Рецепт добавлен в избранное",

@@ -171,7 +171,7 @@ class RecipesFavoriteScreen() : Screen {
                         })
                 }) {
 
-                if (!rvm.isAllDataReady.value) {
+                if (rvm.allRecipes.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(
@@ -230,7 +230,7 @@ class RecipesFavoriteScreen() : Screen {
                     }
                 } else {
                     Column {
-                        val items =
+                        val items = mutableStateOf(
                             rvm.favoriteRecipe.sortedBy { it.name.lowercase() }.filter {
                                 val nameRequest =
                                     searchTextState.value.trim().lowercase().split(' ')
@@ -251,11 +251,10 @@ class RecipesFavoriteScreen() : Screen {
                                 } else {
                                     (nameRequest subtract nameRecipe).isEmpty()
                                 }
-                            }
-
+                            })
                         Column(modifier = Modifier.fillMaxSize()) {
                             Text(
-                                text = if (!rvm.isAllDataReady.value) "" else if (items.size == 200) "Рецептов 200+" else "Рецептов ${items.size}",
+                                text = if (rvm.favoriteRecipe.isEmpty()) "" else if (items.value.size == 200) "Рецептов 200+" else "Рецептов ${items.value.size}",
                                 textAlign = TextAlign.Start,
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
@@ -265,7 +264,7 @@ class RecipesFavoriteScreen() : Screen {
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                             LazyColumn(state = lazyListState) {
-                                itemsIndexed(items) { index, recipe ->
+                                itemsIndexed(rvm.favoriteRecipe) { index, recipe ->
                                     CompactRecipeCard(
                                         recipe = recipe,
                                         index = index
@@ -279,7 +278,7 @@ class RecipesFavoriteScreen() : Screen {
                                 }
                             }
 
-                            AnimatedVisibility(!rvm.isAllDataReady.value) {
+                            AnimatedVisibility(rvm.favoriteRecipe.isEmpty()) {
                                 Column(
                                     modifier = Modifier.fillMaxSize(),
                                     verticalArrangement = Arrangement.spacedBy(
