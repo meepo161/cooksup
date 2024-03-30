@@ -1,84 +1,102 @@
 package ru.cooksupteam.cooksup.ui.components
 
-import androidx.compose.foundation.Image
+import android.annotation.SuppressLint
+import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
+import androidx.compose.material.Checkbox
+import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.rememberAsyncImagePainter
+import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
+import ru.cooksupteam.cooksup.screens.RecipeDetailScreen
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
+@SuppressLint("UnrememberedMutableState")
 @Composable
 fun CompactRecipeCard(
+    modifier: Modifier = Modifier,
     recipe: Recipe,
-    isFavorite: Boolean,
-    onFavoriteClick: () -> Unit, // Callback for favoriting action
-    modifier: Modifier = Modifier
+    index: Int,
+    onFavoriteClick: (Recipe, Boolean) -> Unit
 ) {
-    Card(
+    Log.d("favorite", rvm.favoriteRecipe.contains(recipe).toString())
+    val isFavorite = mutableStateOf(rvm.favoriteRecipe.contains(recipe))
+    CooksupCard(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        elevation = 4.dp,
-        shape = RoundedCornerShape(8.dp)
+            .height(128.dp)
+            .padding(4.dp)
+            .clickable {
+                rvm.lastIndexRecipe = index
+                navigator.push(RecipeDetailScreen(recipe))
+            },
+        elevation = 2.dp,
+        shape = RoundedCornerShape(4.dp),
     ) {
-        Column {
-            Image(
-                painter = rememberAsyncImagePainter(recipe.pic),
-                contentDescription = recipe.name,
+        Row(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+        ) {
+            IngredientImage(
+                imageUrl = recipe.pic,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp) // Larger image height
-                    .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
+                    .size(100.dp)
             )
             Column(
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(4.dp)
             ) {
                 Text(
                     text = recipe.name,
-                    style = MaterialTheme.typography.h6,
+                    color = CooksupTheme.colors.brandSecondary,
+                    style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = recipe.description,
-                    style = MaterialTheme.typography.body2,
-                    maxLines = 2, // Limit description to two lines
+                    color = CooksupTheme.colors.brand,
+                    style = MaterialTheme.typography.caption,
+                    maxLines = 4,
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                horizontalArrangement = Arrangement.End
-            ) {
-                IconButton(
-                    onClick = onFavoriteClick
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite) Icons.Filled.FavoriteBorder else Icons.Filled.Favorite,
-                        contentDescription = "Favorite",
-                        tint = if (isFavorite) MaterialTheme.colors.onSurface else MaterialTheme.colors.primary
-                    )
-                }
-            }
+            Checkbox(
+                checked = isFavorite.value,
+                onCheckedChange = {
+                    onFavoriteClick(recipe, isFavorite.value)
+                    isFavorite.value = !isFavorite.value
+//                    recipe.selected = isFavorite.value
+                },
+                colors = CheckboxDefaults.colors(
+                    checkedColor = CooksupTheme.colors.brandSecondary,
+                    uncheckedColor = CooksupTheme.colors.brandSecondary.copy(alpha = 0.6f),
+                    checkmarkColor = CooksupTheme.colors.uiBackground
+                ),
+                modifier = Modifier.padding(4.dp)
+            )
         }
     }
 }
+

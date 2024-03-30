@@ -19,12 +19,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.screens.IngredientDetailScreen
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @SuppressLint("UnrememberedMutableState")
 @Composable
@@ -59,17 +61,18 @@ fun CompactIngredientCard(
             )
             Column(
                 modifier = Modifier
-                    .padding(4.dp)
                     .weight(1f)
+                    .padding(4.dp)
             ) {
                 Text(
                     text = ingredient.name,
+                    color = CooksupTheme.colors.brandSecondary,
                     style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
                     text = ingredient.description,
-                    color = MaterialTheme.colors.secondary,
+                    color = CooksupTheme.colors.brand,
                     style = MaterialTheme.typography.caption,
                     maxLines = 4,
                     overflow = TextOverflow.Ellipsis
@@ -82,7 +85,11 @@ fun CompactIngredientCard(
                     isSelected.value = !isSelected.value
                     ingredient.selected = isSelected.value
                 },
-                colors = CheckboxDefaults.colors(checkedColor = MaterialTheme.colors.primary),
+                colors = CheckboxDefaults.colors(
+                    checkedColor = CooksupTheme.colors.brandSecondary,
+                    uncheckedColor = CooksupTheme.colors.brandSecondary.copy(alpha = 0.6f),
+                    checkmarkColor = CooksupTheme.colors.uiBackground
+                ),
                 modifier = Modifier.padding(4.dp)
             )
         }

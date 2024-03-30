@@ -12,6 +12,6 @@ object Singleton {
     var ip = "185.87.49.27"
     var port = "80"
     lateinit var appContext: Context
-    val scope = CoroutineScope(Dispatchers.Default)
+    val scope = CoroutineScope(Dispatchers.IO)
     lateinit var navigator: Navigator
 }

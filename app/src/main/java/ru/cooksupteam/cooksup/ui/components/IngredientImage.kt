@@ -3,7 +3,6 @@ package ru.cooksupteam.cooksup.ui.components
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.FilterQuality
@@ -16,7 +15,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 
 @Composable
@@ -26,7 +25,7 @@ fun IngredientImage(
     elevation: Dp = 0.dp
 ) {
     CooksupSurface(
-        color = MaterialTheme.colors.background,
+        color = CooksupTheme.colors.uiBackground,
         elevation = elevation,
         shape = CircleShape,
         modifier = modifier

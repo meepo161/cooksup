@@ -28,14 +28,14 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
 fun CooksupCard(
     modifier: Modifier = Modifier,
     shape: Shape = MaterialTheme.shapes.medium,
-    color: Color = MaterialTheme.colors.background,
-    contentColor: Color = MaterialTheme.colors.primary,
+    color: Color = CooksupTheme.colors.uiBackground,
+    contentColor: Color = CooksupTheme.colors.textPrimary,
     border: BorderStroke? = null,
     elevation: Dp = 4.dp,
     content: @Composable () -> Unit
@@ -56,7 +56,7 @@ fun CooksupCard(
 @Preview("large font", fontScale = 2f)
 @Composable
 private fun CardPreview() {
-    MaterialTheme {
+    CooksupTheme {
         CooksupCard {
             Text(text = "Demo", modifier = Modifier.padding(16.dp))
         }

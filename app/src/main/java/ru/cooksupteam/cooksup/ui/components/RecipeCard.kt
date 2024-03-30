@@ -1,40 +1,28 @@
 package ru.cooksupteam.cooksup.ui.components
 
 import android.annotation.SuppressLint
-import android.content.res.Configuration
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.Icon
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Favorite
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
-import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton.appContext
-import ru.cooksupteam.cooksup.Singleton.scope
-import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.model.Recipe
-
-import java.time.Duration
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 private val HighlightCardWidth = 170.dp
 private val HighlightCardPadding = 16.dp
@@ -58,8 +46,8 @@ fun RecipeCard(
     CooksupCard(
         modifier = modifier
             .size(
-                width = 64.dp,
-                height = 96.dp
+                width = 170.dp,
+                height = 250.dp
             )
     ) {
         Column(
@@ -69,20 +57,20 @@ fun RecipeCard(
         ) {
             Box(
                 modifier = Modifier
-                    .height(48.dp)
+                    .height(160.dp)
                     .fillMaxWidth()
             ) {
                 val gradientOffset = left - (scroll / 3f)
                 Box(
                     modifier = Modifier
-                        .height(36.dp)
+                        .height(100.dp)
                         .fillMaxWidth()
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
 //                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
 //                    Icon(
 //                        imageVector = if (isFavorite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-//                        tint = if (isFavorite.value) Color.Red else MaterialTheme.colors.background,
+//                        tint = if (isFavorite.value) Color.Red else CooksupTheme.colors.uiBackground,
 //                        contentDescription = "Favorite",
 //                        modifier = Modifier
 //                            .background(Color.Transparent)
@@ -95,7 +83,7 @@ fun RecipeCard(
                 RecipeImage(
                     imageUrl = recipe.pic,
                     modifier = Modifier
-                        .size(48.dp)
+                        .size(140.dp)
                         .align(Alignment.BottomCenter)
                 )
             }
@@ -104,13 +92,13 @@ fun RecipeCard(
                 text = recipe.name,
                 maxLines = 2,
 //                overflow = TextOverflow.Ellipsis,
-                fontSize = 12.sp,
+                fontSize = 18.sp,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6,
 //                softWrap = false,
-                color = MaterialTheme.colors.secondary,
+                color = CooksupTheme.colors.textSecondary,
                 modifier = Modifier
-                    .padding(horizontal = 2.dp)
+                    .padding(horizontal = 16.dp)
                     .fillMaxWidth()
             )
 

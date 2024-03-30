@@ -48,7 +48,7 @@ import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.isEmailValid
 import ru.cooksupteam.cooksup.model.Person
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
 fun RegisterPage() {
@@ -67,7 +67,7 @@ fun RegisterPage() {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
+            .background(CooksupTheme.colors.uiBackground)
             .padding(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Top
@@ -75,7 +75,7 @@ fun RegisterPage() {
         Text(
             text = "Регистрация",
             style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.primary,
+            color = CooksupTheme.colors.brand,
             fontSize = 30.sp
         )
         Spacer(modifier = Modifier.padding(20.dp))
@@ -87,7 +87,7 @@ fun RegisterPage() {
                 label = {
                     Text(
                         text = "Имя",
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -101,12 +101,12 @@ fun RegisterPage() {
                 ),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(0.8f),
-                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
+                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary
+                    backgroundColor = CooksupTheme.colors.uiBackground,
+                    cursorColor = CooksupTheme.colors.brand,
+                    focusedIndicatorColor = CooksupTheme.colors.brand,
+                    unfocusedIndicatorColor = CooksupTheme.colors.brand
                 )
             )
 
@@ -117,7 +117,7 @@ fun RegisterPage() {
                 label = {
                     Text(
                         text = "Email",
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -131,12 +131,12 @@ fun RegisterPage() {
                 ),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(0.8f),
-                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
+                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary
+                    backgroundColor = CooksupTheme.colors.uiBackground,
+                    cursorColor = CooksupTheme.colors.brand,
+                    focusedIndicatorColor = CooksupTheme.colors.brand,
+                    unfocusedIndicatorColor = CooksupTheme.colors.brand
                 )
             )
             OutlinedTextField(
@@ -146,7 +146,7 @@ fun RegisterPage() {
                 label = {
                     Text(
                         text = "Пароль",
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -163,28 +163,28 @@ fun RegisterPage() {
                 trailingIcon = {
                     IconButton(modifier = Modifier.indication(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(color = MaterialTheme.colors.primary)
+                        indication = rememberRipple(color = CooksupTheme.colors.brand)
                     ), onClick = {
                         passwordVisibility.value = !passwordVisibility.value
                     }) {
                         Icon(
                             imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = "",
-                            tint = if (passwordVisibility.value) MaterialTheme.colors.primary else Color.Gray
+                            tint = if (passwordVisibility.value) CooksupTheme.colors.brand else Color.Gray
                         )
                     }
                 },
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None
                 else PasswordVisualTransformation(),
-                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
+                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary,
-                    disabledLabelColor = MaterialTheme.colors.primary,
-                    focusedLabelColor = MaterialTheme.colors.primary,
-                    placeholderColor = MaterialTheme.colors.primary,
+                    backgroundColor = CooksupTheme.colors.uiBackground,
+                    cursorColor = CooksupTheme.colors.brand,
+                    focusedIndicatorColor = CooksupTheme.colors.brand,
+                    unfocusedIndicatorColor = CooksupTheme.colors.brand,
+                    disabledLabelColor = CooksupTheme.colors.brand,
+                    focusedLabelColor = CooksupTheme.colors.brand,
+                    placeholderColor = CooksupTheme.colors.brand,
 
                     )
             )
@@ -196,7 +196,7 @@ fun RegisterPage() {
                 label = {
                     Text(
                         text = "Подвердите пароль",
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -222,25 +222,25 @@ fun RegisterPage() {
                 trailingIcon = {
                     IconButton(modifier = Modifier.indication(
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(color = MaterialTheme.colors.primary)
+                        indication = rememberRipple(color = CooksupTheme.colors.brand)
                     ), onClick = {
                         passwordVisibility.value = !passwordVisibility.value
                     }) {
                         Icon(
                             imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = "",
-                            tint = if (passwordVisibility.value) MaterialTheme.colors.primary else Color.Gray
+                            tint = if (passwordVisibility.value) CooksupTheme.colors.brand else Color.Gray
                         )
                     }
                 },
                 visualTransformation = if (passwordVisibility.value) VisualTransformation.None
                 else PasswordVisualTransformation(),
-                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
+                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary
+                    backgroundColor = CooksupTheme.colors.uiBackground,
+                    cursorColor = CooksupTheme.colors.brand,
+                    focusedIndicatorColor = CooksupTheme.colors.brand,
+                    unfocusedIndicatorColor = CooksupTheme.colors.brand
                 )
             )
             Spacer(modifier = Modifier.padding(12.dp))
@@ -261,14 +261,14 @@ fun RegisterPage() {
                     .fillMaxWidth(0.8f)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.background
+                    backgroundColor = CooksupTheme.colors.brand,
+                    contentColor = CooksupTheme.colors.uiBackground
                 )
             ) {
                 Text(
                     text = "Зарегистрироваться",
                     fontSize = 18.sp,
-                    color = MaterialTheme.colors.background
+                    color = CooksupTheme.colors.uiBackground
                 )
             }
 
@@ -279,9 +279,9 @@ fun RegisterPage() {
                 modifier = Modifier.clickable(
                     enabled = true,
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(color = MaterialTheme.colors.primary),
+                    indication = rememberRipple(color = CooksupTheme.colors.brand),
                     onClick = { uvm.loginState.value = true }),
-                color = MaterialTheme.colors.primary
+                color = CooksupTheme.colors.brand
             )
 
         }
@@ -372,7 +372,7 @@ private fun postPerson(
 @Preview("large font", fontScale = 2f)
 @Composable
 private fun FilterEnabledPreview() {
-    MaterialTheme {
+    CooksupTheme {
         RegisterPage()
     }
 }

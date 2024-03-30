@@ -44,7 +44,7 @@ import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.uvm
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.io.File
 
 
@@ -61,14 +61,14 @@ fun LoginPage() {
         verticalArrangement = Arrangement.Center,
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colors.background)
+            .background(CooksupTheme.colors.uiBackground)
             .padding(12.dp)
     ) {
 
         Text(
             text = "Авторизация",
             style = MaterialTheme.typography.h4,
-            color = MaterialTheme.colors.primary,
+            color = CooksupTheme.colors.brand,
             fontSize = 30.sp
         )
         Spacer(modifier = Modifier.padding(20.dp))
@@ -80,7 +80,7 @@ fun LoginPage() {
                 label = {
                     Text(
                         text = "Email",
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -95,12 +95,12 @@ fun LoginPage() {
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .focusRequester(focusRequester = focusRequester),
-                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
+                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary
+                    backgroundColor = CooksupTheme.colors.uiBackground,
+                    cursorColor = CooksupTheme.colors.brand,
+                    focusedIndicatorColor = CooksupTheme.colors.brand,
+                    unfocusedIndicatorColor = CooksupTheme.colors.brand
                 )
             )
             OutlinedTextField(
@@ -113,7 +113,7 @@ fun LoginPage() {
                         Icon(
                             imageVector = if (passwordVisibility.value) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = "",
-                            tint = if (passwordVisibility.value) MaterialTheme.colors.primary else Color.Gray
+                            tint = if (passwordVisibility.value) CooksupTheme.colors.brand else Color.Gray
                         )
                     }
                 },
@@ -121,7 +121,7 @@ fun LoginPage() {
                 label = {
                     Text(
                         text = "Пароль",
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
                 },
                 keyboardOptions = KeyboardOptions(
@@ -138,12 +138,12 @@ fun LoginPage() {
                 modifier = Modifier
                     .fillMaxWidth(0.8f)
                     .focusRequester(focusRequester = focusRequester),
-                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
+                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
                 colors = TextFieldDefaults.textFieldColors(
-                    backgroundColor = MaterialTheme.colors.background,
-                    cursorColor = MaterialTheme.colors.primary,
-                    focusedIndicatorColor = MaterialTheme.colors.primary,
-                    unfocusedIndicatorColor = MaterialTheme.colors.primary
+                    backgroundColor = CooksupTheme.colors.uiBackground,
+                    cursorColor = CooksupTheme.colors.brand,
+                    focusedIndicatorColor = CooksupTheme.colors.brand,
+                    unfocusedIndicatorColor = CooksupTheme.colors.brand
                 )
 
             )
@@ -157,14 +157,14 @@ fun LoginPage() {
                     .fillMaxWidth(0.8f)
                     .height(50.dp),
                 colors = ButtonDefaults.buttonColors(
-                    backgroundColor = MaterialTheme.colors.primary,
-                    contentColor = MaterialTheme.colors.background
+                    backgroundColor = CooksupTheme.colors.brand,
+                    contentColor = CooksupTheme.colors.uiBackground
                 )
             ) {
                 Text(
                     text = "Вход",
                     fontSize = 20.sp,
-                    color = MaterialTheme.colors.background
+                    color = CooksupTheme.colors.uiBackground
                 )
             }
 
@@ -174,9 +174,9 @@ fun LoginPage() {
                 modifier = Modifier.clickable(
                     enabled = true,
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(color = MaterialTheme.colors.primary),
+                    indication = rememberRipple(color = CooksupTheme.colors.brand),
                     onClick = { uvm.loginState.value = false }),
-                color = MaterialTheme.colors.primary
+                color = CooksupTheme.colors.brand
             )
         }
     }

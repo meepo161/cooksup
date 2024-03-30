@@ -28,7 +28,6 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -50,7 +49,6 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import kotlinx.serialization.json.encodeToJsonElement
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.scope
@@ -60,8 +58,7 @@ import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.ui.components.SnackCard
-
-import java.io.File
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 
 class MainTab : Tab {
@@ -88,54 +85,22 @@ class MainTab : Tab {
         val scrollState = rememberLazyListState()
 
         LifecycleEffect(onStarted = {
-            scope.launch {
-                if (firstStart) {
-                    Log.d("firstStart", "22222222222222")
-                    firstStart = false
-                    rvm.allRecipes.clear()
-                    Json.decodeFromStream<List<Recipe>>(
-                        stream = Singleton.appContext.assets.open(
-                            "recipes0.json"
-                        )
-                    ).asFlow().collect { recipe ->
-                        rvm.allRecipes.add(recipe)
-                    }
-                    scope.launch {
-                        for (i in 1..8){
-                            Json.decodeFromStream<List<Recipe>>(
-                                stream = Singleton.appContext.assets.open(
-                                    "recipes$i.json"
-                                )
-                            ).asFlow().collect { recipe ->
-                                rvm.allRecipes.add(recipe)
-                            }
-                        }
-                    }
-//                    rvm.allRecipes.addAll(
-//                        Json.decodeFromStream<List<Recipe>>(
-//                            stream = Singleton.appContext.assets.open(
-//                                "recipes.json"
-//                            )
-//                        )
-//                    )
-                }
-            }
         })
 
-        MaterialTheme {
+        CooksupTheme {
             Scaffold(
                 scaffoldState = scaffoldState,
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = MaterialTheme.colors.background,
+                backgroundColor = CooksupTheme.colors.uiBackground,
                 topBar = {
                     TopAppBar(
                         elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = MaterialTheme.colors.background,
+                        backgroundColor = CooksupTheme.colors.uiBackground,
                         title = {
                             Row(
                                 modifier = Modifier
-                                    .background(MaterialTheme.colors.background),
+                                    .background(CooksupTheme.colors.uiBackground),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Image(
@@ -148,7 +113,7 @@ class MainTab : Tab {
                                 Spacer(modifier = Modifier.size(8.dp))
                                 Text(
                                     text = stringResource(id = R.string.app_name),
-                                    color = MaterialTheme.colors.primary,
+                                    color = CooksupTheme.colors.brand,
                                     fontSize = 22.sp
                                 )
                             }
@@ -159,14 +124,14 @@ class MainTab : Tab {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colors.background)
+                        .background(CooksupTheme.colors.uiBackground)
                 ) {
                     LazyColumn(
                         state = scrollState,
                         modifier = Modifier
                             .padding(bottom = 56.dp, top = 8.dp)
                             .fillMaxSize()
-                            .background(MaterialTheme.colors.background),
+                            .background(CooksupTheme.colors.uiBackground),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -207,7 +172,7 @@ class MainTab : Tab {
                                         overflow = TextOverflow.Ellipsis,
                                         style = MaterialTheme.typography.h6,
                                         softWrap = false,
-                                        color = MaterialTheme.colors.secondary,
+                                        color = CooksupTheme.colors.textSecondary,
                                         modifier = Modifier.padding(horizontal = 16.dp)
                                     )
                                     LazyRow(
@@ -235,10 +200,7 @@ class MainTab : Tab {
                                                     )
                                                 },
                                                 index = index,
-                                                gradient = listOf(
-                                                    MaterialTheme.colors.primary,
-                                                    MaterialTheme.colors.secondary
-                                                ),
+                                                gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
                                                 gradientWidth = 1800f,
                                                 scroll = 1,
                                                 modifier = Modifier

@@ -22,7 +22,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
@@ -61,7 +60,7 @@ import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.uvm
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import java.io.File
 
 class ProfileTab() : Tab {
@@ -85,37 +84,37 @@ class ProfileTab() : Tab {
     override fun Content() {
         var scaffoldState = rememberScaffoldState()
 
-        MaterialTheme {
+        CooksupTheme {
             Scaffold(
                 scaffoldState = scaffoldState,
                 topBar = {
                     TopAppBar(
                         modifier = Modifier
                             .heightIn(max = 32.dp)
-                            .background(MaterialTheme.colors.background)
+                            .background(CooksupTheme.colors.uiBackground)
                             .fillMaxWidth(),
                         title = {
                             Row(
                                 modifier = Modifier
-                                    .background(MaterialTheme.colors.background)
+                                    .background(CooksupTheme.colors.uiBackground)
                                     .fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Spacer(modifier = Modifier.size(8.dp))
                                 Text(
                                     text = stringResource(id = R.string.my_profile),
-                                    color = MaterialTheme.colors.primary,
+                                    color = CooksupTheme.colors.brand,
                                     fontSize = 22.sp
                                 )
                             }
-                        }, backgroundColor = MaterialTheme.colors.background
+                        }, backgroundColor = CooksupTheme.colors.uiBackground
                     )
                 },
             ) {
                 Column(
                     Modifier
                         .fillMaxSize()
-                        .background(MaterialTheme.colors.background)
+                        .background(CooksupTheme.colors.uiBackground)
                         .padding(bottom = 56.dp)
                 ) {
                     if (uvm.isAuthorized.value) {
@@ -200,7 +199,7 @@ class ProfileTab() : Tab {
                         ),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))
@@ -228,7 +227,7 @@ class ProfileTab() : Tab {
                         modifier = Modifier.size(24.dp),
                         imageVector = Icons.Outlined.Edit,
                         contentDescription = "Edit Details",
-                        tint = MaterialTheme.colors.primary
+                        tint = CooksupTheme.colors.brand
                     )
                 }
 
@@ -245,7 +244,7 @@ class ProfileTab() : Tab {
                 .clickable(
                     enabled = true,
                     interactionSource = remember { MutableInteractionSource() },
-                    indication = rememberRipple(color = MaterialTheme.colors.primary),
+                    indication = rememberRipple(color = CooksupTheme.colors.brand),
                     onClick = {
                         when (item.title) {
                             "Выйти" -> {
@@ -274,7 +273,7 @@ class ProfileTab() : Tab {
                     .size(32.dp),
                 imageVector = item.icon,
                 contentDescription = item.title,
-                tint = MaterialTheme.colors.primary
+                tint = CooksupTheme.colors.brand
             )
 
             Row(
@@ -295,7 +294,7 @@ class ProfileTab() : Tab {
                         style = TextStyle(
                             fontSize = 18.sp,
                         ),
-                        color = MaterialTheme.colors.primary
+                        color = CooksupTheme.colors.brand
                     )
 
                     Spacer(modifier = Modifier.height(2.dp))

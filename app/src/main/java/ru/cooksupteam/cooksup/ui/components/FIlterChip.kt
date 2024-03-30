@@ -18,7 +18,7 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.cooksupteam.cooksup.model.Filter
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Composable
 fun CooksupFilterChip(
@@ -28,18 +28,15 @@ fun CooksupFilterChip(
 ) {
     val (selected, setSelected) = filter.enabled
     val backgroundColor by animateColorAsState(
-        if (selected) MaterialTheme.colors.secondary else MaterialTheme.colors.background
+        if (selected) CooksupTheme.colors.brandSecondary else CooksupTheme.colors.uiBackground
     )
     val border = Modifier.fadeInDiagonalGradientBorder(
         showBorder = !selected,
-        colors = listOf(
-            MaterialTheme.colors.primary,
-            MaterialTheme.colors.secondary
-        ),
+        colors = CooksupTheme.colors.interactiveSecondary,
         shape = shape
     )
     val textColor by animateColorAsState(
-        if (selected) Color.Black else MaterialTheme.colors.secondary
+        if (selected) Color.Black else CooksupTheme.colors.textSecondary
     )
 
     CooksupSurface(
@@ -55,10 +52,7 @@ fun CooksupFilterChip(
         val backgroundPressed =
             if (pressed) {
                 Modifier.offsetGradientBackground(
-                    listOf(
-                        MaterialTheme.colors.primary,
-                        MaterialTheme.colors.secondary
-                    ),
+                    CooksupTheme.colors.interactiveSecondary,
                     200f,
                     0f
                 )
@@ -95,7 +89,7 @@ fun CooksupFilterChip(
 @Preview("large font", fontScale = 2f)
 @Composable
 private fun FilterDisabledPreview() {
-    MaterialTheme {
+    CooksupTheme {
         CooksupFilterChip(Filter(name = "Низкокалорийные", enabled = false), Modifier.padding(4.dp))
     }
 }
@@ -105,7 +99,7 @@ private fun FilterDisabledPreview() {
 @Preview("large font", fontScale = 2f)
 @Composable
 private fun FilterEnabledPreview() {
-    MaterialTheme {
+    CooksupTheme {
         CooksupFilterChip(Filter(name = "Низкокалорийные", enabled = true))
     }
 }

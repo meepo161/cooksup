@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,7 +18,7 @@ import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-
+import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 
 @Composable
@@ -27,11 +26,11 @@ fun RecipeImage(
     imageUrl: String,
     modifier: Modifier = Modifier,
     elevation: Dp = 0.dp,
-    background: Color = MaterialTheme.colors.background,
+    background: Color = CooksupTheme.colors.uiBackground,
     shape: Shape = CircleShape
 ) {
     CooksupSurface(
-        color = MaterialTheme.colors.background,
+        color = CooksupTheme.colors.uiBackground,
         elevation = elevation,
         shape = shape,
         modifier = modifier
