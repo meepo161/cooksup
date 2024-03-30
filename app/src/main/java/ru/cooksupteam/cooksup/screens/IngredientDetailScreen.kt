@@ -64,16 +64,14 @@ import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.ui.components.CooksupSurface
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.SnackCard
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.ui.theme.Neutral8
+
 import ru.cooksupteam.cooksup.utils.mirroringBackIcon
 import kotlin.math.max
 import kotlin.math.min
 
 
 class IngredientDetailScreen(
-    var ingredient: Ingredient,
-    var onClickArrowBack: () -> Unit = { navigator.popUntilRoot() }
+    var ingredient: Ingredient, var onClickArrowBack: () -> Unit = { navigator.popUntilRoot() }
 ) : Screen {
     val BottomBarHeight = 56.dp
     val TitleHeight = 128.dp
@@ -87,7 +85,8 @@ class IngredientDetailScreen(
     val HzPadding = Modifier.padding(horizontal = 24.dp)
 
     @SuppressLint(
-        "UnusedMaterialScaffoldPaddingParameter", "MutableCollectionMutableState",
+        "UnusedMaterialScaffoldPaddingParameter",
+        "MutableCollectionMutableState",
         "UnrememberedMutableState"
     )
     @Composable
@@ -100,41 +99,32 @@ class IngredientDetailScreen(
             }
         )
         val snack = ingredient
-        val related =
-            ivm.allIngredients.filter {
-                it.name.contains(
-                    ingredient.name.removeRange(
-                        3,
-                        ingredient.name.length
-                    )
+        val related = ivm.allIngredients.filter {
+            it.name.contains(
+                ingredient.name.removeRange(
+                    3, ingredient.name.length
                 )
-            }.filter { it.name != ingredient.name }
-        CooksupTheme {
+            )
+        }.filter { it.name != ingredient.name }
+        MaterialTheme {
             Scaffold(
-                backgroundColor = CooksupTheme.colors.uiBackground,
                 topBar = {
-                    TopAppBar(
-                        backgroundColor = CooksupTheme.colors.uiBackground,
-                        title = {
-                            IconButton(
-                                onClick = { onClickArrowBack() },
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowBack,
-                                    tint = CooksupTheme.colors.brand,
-                                    contentDescription = "Back",
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground)
-                                )
-                            }
-                            Text(
-                                text = ingredient.name,
-                                color = CooksupTheme.colors.brand,
-                                maxLines = 2,
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                    TopAppBar(title = {
+                        IconButton(
+                            onClick = { onClickArrowBack() }, modifier = Modifier
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                modifier = Modifier
                             )
                         }
-                    )
+                        Text(
+                            text = ingredient.name,
+
+                            maxLines = 2, modifier = Modifier
+                        )
+                    })
                 },
             ) {
                 Box(Modifier.fillMaxSize()) {
@@ -143,7 +133,6 @@ class IngredientDetailScreen(
                     Body(related, scroll)
                     Title(snack) { scroll.value }
                     Image(snack.pic) { scroll.value }
-//                    Up(upPress)
                     CartBottomBar(modifier = Modifier.align(Alignment.BottomCenter), textButton)
                 }
             }
@@ -156,35 +145,19 @@ class IngredientDetailScreen(
             modifier = Modifier
                 .height(280.dp)
                 .fillMaxWidth()
-                .background(Brush.horizontalGradient(CooksupTheme.colors.tornado1))
+                .background(
+                    Brush.horizontalGradient(
+                        listOf(
+                            MaterialTheme.colors.primary, MaterialTheme.colors.secondary
+                        )
+                    )
+                )
         )
     }
 
     @Composable
-    private fun Up(upPress: () -> Unit) {
-        IconButton(
-            onClick = upPress,
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .size(36.dp)
-                .background(
-                    color = Neutral8.copy(alpha = 0.32f),
-                    shape = CircleShape
-                )
-        ) {
-            Icon(
-                imageVector = mirroringBackIcon(),
-                tint = CooksupTheme.colors.iconInteractive,
-                contentDescription = stringResource(R.string.label_back)
-            )
-        }
-    }
-
-    @Composable
     private fun Body(
-        related: List<Ingredient>,
-        scroll: ScrollState
+        related: List<Ingredient>, scroll: ScrollState
     ) {
         Column {
             Spacer(
@@ -198,11 +171,10 @@ class IngredientDetailScreen(
             ) {
                 Spacer(Modifier.height(GradientScroll))
                 CooksupSurface(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(CooksupTheme.colors.uiBackground)
+                    Modifier.fillMaxWidth()
+
                 ) {
-                    Column(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
+                    Column(modifier = Modifier) {
                         Spacer(Modifier.height(ImageOverlap))
                         Spacer(Modifier.height(TitleHeight))
                         var seeMore by remember { mutableStateOf(true) }
@@ -210,129 +182,90 @@ class IngredientDetailScreen(
                         Text(
                             text = "Описание",
                             style = MaterialTheme.typography.overline,
-                            color = CooksupTheme.colors.textPrimary,
-                            modifier = HzPadding
-                                .background(CooksupTheme.colors.uiBackground)
-                                .padding(vertical = 16.dp)
+                            modifier = HzPadding.padding(vertical = 16.dp)
                         )
                         Text(
                             text = ingredient.description,
-                            style = MaterialTheme.typography.body1,
-                            color = CooksupTheme.colors.textHelp,
+                            style = MaterialTheme.typography.caption,
                             maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                             overflow = TextOverflow.Ellipsis,
-                            modifier = HzPadding
-                                .background(CooksupTheme.colors.uiBackground)
-                                .padding(vertical = 16.dp)
+                            modifier = HzPadding.padding(vertical = 16.dp)
                         )
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
-                                text = "История появления",
-                                style = MaterialTheme.typography.overline,
-                                color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                text = "История появления", style = MaterialTheme.typography.overline,
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.history,
-                                style = MaterialTheme.typography.body1,
-                                color = CooksupTheme.colors.textHelp,
+                                style = MaterialTheme.typography.caption,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
-                                text = "Польза и вред",
-                                style = MaterialTheme.typography.overline,
-                                color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                text = "Польза и вред", style = MaterialTheme.typography.overline,
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.benefitAndHarm,
-                                style = MaterialTheme.typography.body1,
-                                color = CooksupTheme.colors.textHelp,
+                                style = MaterialTheme.typography.caption,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
-                                text = "На вкус",
-                                style = MaterialTheme.typography.overline,
-                                color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                text = "На вкус", style = MaterialTheme.typography.overline,
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.taste,
-                                style = MaterialTheme.typography.body1,
-                                color = CooksupTheme.colors.textHelp,
+                                style = MaterialTheme.typography.caption,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "Как это есть/пить",
                                 style = MaterialTheme.typography.overline,
-                                color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.howTo,
-                                style = MaterialTheme.typography.body1,
-                                color = CooksupTheme.colors.textHelp,
+                                style = MaterialTheme.typography.caption,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = "Как и сколько хранить",
                                 style = MaterialTheme.typography.overline,
-                                color = CooksupTheme.colors.textPrimary,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
                         AnimatedVisibility(visible = !seeMore) {
                             Text(
                                 text = ingredient.howLong,
-                                style = MaterialTheme.typography.body1,
-                                color = CooksupTheme.colors.textHelp,
+                                style = MaterialTheme.typography.caption,
                                 maxLines = if (seeMore) 5 else Int.MAX_VALUE,
                                 overflow = TextOverflow.Ellipsis,
-                                modifier = HzPadding
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .padding(vertical = 16.dp)
+                                modifier = HzPadding.padding(vertical = 16.dp)
                             )
                         }
 
@@ -341,36 +274,32 @@ class IngredientDetailScreen(
                         } else {
                             stringResource(id = R.string.see_less)
                         }
-                        Text(
-                            text = textButton,
+                        Text(text = textButton,
                             style = MaterialTheme.typography.button,
                             textAlign = TextAlign.Center,
-                            color = CooksupTheme.colors.textLink,
+
                             modifier = Modifier
                                 .heightIn(20.dp)
                                 .fillMaxWidth()
                                 .padding(top = 15.dp)
                                 .clickable {
                                     seeMore = !seeMore
-                                }
-                        )
+                                })
                         Spacer(Modifier.height(40.dp))
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 12.dp),
                             horizontalArrangement = Arrangement.spacedBy(
-                                8.dp,
-                                Alignment.CenterHorizontally
+                                8.dp, Alignment.CenterHorizontally
                             )
                         ) {
                             Box(
-                                modifier = Modifier
-                                    .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.weight(0.25f)
+
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -378,23 +307,21 @@ class IngredientDetailScreen(
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = ingredient.nutrition.calories.toString(),
                                         style = MaterialTheme.typography.button,
-                                        textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
                             Box(
-                                modifier = Modifier
-                                    .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.weight(0.25f)
+
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -402,23 +329,21 @@ class IngredientDetailScreen(
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = ingredient.nutrition.proteins.toString(),
                                         style = MaterialTheme.typography.button,
-                                        textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
                             Box(
-                                modifier = Modifier
-                                    .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.weight(0.25f)
+
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -426,23 +351,21 @@ class IngredientDetailScreen(
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = ingredient.nutrition.fats.toString(),
                                         style = MaterialTheme.typography.button,
-                                        textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
                             Box(
-                                modifier = Modifier
-                                    .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.weight(0.25f)
+
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier,
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -450,20 +373,19 @@ class IngredientDetailScreen(
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = ingredient.nutrition.carbohydrates.toString(),
                                         style = MaterialTheme.typography.button,
-                                        textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
                         }
 
                         Spacer(Modifier.height(16.dp))
-                        Divider(color = CooksupTheme.colors.uiFloated)
+                        Divider(color = MaterialTheme.colors.primary)
                         Spacer(Modifier.height(16.dp))
 
                         LazyRow(
@@ -472,19 +394,15 @@ class IngredientDetailScreen(
                         ) {
                             items(related) { ingr ->
                                 SnackCard(
-                                    ingredient = ingr,
-                                    onSnackClick = {
+                                    ingredient = ingr, onSnackClick = {
                                         navigator.push(
                                             IngredientDetailScreen(
                                                 ingr
                                             )
                                         )
-                                    },
-                                    index = 0,
-                                    gradient = CooksupTheme.colors.gradient6_2,
-                                    gradientWidth = 1800f,
-                                    scroll = 1,
-                                    modifier = Modifier
+                                    }, index = 0, gradient = listOf(
+                                        MaterialTheme.colors.primary, MaterialTheme.colors.secondary
+                                    ), gradientWidth = 1800f, scroll = 1, modifier = Modifier
                                 )
                             }
                         }
@@ -505,8 +423,7 @@ class IngredientDetailScreen(
         val maxOffset = with(LocalDensity.current) { MaxTitleOffset.toPx() }
         val minOffset = with(LocalDensity.current) { MinTitleOffset.toPx() }
 
-        Column(
-            verticalArrangement = Arrangement.Bottom,
+        Column(verticalArrangement = Arrangement.Bottom,
             modifier = Modifier
                 .heightIn(min = TitleHeight)
                 .statusBarsPadding()
@@ -515,34 +432,24 @@ class IngredientDetailScreen(
                     val offset = (maxOffset - scroll).coerceAtLeast(minOffset)
                     IntOffset(x = 0, y = offset.toInt())
                 }
-                .background(color = CooksupTheme.colors.uiBackground)
-        ) {
+                .background(color = MaterialTheme.colors.background)) {
             Spacer(Modifier.height(16.dp))
             Text(
                 text = snack.name,
                 style = MaterialTheme.typography.h4,
-                color = CooksupTheme.colors.textSecondary,
-                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
-            )
-            Text(
-                text = snack.name,
-                style = MaterialTheme.typography.subtitle2,
-                fontSize = 20.sp,
-                color = CooksupTheme.colors.textHelp,
-                modifier = HzPadding.background(CooksupTheme.colors.uiBackground)
+                color = MaterialTheme.colors.secondary,
+                modifier = HzPadding
             )
             Spacer(Modifier.height(8.dp))
-            Divider(color = CooksupTheme.colors.uiFloated)
+            Divider(color = MaterialTheme.colors.primary)
         }
     }
 
     @Composable
     private fun Image(
-        imageUrl: String,
-        scrollProvider: () -> Int
+        imageUrl: String, scrollProvider: () -> Int
     ) {
-        val collapseRange =
-            with(LocalDensity.current) { (MaxTitleOffset - MinTitleOffset).toPx() }
+        val collapseRange = with(LocalDensity.current) { (MaxTitleOffset - MinTitleOffset).toPx() }
         val collapseFractionProvider = {
             (scrollProvider() / collapseRange).coerceIn(0f, 1f)
         }
@@ -552,8 +459,7 @@ class IngredientDetailScreen(
             modifier = HzPadding.then(Modifier.statusBarsPadding())
         ) {
             IngredientImage(
-                imageUrl = imageUrl,
-                modifier = Modifier.fillMaxSize()
+                imageUrl = imageUrl, modifier = Modifier.fillMaxSize()
             )
         }
     }
@@ -565,8 +471,7 @@ class IngredientDetailScreen(
         content: @Composable () -> Unit
     ) {
         Layout(
-            modifier = modifier,
-            content = content
+            modifier = modifier, content = content
         ) { measurables, constraints ->
             check(measurables.size == 1)
 
@@ -575,8 +480,7 @@ class IngredientDetailScreen(
             val imageMaxSize = min(ExpandedImageSize.roundToPx(), constraints.maxWidth)
             val imageMinSize = max(CollapsedImageSize.roundToPx(), constraints.minWidth)
             val imageWidth = lerp(imageMaxSize, imageMinSize, collapseFraction)
-            val imagePlaceable =
-                measurables[0].measure(Constraints.fixed(imageWidth, imageWidth))
+            val imagePlaceable = measurables[0].measure(Constraints.fixed(imageWidth, imageWidth))
 
             val imageY = lerp(MinTitleOffset, MinImageOffset, collapseFraction).roundToPx()
             val imageX = lerp(
@@ -585,8 +489,7 @@ class IngredientDetailScreen(
                 collapseFraction
             )
             layout(
-                width = constraints.maxWidth,
-                height = imageY + imageWidth
+                width = constraints.maxWidth, height = imageY + imageWidth
             ) {
                 imagePlaceable.placeRelative(imageX, imageY)
             }
@@ -596,16 +499,15 @@ class IngredientDetailScreen(
     @Composable
     private fun CartBottomBar(modifier: Modifier = Modifier, textButton: MutableState<String>) {
         val (count, updateCount) = remember { mutableStateOf(1) }
-        CooksupSurface(modifier.background(CooksupTheme.colors.uiBackground)) {
-            Column(Modifier.background(CooksupTheme.colors.uiBackground)) {
-                Divider(color = CooksupTheme.colors.uiFloated)
+        CooksupSurface(modifier) {
+            Column(Modifier) {
+                Divider(color = MaterialTheme.colors.primary)
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .navigationBarsPadding()
-                        .then(HzPadding.background(CooksupTheme.colors.uiBackground))
+                        .then(HzPadding)
                         .heightIn(min = BottomBarHeight)
-                        .background(CooksupTheme.colors.uiBackground)
                 ) {
                     Spacer(Modifier.width(16.dp))
                     Button(
@@ -619,20 +521,11 @@ class IngredientDetailScreen(
                                 ingredient.selected = true
                                 textButton.value = "Убрать из продуктов"
                             }
-                        },
-                        modifier = Modifier
-                            .weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            backgroundColor = CooksupTheme.colors.uiFloated,
-                            contentColor = CooksupTheme.colors.brand
-                        )
+                        }, modifier = Modifier.weight(1f)
                     ) {
                         Text(
                             text = textButton.value,
-                            color = CooksupTheme.colors.textPrimary,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(CooksupTheme.colors.uiFloated),
+                            modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
                             maxLines = 1
                         )

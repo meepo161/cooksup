@@ -7,13 +7,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.decodeFromStream
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.model.Ingredient
 import java.io.File
 
 class IngredientsViewModel {
-    var all = listOf<Ingredient>()
     private val scope = CoroutineScope(Dispatchers.Default)
     var isIngredientDataReady = mutableStateOf(true)
     var lastIngredients: List<String> = listOf()
@@ -29,7 +30,7 @@ class IngredientsViewModel {
     }
 
     fun load() {
-        if (all.isEmpty()) {
+        if (allIngredients.isEmpty()) {
             scope.launch {
                 isIngredientDataReady.value = false
                 if (!fileFields.exists()) {
@@ -38,31 +39,17 @@ class IngredientsViewModel {
                     }
                 }
                 Log.d("fields", fileFields.readText())
-                all = RESTAPI.fetchIngredients()
-                appendToAllIngredients()
+                allIngredients.addAll(
+                    Json.decodeFromStream<List<Ingredient>>(
+                        stream = Singleton.appContext.assets.open(
+                            "ingredients.json"
+                        )
+                    ).sortedBy { it.name }
+                )
                 items = mutableStateListOf(*allIngredients.toTypedArray())
                 isIngredientDataReady.value = true
             }
         }
-    }
-
-    private fun appendToAllIngredients() {
-        allIngredients.clear()
-        allIngredients.addAll(all.map {
-            Ingredient(
-                name = it.name.replace("процент", "%"),
-                description = it.description,
-//                pic = "http://$ip:$port/ingredients_pics/" + it.name + ".webp",
-                pic = it.pic,
-                nutrition = it.nutrition,
-                history = it.history,
-                benefitAndHarm = it.benefitAndHarm,
-                taste = it.taste,
-                howTo = it.howTo,
-                howLong = it.howLong,
-                tags = it.tags,
-            )
-        }.sortedBy { it.name })
     }
 
     fun getFilteredIngredients(predicate: String): List<Ingredient> =

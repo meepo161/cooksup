@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup
 
+import kotlinx.serialization.decodeFromString
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.HttpTimeout
@@ -38,17 +39,10 @@ object RESTAPI {
         }
     }
 
-    @OptIn(ExperimentalSerializationApi::class)
-    var ingredients =
-        Json.decodeFromStream<List<Ingredient>>(stream = appContext.assets.open("ingredients.json"))
 
     suspend fun fetchVersionDB(): List<FieldRemote> {
         val response = client.get("http://$ip:$port/fields")
         return response.body()
-    }
-
-    fun fetchIngredients(): List<Ingredient> {
-        return ingredients
     }
 
     fun fetchRecipeFilteredFromText(name: String): List<Recipe> {
@@ -182,3 +176,4 @@ object RESTAPI {
         return variations.sortedBy { it.size }.reversed()
     }
 }
+

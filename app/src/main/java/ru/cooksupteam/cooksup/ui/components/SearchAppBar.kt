@@ -22,7 +22,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
 
 @Composable
 fun SearchAppBar(
@@ -49,7 +49,7 @@ fun SearchAppBar(
         title = {
             Text(
                 text = titleText,
-                color = CooksupTheme.colors.brand
+                color = MaterialTheme.colors.primary
             )
         },
         actions = {
@@ -68,12 +68,12 @@ fun SearchAppBar(
                         Text(
                             modifier = Modifier.alpha(ContentAlpha.medium),
                             text = "Фильтр",
-                            color = CooksupTheme.colors.brand
+                            color = MaterialTheme.colors.primary
                         )
                     },
                     textStyle = TextStyle(
                         fontSize = MaterialTheme.typography.subtitle1.fontSize,
-                        color = CooksupTheme.colors.brand
+                        color = MaterialTheme.colors.primary
                     ),
                     singleLine = true,
                     leadingIcon = {
@@ -84,7 +84,7 @@ fun SearchAppBar(
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "Search Icon",
-                                tint = CooksupTheme.colors.brand
+                                tint = MaterialTheme.colors.primary
                             )
                         }
                     },
@@ -101,7 +101,7 @@ fun SearchAppBar(
                             Icon(
                                 imageVector = Icons.Default.Close,
                                 contentDescription = "Close Icon",
-                                tint = CooksupTheme.colors.brand
+                                tint = MaterialTheme.colors.primary
                             )
                         }
                     },
@@ -115,7 +115,7 @@ fun SearchAppBar(
                     ),
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.Transparent,
-                        cursorColor = CooksupTheme.colors.brand
+                        cursorColor = MaterialTheme.colors.primary
                     ))
             }
 
@@ -132,7 +132,7 @@ fun SearchAppBar(
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = "Search Icon",
-                        tint = CooksupTheme.colors.brand
+                        tint = MaterialTheme.colors.primary
                     )
                 }
             }

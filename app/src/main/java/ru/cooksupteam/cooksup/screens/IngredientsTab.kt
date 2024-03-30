@@ -3,17 +3,12 @@ package ru.cooksupteam.cooksup.screens
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Icon
@@ -42,11 +37,12 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.regex
-import ru.cooksupteam.cooksup.ui.components.IngredientListItem
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+import ru.cooksupteam.cooksup.ui.components.CompactIngredientCard
+
 
 class IngredientsTab : Tab {
 
@@ -97,22 +93,22 @@ class IngredientsTab : Tab {
             ivm.items.addAll(ivm.allIngredients)
         }
 
-        CooksupTheme {
+        MaterialTheme {
             Scaffold(
                 modifier = Modifier.padding(bottom = 56.dp),
-                backgroundColor = CooksupTheme.colors.uiBackground,
+                backgroundColor = MaterialTheme.colors.background,
                 topBar = {
                     TopAppBar(
                         elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = CooksupTheme.colors.uiBackground,
+                        backgroundColor = MaterialTheme.colors.background,
                         title = {
                             TextField(
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = CooksupTheme.colors.brand,
+                                        tint = MaterialTheme.colors.primary,
                                         modifier = Modifier.padding(horizontal = 12.dp)
                                     )
                                 },
@@ -124,7 +120,7 @@ class IngredientsTab : Tab {
                                             .padding(horizontal = 12.dp),
                                         textAlign = TextAlign.Start,
                                         fontSize = 20.sp,
-                                        color = CooksupTheme.colors.textPrimary
+                                        color = MaterialTheme.colors.primary
                                     )
                                 },
                                 trailingIcon = {
@@ -132,7 +128,7 @@ class IngredientsTab : Tab {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Close Icon",
-                                            tint = CooksupTheme.colors.brand,
+                                            tint = MaterialTheme.colors.primary,
                                             modifier = Modifier
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
@@ -141,7 +137,7 @@ class IngredientsTab : Tab {
                                         )
                                     }
                                 },
-                                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
+                                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
                                 value = ivm.searchTextState.value,
                                 onValueChange = {
                                     ivm.searchTextState.value =
@@ -172,12 +168,12 @@ class IngredientsTab : Tab {
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(CooksupTheme.colors.uiBackground),
+                                    .background(MaterialTheme.colors.background),
                                 colors = TextFieldDefaults.textFieldColors(
-                                    backgroundColor = CooksupTheme.colors.uiBackground,
-                                    cursorColor = CooksupTheme.colors.brand,
-                                    focusedIndicatorColor = CooksupTheme.colors.brand,
-                                    unfocusedIndicatorColor = CooksupTheme.colors.brand
+                                    backgroundColor = MaterialTheme.colors.background,
+                                    cursorColor = MaterialTheme.colors.primary,
+                                    focusedIndicatorColor = MaterialTheme.colors.primary,
+                                    unfocusedIndicatorColor = MaterialTheme.colors.primary
                                 )
                             )
 
@@ -191,36 +187,17 @@ class IngredientsTab : Tab {
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.h6,
                         softWrap = false,
-                        color = CooksupTheme.colors.textSecondary,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                    LazyVerticalGrid(
-                        state = stateGrid,
-                        columns = GridCells.Fixed(2),
+                        color = MaterialTheme.colors.secondary,
                         modifier = Modifier
-                            .background(CooksupTheme.colors.uiBackground)
-                            .fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        if (stateGrid.isScrollInProgress) {
-//                            keyboardController?.hide()
-                        }
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
+                    LazyColumn {
                         itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
-                            if (stateGrid.isScrollInProgress) {
-//                                keyboardController?.hide()
-                            }
-                            IngredientListItem(
-                                ingredient = ingredient,
-                                index = index,
-                                gradient = if (ingredient.selected) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
-                                gradientWidth = 6000f,
-                                scroll = 1,
-                                modifier = if (index % 2 == 0) Modifier.padding(
-                                    start = 12.dp,
-                                    end = 4.dp
-                                ) else Modifier.padding(start = 4.dp, end = 12.dp),
-
-                                ) { _, isSelected ->
+                            CompactIngredientCard(
+                                modifier = Modifier,
+                                ingredient = ingredient
+                            ) { _, isSelected ->
                                 if (!isSelected) {
                                     ivm.selectedIngredients.add(ingredient)
                                 } else {

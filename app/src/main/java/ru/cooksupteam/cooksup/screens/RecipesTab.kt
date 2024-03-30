@@ -7,17 +7,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
@@ -27,7 +24,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Snackbar
-import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
@@ -39,7 +35,6 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -61,7 +56,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.navigator
@@ -70,11 +64,9 @@ import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
-import ru.cooksupteam.cooksup.model.Filter
 import ru.cooksupteam.cooksup.regex
-import ru.cooksupteam.cooksup.ui.components.CooksupFilterChip
-import ru.cooksupteam.cooksup.ui.components.RecipeCard
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+import ru.cooksupteam.cooksup.ui.components.CompactRecipeCard
+
 
 class RecipesTab() : Tab {
     override val options: TabOptions
@@ -111,32 +103,32 @@ class RecipesTab() : Tab {
             }
         })
 
-        CooksupTheme {
+        MaterialTheme {
             Scaffold(
                 modifier = Modifier.padding(bottom = 56.dp),
                 scaffoldState = scaffoldState,
                 snackbarHost = {
                     SnackbarHost(it) { data ->
                         Snackbar(
-                            backgroundColor = CooksupTheme.colors.uiBackground,
-                            contentColor = CooksupTheme.colors.brand,
+                            backgroundColor = MaterialTheme.colors.background,
+                            contentColor = MaterialTheme.colors.primary,
                             snackbarData = data
                         )
                     }
                 },
-                backgroundColor = CooksupTheme.colors.uiBackground,
+                backgroundColor = MaterialTheme.colors.background,
                 topBar = {
                     TopAppBar(
                         elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = CooksupTheme.colors.uiBackground,
+                        backgroundColor = MaterialTheme.colors.background,
                         title = {
                             TextField(
                                 leadingIcon = {
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = CooksupTheme.colors.brand,
+                                        tint = MaterialTheme.colors.primary,
                                         modifier = Modifier.padding(horizontal = 12.dp)
                                     )
                                 },
@@ -148,7 +140,7 @@ class RecipesTab() : Tab {
                                             .padding(horizontal = 12.dp),
                                         textAlign = TextAlign.Start,
                                         fontSize = 20.sp,
-                                        color = CooksupTheme.colors.textPrimary
+                                        color = MaterialTheme.colors.primary
                                     )
                                 },
                                 trailingIcon = {
@@ -156,7 +148,7 @@ class RecipesTab() : Tab {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Close Icon",
-                                            tint = CooksupTheme.colors.brand,
+                                            tint = MaterialTheme.colors.primary,
                                             modifier = Modifier
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
@@ -165,7 +157,7 @@ class RecipesTab() : Tab {
                                         )
                                     }
                                 },
-                                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
+                                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
                                 value = rvm.searchTextState.value,
                                 onValueChange = {
                                     rvm.searchTextState.value =
@@ -192,12 +184,12 @@ class RecipesTab() : Tab {
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(CooksupTheme.colors.uiBackground),
+                                    .background(MaterialTheme.colors.background),
                                 colors = TextFieldDefaults.textFieldColors(
-                                    backgroundColor = CooksupTheme.colors.uiBackground,
-                                    cursorColor = CooksupTheme.colors.brand,
-                                    focusedIndicatorColor = CooksupTheme.colors.brand,
-                                    unfocusedIndicatorColor = CooksupTheme.colors.brand
+                                    backgroundColor = MaterialTheme.colors.background,
+                                    cursorColor = MaterialTheme.colors.primary,
+                                    focusedIndicatorColor = MaterialTheme.colors.primary,
+                                    unfocusedIndicatorColor = MaterialTheme.colors.primary
                                 )
                             )
 
@@ -207,7 +199,7 @@ class RecipesTab() : Tab {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(CooksupTheme.colors.uiBackground)
+                            .background(MaterialTheme.colors.background)
                             .padding(horizontal = 8.dp)
                     ) {
                         Column(
@@ -220,12 +212,12 @@ class RecipesTab() : Tab {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "",
-                                tint = CooksupTheme.colors.brand,
+                                tint = MaterialTheme.colors.primary,
                                 modifier = Modifier.size(300.dp)
                             )
                             Text(
                                 text = "Начните поиск",
-                                color = CooksupTheme.colors.brand,
+                                color = MaterialTheme.colors.primary,
                                 style = TextStyle(
                                     fontSize = 28.sp,
                                     fontWeight = FontWeight.Bold,
@@ -249,16 +241,16 @@ class RecipesTab() : Tab {
                                 },
                                 modifier = Modifier,
                                 colors = ButtonDefaults.buttonColors(
-                                    backgroundColor = CooksupTheme.colors.uiFloated,
-                                    contentColor = CooksupTheme.colors.brand
+                                    backgroundColor = MaterialTheme.colors.primary,
+                                    contentColor = MaterialTheme.colors.primary
                                 )
                             ) {
                                 Text(
                                     text = if (rvm.allRecipes.isEmpty()) "Загрузка..." else "Случайный рецепт",
-                                    color = CooksupTheme.colors.textPrimary,
+                                    color = MaterialTheme.colors.primary,
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .background(CooksupTheme.colors.uiFloated),
+                                        .background(MaterialTheme.colors.primary),
                                     textAlign = TextAlign.Center,
                                     maxLines = 1
                                 )
@@ -308,72 +300,93 @@ class RecipesTab() : Tab {
                                 overflow = TextOverflow.Ellipsis,
                                 style = MaterialTheme.typography.h6,
                                 softWrap = false,
-                                color = CooksupTheme.colors.textSecondary,
+                                color = MaterialTheme.colors.secondary,
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
-                            LazyVerticalGrid(
-                                state = stateGrid,
-                                columns = GridCells.Fixed(2),
-                                modifier = Modifier
-                                    .background(CooksupTheme.colors.uiBackground)
-                                    .fillMaxWidth()
-                                    .weight(0.8f),
-                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                if (stateGrid.isScrollInProgress) {
-//                                    keyboardController?.hide()
-                                }
+                            LazyColumn {
                                 itemsIndexed(items) { index, recipe ->
                                     val isFavorite =
                                         remember { mutableStateOf(uvm.favorite.contains(recipe.id)) }
-                                    RecipeCard(
+                                    CompactRecipeCard(
                                         recipe = recipe,
-                                        onRecipeClick = {
-                                            rvm.lastIndexRecipe = index
-                                            rvm.selectedRecipe = recipe
-                                            navigator.push(RecipeScreen())
-                                        },
+                                        isFavorite = isFavorite.value,
                                         onFavoriteClick = {
-                                            if (uvm.isAuthorized.value) {
-                                                isFavorite.value = !isFavorite.value
-                                                if (isFavorite.value) {
-                                                    uvm.favorite.remove(recipe.id)
-                                                } else {
-                                                    uvm.favorite.add(recipe.id)
-                                                }
-                                                scope.launch {
-                                                    RESTAPI.postFavouriteRecipe(
-                                                        uvm.user.id,
-                                                        recipe.id
-                                                    )
-                                                    delay(200)
-                                                    uvm.load()
-                                                }
+                                            isFavorite.value = !isFavorite.value
+                                            if (isFavorite.value) {
+                                                uvm.favorite.remove(recipe.id)
                                             } else {
-                                                scope.launch {
-                                                    scaffoldState.snackbarHostState.showSnackbar(
-                                                        "Вы не авторизованы",
-                                                        null,
-                                                        SnackbarDuration.Short
-                                                    )
-                                                }
+                                                uvm.favorite.add(recipe.id)
                                             }
-                                        },
-                                        isFavorite = isFavorite,
-                                        index = index,
-                                        gradient =
-                                        if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
-                                        gradientWidth = 1800f,
-                                        scroll = 1,
-                                        modifier = if (index % 2 == 0) Modifier.padding(
-                                            start = 12.dp,
-                                            end = 4.dp
-                                        ) else Modifier.padding(
-                                            start = 4.dp, end = 12.dp
-                                        )
-                                    )
+                                        })
                                 }
                             }
+
+
+
+//                            LazyVerticalGrid(
+//                                state = stateGrid,
+//                                columns = GridCells.Fixed(4),
+//                                modifier = Modifier
+//                                    .background(MaterialTheme.colors.background)
+//                                    .fillMaxWidth()
+//                                    .weight(0.8f),
+//                                verticalArrangement = Arrangement.spacedBy(8.dp)
+//                            ) {
+//                                if (stateGrid.isScrollInProgress) {
+////                                    keyboardController?.hide()
+//                                }
+//                                itemsIndexed(items) { index, recipe ->
+//                                    val isFavorite =
+//                                        remember { mutableStateOf(uvm.favorite.contains(recipe.id)) }
+//                                    RecipeCard(
+//                                        recipe = recipe,
+//                                        onRecipeClick = {
+//                                            rvm.lastIndexRecipe = index
+//                                            rvm.selectedRecipe = recipe
+//                                            navigator.push(RecipeScreen())
+//                                        },
+//                                        onFavoriteClick = {
+//                                            if (uvm.isAuthorized.value) {
+//                                                isFavorite.value = !isFavorite.value
+//                                                if (isFavorite.value) {
+//                                                    uvm.favorite.remove(recipe.id)
+//                                                } else {
+//                                                    uvm.favorite.add(recipe.id)
+//                                                }
+//                                                scope.launch {
+//                                                    RESTAPI.postFavouriteRecipe(
+//                                                        uvm.user.id,
+//                                                        recipe.id
+//                                                    )
+//                                                    delay(200)
+//                                                    uvm.load()
+//                                                }
+//                                            } else {
+//                                                scope.launch {
+//                                                    scaffoldState.snackbarHostState.showSnackbar(
+//                                                        "Вы не авторизованы",
+//                                                        null,
+//                                                        SnackbarDuration.Short
+//                                                    )
+//                                                }
+//                                            }
+//                                        },
+//                                        isFavorite = isFavorite,
+//                                        index = index,
+//                                        gradient =
+//                                        if (index % 2 == 0) listOf(
+//                                            MaterialTheme.colors.primary,
+//                                            MaterialTheme.colors.secondary
+//                                        ) else listOf(
+//                                            MaterialTheme.colors.primary,
+//                                            MaterialTheme.colors.secondary
+//                                        ),
+//                                        gradientWidth = 1800f,
+//                                        scroll = 1,
+//                                        modifier = Modifier.padding(start = 4.dp, end = 4.dp)
+//                                    )
+//                                }
+//                            }
 
                             AnimatedVisibility(!rvm.isAllDataReady.value) {
                                 Column(
@@ -385,12 +398,12 @@ class RecipesTab() : Tab {
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     CircularProgressIndicator(
-                                        color = CooksupTheme.colors.brand,
+                                        color = MaterialTheme.colors.primary,
                                         modifier = Modifier.size(100.dp)
                                     )
                                     Text(
                                         text = "Загрузка рецептов",
-                                        color = CooksupTheme.colors.brand
+                                        color = MaterialTheme.colors.primary
                                     )
                                 }
                             }

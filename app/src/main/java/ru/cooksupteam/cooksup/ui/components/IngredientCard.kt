@@ -15,7 +15,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import ru.cooksupteam.cooksup.model.Ingredient
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
 import ru.cooksupteam.cooksup.ui.theme.Shapes
 
 private val HighlightCardWidth = 170.dp
@@ -63,7 +63,7 @@ fun IngredientCard(
                     overflow = TextOverflow.Ellipsis,
                     style = MaterialTheme.typography.h6,
                     softWrap = true,
-                    color = CooksupTheme.colors.textInteractive,
+                    color = MaterialTheme.colors.primary,
                     textAlign = TextAlign.End,
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
@@ -81,7 +81,7 @@ fun IngredientCard(
 )
 @Composable
 private fun IngredientCardPreview() {
-    CooksupTheme {
+    MaterialTheme {
         IngredientCard(
             ingredient = Ingredient(
                 "Карамельный попкорн",
@@ -90,7 +90,7 @@ private fun IngredientCardPreview() {
             ),
             onSnackClick = {},
             index = 1,
-            gradient = CooksupTheme.colors.gradient2_1,
+            gradient = listOf( MaterialTheme.colors.secondary),
             gradientWidth = 380f,
             scroll = 10,
             modifier = Modifier

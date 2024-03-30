@@ -11,6 +11,7 @@ import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.model.Filter
+import ru.cooksupteam.cooksup.model.Ingredient
 import ru.cooksupteam.cooksup.model.Recipe
 
 class RecipeViewModel {

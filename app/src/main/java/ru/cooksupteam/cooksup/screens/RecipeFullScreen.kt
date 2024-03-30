@@ -55,7 +55,7 @@ import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.toIntOrDefault
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.RecipeImage
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
 
 class RecipeScreen() : Screen {
     @SuppressLint(
@@ -66,29 +66,29 @@ class RecipeScreen() : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val servingsState = remember { mutableStateOf(rvm.selectedRecipe.servings.toString()) }
-        CooksupTheme {
+        MaterialTheme {
             Scaffold(
-                backgroundColor = CooksupTheme.colors.uiBackground,
+                backgroundColor = MaterialTheme.colors.background,
                 topBar = {
                     TopAppBar(
-                        backgroundColor = CooksupTheme.colors.uiBackground,
+                        backgroundColor = MaterialTheme.colors.background,
                         title = {
                             IconButton(
                                 onClick = { navigator.pop() },
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.background(MaterialTheme.colors.background)
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.ArrowBack,
-                                    tint = CooksupTheme.colors.brand,
+                                    tint = MaterialTheme.colors.primary,
                                     contentDescription = "Back",
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                    modifier = Modifier.background(MaterialTheme.colors.background)
                                 )
                             }
                             Text(
                                 text = rvm.selectedRecipe.name,
-                                color = CooksupTheme.colors.brand,
+                                color = MaterialTheme.colors.primary,
                                 maxLines = 2,
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.background(MaterialTheme.colors.background)
                             )
                         }
                     )
@@ -97,7 +97,7 @@ class RecipeScreen() : Screen {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(CooksupTheme.colors.uiBackground)
+                        .background(MaterialTheme.colors.background)
                         .padding(8.dp),
                 ) {
                     item {
@@ -116,7 +116,7 @@ class RecipeScreen() : Screen {
                             Text(
                                 modifier = Modifier,
                                 text = rvm.selectedRecipe.description,
-                                color = CooksupTheme.colors.textPrimary
+                                color = MaterialTheme.colors.primary
                             )
                         }
                         Row(
@@ -131,10 +131,10 @@ class RecipeScreen() : Screen {
                             Box(
                                 modifier = Modifier
                                     .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                    .background(MaterialTheme.colors.background)
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier.background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -142,23 +142,23 @@ class RecipeScreen() : Screen {
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = rvm.selectedRecipe.nutrition.calories.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                 }
                             }
                             Box(
                                 modifier = Modifier
                                     .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                    .background(MaterialTheme.colors.background)
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier.background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -166,23 +166,23 @@ class RecipeScreen() : Screen {
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = rvm.selectedRecipe.nutrition.proteins.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                 }
                             }
                             Box(
                                 modifier = Modifier
                                     .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                    .background(MaterialTheme.colors.background)
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier.background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -190,23 +190,23 @@ class RecipeScreen() : Screen {
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = rvm.selectedRecipe.nutrition.fats.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                 }
                             }
                             Box(
                                 modifier = Modifier
                                     .weight(0.25f)
-                                    .background(CooksupTheme.colors.uiBackground)
+                                    .background(MaterialTheme.colors.background)
                             ) {
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier.background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
@@ -214,24 +214,24 @@ class RecipeScreen() : Screen {
                                         style = MaterialTheme.typography.button,
                                         fontSize = 12.sp,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     Text(
                                         text = rvm.selectedRecipe.nutrition.carbohydrates.toString(),
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                 }
                             }
                         }
                         Spacer(modifier = Modifier.size(8.dp))
                         Box(
-                            modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                            modifier = Modifier.background(MaterialTheme.colors.background)
                         ) {
                             Column(
                                 modifier = Modifier
-                                    .background(CooksupTheme.colors.uiBackground)
+                                    .background(MaterialTheme.colors.background)
                                     .fillMaxWidth(),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
@@ -239,19 +239,19 @@ class RecipeScreen() : Screen {
                                     text = "Время приготовления",
                                     style = MaterialTheme.typography.button,
                                     textAlign = TextAlign.Center,
-                                    color = CooksupTheme.colors.textLink
+                                    color = MaterialTheme.colors.primary
                                 )
                                 Text(
                                     text = rvm.selectedRecipe.time,
                                     style = MaterialTheme.typography.button,
                                     textAlign = TextAlign.Center,
-                                    color = CooksupTheme.colors.textLink
+                                    color = MaterialTheme.colors.primary
                                 )
                             }
                         }
                         Spacer(modifier = Modifier.size(8.dp))
                         Box(
-                            modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                            modifier = Modifier.background(MaterialTheme.colors.background)
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxSize(),
@@ -268,18 +268,18 @@ class RecipeScreen() : Screen {
                                     Icon(
                                         imageVector = Icons.Filled.Remove,
                                         contentDescription = "",
-                                        tint = CooksupTheme.colors.brand
+                                        tint = MaterialTheme.colors.primary
                                     )
                                 }
                                 Column(
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground),
+                                    modifier = Modifier.background(MaterialTheme.colors.background),
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     Text(
                                         text = "Количество порций",
                                         style = MaterialTheme.typography.button,
                                         textAlign = TextAlign.Center,
-                                        color = CooksupTheme.colors.textLink
+                                        color = MaterialTheme.colors.primary
                                     )
                                     BasicTextField(
                                         modifier = Modifier.width(36.dp),
@@ -289,7 +289,7 @@ class RecipeScreen() : Screen {
                                         singleLine = true,
                                         textStyle = LocalTextStyle.current.copy(
                                             textAlign = TextAlign.Center,
-                                            color = CooksupTheme.colors.textLink
+                                            color = MaterialTheme.colors.primary
                                         )
                                     )
                                 }
@@ -300,7 +300,7 @@ class RecipeScreen() : Screen {
                                     Icon(
                                         imageVector = Icons.Filled.Add,
                                         contentDescription = "",
-                                        tint = CooksupTheme.colors.brand
+                                        tint = MaterialTheme.colors.primary
                                     )
                                 }
                             }
@@ -313,7 +313,7 @@ class RecipeScreen() : Screen {
                             Box {
                                 Text(
                                     text = "Используемые ингредиенты:",
-                                    color = CooksupTheme.colors.textPrimary
+                                    color = MaterialTheme.colors.primary
                                 )
                             }
                             Spacer(modifier = Modifier.size(8.dp))
@@ -341,7 +341,7 @@ class RecipeScreen() : Screen {
                                         )
                                         Text(
                                             text = measure.ingredient.name,
-                                            color = CooksupTheme.colors.textPrimary
+                                            color = MaterialTheme.colors.primary
                                         )
                                         Spacer(
                                             modifier = Modifier
@@ -356,7 +356,7 @@ class RecipeScreen() : Screen {
                                                     0
                                                 )).autoformat()
                                             } г.",
-                                            color = CooksupTheme.colors.textPrimary
+                                            color = MaterialTheme.colors.primary
                                         )
                                     }
                                 }
@@ -372,11 +372,11 @@ class RecipeScreen() : Screen {
                                 Card(
                                     modifier = Modifier
                                         .padding(top = 8.dp)
-                                        .background(CooksupTheme.colors.uiBackground)
+                                        .background(MaterialTheme.colors.background)
                                         .fillMaxWidth()
                                 ) {
-                                    Box(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
-                                        Column(modifier = Modifier.background(CooksupTheme.colors.uiBackground)) {
+                                    Box(modifier = Modifier.background(MaterialTheme.colors.background)) {
+                                        Column(modifier = Modifier.background(MaterialTheme.colors.background)) {
                                             if (step.pic.isNotEmpty()) {
                                                 RecipeImage(
                                                     imageUrl = step.pic,
@@ -389,7 +389,7 @@ class RecipeScreen() : Screen {
                                             Text(
                                                 modifier = Modifier.padding(16.dp),
                                                 text = "Шаг ${i + 1}: \n${step.text}",
-                                                color = CooksupTheme.colors.textPrimary
+                                                color = MaterialTheme.colors.primary
                                             )
 
                                         }

@@ -15,7 +15,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ru.cooksupteam.cooksup.model.Ingredient
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 private val HighlightCardWidth = 170.dp
 private val HighlightCardPadding = 16.dp
@@ -74,7 +73,7 @@ fun SnackCard(
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6,
 //                softWrap = false,
-                color = CooksupTheme.colors.textSecondary,
+                color = MaterialTheme.colors.primary,
                 modifier = Modifier
                     .padding(horizontal = 16.dp)
                     .fillMaxWidth()
@@ -90,19 +89,4 @@ fun SnackCard(
 )
 @Composable
 private fun SnackCardPreview() {
-    CooksupTheme {
-        SnackCard(
-            ingredient = Ingredient(
-                "Огурец",
-                "Овощи и зелень",
-                "https://foodcity.ru/storage/products/October2018/eP9jt5L6V510QjjT4a1B.jpg"
-            ),
-            onSnackClick = {},
-            index = 2,
-            gradient = CooksupTheme.colors.gradient2_1,
-            gradientWidth = 380f,
-            scroll = 1,
-            modifier = Modifier
-        )
-    }
 }

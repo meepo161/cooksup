@@ -3,8 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id("org.jetbrains.kotlin.plugin.serialization") version "1.7.10"
 }
-
 android {
+    dexOptions {
+        javaMaxHeapSize "4G"
+    }
     namespace 'ru.cooksupteam.cooksup.app'
     compileSdk 33
 
@@ -59,7 +61,6 @@ dependencies {
     implementation "org.jsoup:jsoup:1.7.2"
     implementation "io.coil-kt:coil-compose:2.2.1"
 
-    implementation "androidx.compose.material3:material3:1.2.0-alpha01"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation "androidx.compose.ui:ui:1.4.3"
@@ -71,7 +72,6 @@ dependencies {
     implementation 'androidx.activity:activity-compose:1.3.1'
     implementation "androidx.navigation:navigation-compose:2.5.3"
     implementation 'androidx.constraintlayout:constraintlayout-compose:1.0.0'
-    implementation 'androidx.compose.material3:material3:1.1.0'
     implementation 'com.google.android.play:app-update-ktx:+'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

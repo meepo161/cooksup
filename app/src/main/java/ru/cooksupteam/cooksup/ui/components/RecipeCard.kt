@@ -15,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -34,7 +33,7 @@ import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.model.Recipe
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
 import java.time.Duration
 
 private val HighlightCardWidth = 170.dp
@@ -59,8 +58,8 @@ fun RecipeCard(
     CooksupCard(
         modifier = modifier
             .size(
-                width = 170.dp,
-                height = 250.dp
+                width = 64.dp,
+                height = 96.dp
             )
     ) {
         Column(
@@ -70,20 +69,20 @@ fun RecipeCard(
         ) {
             Box(
                 modifier = Modifier
-                    .height(160.dp)
+                    .height(48.dp)
                     .fillMaxWidth()
             ) {
                 val gradientOffset = left - (scroll / 3f)
                 Box(
                     modifier = Modifier
-                        .height(100.dp)
+                        .height(36.dp)
                         .fillMaxWidth()
                         .offsetGradientBackground(gradient, gradientWidth, gradientOffset)
                 )
 //                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.TopEnd) {
 //                    Icon(
 //                        imageVector = if (isFavorite.value) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
-//                        tint = if (isFavorite.value) Color.Red else CooksupTheme.colors.uiBackground,
+//                        tint = if (isFavorite.value) Color.Red else MaterialTheme.colors.background,
 //                        contentDescription = "Favorite",
 //                        modifier = Modifier
 //                            .background(Color.Transparent)
@@ -96,7 +95,7 @@ fun RecipeCard(
                 RecipeImage(
                     imageUrl = recipe.pic,
                     modifier = Modifier
-                        .size(140.dp)
+                        .size(48.dp)
                         .align(Alignment.BottomCenter)
                 )
             }
@@ -105,13 +104,13 @@ fun RecipeCard(
                 text = recipe.name,
                 maxLines = 2,
 //                overflow = TextOverflow.Ellipsis,
-                fontSize = 18.sp,
+                fontSize = 12.sp,
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.h6,
 //                softWrap = false,
-                color = CooksupTheme.colors.textSecondary,
+                color = MaterialTheme.colors.secondary,
                 modifier = Modifier
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 2.dp)
                     .fillMaxWidth()
             )
 

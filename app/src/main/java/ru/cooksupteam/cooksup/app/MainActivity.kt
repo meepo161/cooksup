@@ -7,38 +7,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.darkColors
+import androidx.compose.material.lightColors
 import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.screens.MainScreen
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.utils.ConnectionState
-import ru.cooksupteam.cooksup.utils.connectivityState
+import ru.cooksupteam.cooksup.ui.theme.darkScheme
+import ru.cooksupteam.cooksup.ui.theme.lightScheme
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 import ru.cooksupteam.cooksup.viewmodel.RecipeViewModel
 import ru.cooksupteam.cooksup.viewmodel.UserViewModel
@@ -78,7 +58,7 @@ class MainActivity : ComponentActivity() {
         rvm = RecipeViewModel()
         uvm = UserViewModel()
         setContent {
-            CooksupTheme {
+            MaterialTheme(colors = if (isSystemInDarkTheme()) darkScheme else lightScheme) {
                 Navigator(MainScreen())
             }
         }

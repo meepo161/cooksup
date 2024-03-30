@@ -13,6 +13,7 @@ import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -31,7 +32,7 @@ import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.serialization.Serializable
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.ivm
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
 
 @Serializable
 class MainScreen() :
@@ -44,10 +45,10 @@ class MainScreen() :
             TabNavigator(MainTab()) {
                 Scaffold(
                     bottomBar = {
-                        CooksupTheme {
+                        MaterialTheme {
                             BottomNavigation(
-                                backgroundColor = CooksupTheme.colors.uiBackground,
-                                contentColor = CooksupTheme.colors.textPrimary
+                                backgroundColor = MaterialTheme.colors.background,
+                                contentColor = MaterialTheme.colors.primary
                             ) {
                                 TabNavigationItem(tab = MainTab())
                                 TabNavigationItem(tab = IngredientsTab())
@@ -60,23 +61,23 @@ class MainScreen() :
                 }
             }
         } else {
-            CooksupTheme {
+            MaterialTheme {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(CooksupTheme.colors.uiBackground),
+                        .background(MaterialTheme.colors.background),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(
                         16.dp,
                         Alignment.CenterVertically
                     )
                 ) {
-                    CircularProgressIndicator(color = CooksupTheme.colors.brand)
+                    CircularProgressIndicator(color = MaterialTheme.colors.primary)
                     Text(
                         text = "Загрузка...",
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
-                        color = CooksupTheme.colors.brand
+                        color = MaterialTheme.colors.primary
                     )
                 }
             }

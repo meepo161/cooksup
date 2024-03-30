@@ -67,8 +67,8 @@ fun CooksupSurface(
 @Composable
 private fun getBackgroundColorForElevation(color: Color, elevation: Dp): Color {
     return if (elevation > 0.dp // && https://issuetracker.google.com/issues/161429530
-        // CooksupTheme.colors.isDark //&&
-        // color == CooksupTheme.colors.uiBackground
+        // MaterialTheme.colors.isDark //&&
+        // color == MaterialTheme.colors.background
     ) {
         color.withElevation(elevation)
     } else {

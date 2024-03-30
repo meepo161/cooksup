@@ -28,6 +28,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.primarySurface
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -44,9 +45,12 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
+import kotlinx.serialization.json.encodeToJsonElement
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.scope
@@ -56,7 +60,8 @@ import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.ui.components.SnackCard
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
+import java.io.File
 
 
 class MainTab : Tab {
@@ -75,6 +80,7 @@ class MainTab : Tab {
             }
         }
 
+    @OptIn(ExperimentalSerializationApi::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
@@ -86,31 +92,50 @@ class MainTab : Tab {
                 if (firstStart) {
                     Log.d("firstStart", "22222222222222")
                     firstStart = false
-                    rvm.allRecipes.addAll(
-                        Json.decodeFromStream<List<Recipe>>(
-                            stream = Singleton.appContext.assets.open(
-                                "recipes.json"
-                            )
+                    rvm.allRecipes.clear()
+                    Json.decodeFromStream<List<Recipe>>(
+                        stream = Singleton.appContext.assets.open(
+                            "recipes0.json"
                         )
-                    )
+                    ).asFlow().collect { recipe ->
+                        rvm.allRecipes.add(recipe)
+                    }
+                    scope.launch {
+                        for (i in 1..8){
+                            Json.decodeFromStream<List<Recipe>>(
+                                stream = Singleton.appContext.assets.open(
+                                    "recipes$i.json"
+                                )
+                            ).asFlow().collect { recipe ->
+                                rvm.allRecipes.add(recipe)
+                            }
+                        }
+                    }
+//                    rvm.allRecipes.addAll(
+//                        Json.decodeFromStream<List<Recipe>>(
+//                            stream = Singleton.appContext.assets.open(
+//                                "recipes.json"
+//                            )
+//                        )
+//                    )
                 }
             }
         })
 
-        CooksupTheme {
+        MaterialTheme {
             Scaffold(
                 scaffoldState = scaffoldState,
                 modifier = Modifier.fillMaxWidth(),
-                backgroundColor = CooksupTheme.colors.uiBackground,
+                backgroundColor = MaterialTheme.colors.background,
                 topBar = {
                     TopAppBar(
                         elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = CooksupTheme.colors.uiBackground,
+                        backgroundColor = MaterialTheme.colors.background,
                         title = {
                             Row(
                                 modifier = Modifier
-                                    .background(CooksupTheme.colors.uiBackground),
+                                    .background(MaterialTheme.colors.background),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Image(
@@ -123,7 +148,7 @@ class MainTab : Tab {
                                 Spacer(modifier = Modifier.size(8.dp))
                                 Text(
                                     text = stringResource(id = R.string.app_name),
-                                    color = CooksupTheme.colors.brand,
+                                    color = MaterialTheme.colors.primary,
                                     fontSize = 22.sp
                                 )
                             }
@@ -134,14 +159,14 @@ class MainTab : Tab {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(CooksupTheme.colors.uiBackground)
+                        .background(MaterialTheme.colors.background)
                 ) {
                     LazyColumn(
                         state = scrollState,
                         modifier = Modifier
                             .padding(bottom = 56.dp, top = 8.dp)
                             .fillMaxSize()
-                            .background(CooksupTheme.colors.uiBackground),
+                            .background(MaterialTheme.colors.background),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
@@ -182,7 +207,7 @@ class MainTab : Tab {
                                         overflow = TextOverflow.Ellipsis,
                                         style = MaterialTheme.typography.h6,
                                         softWrap = false,
-                                        color = CooksupTheme.colors.textSecondary,
+                                        color = MaterialTheme.colors.secondary,
                                         modifier = Modifier.padding(horizontal = 16.dp)
                                     )
                                     LazyRow(
@@ -210,7 +235,10 @@ class MainTab : Tab {
                                                     )
                                                 },
                                                 index = index,
-                                                gradient = if (index % 2 == 0) CooksupTheme.colors.gradient6_2 else CooksupTheme.colors.gradient6_1,
+                                                gradient = listOf(
+                                                    MaterialTheme.colors.primary,
+                                                    MaterialTheme.colors.secondary
+                                                ),
                                                 gradientWidth = 1800f,
                                                 scroll = 1,
                                                 modifier = Modifier

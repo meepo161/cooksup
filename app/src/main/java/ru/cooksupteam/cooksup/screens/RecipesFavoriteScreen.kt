@@ -63,7 +63,7 @@ import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.app.uvm
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.RecipeCard
-import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
+
 
 class RecipesFavoriteScreen() : Screen {
     @OptIn(ExperimentalComposeUiApi::class)
@@ -77,35 +77,35 @@ class RecipesFavoriteScreen() : Screen {
         val scaffoldState = rememberScaffoldState()
         rvm.loadFavorite()
 
-        CooksupTheme {
+        MaterialTheme {
             Scaffold(
                 modifier = Modifier.fillMaxSize(),
                 scaffoldState = scaffoldState,
                 snackbarHost = {
                     SnackbarHost(it) { data ->
                         Snackbar(
-                            backgroundColor = CooksupTheme.colors.uiBackground,
-                            contentColor = CooksupTheme.colors.brand,
+                            backgroundColor = MaterialTheme.colors.background,
+                            contentColor = MaterialTheme.colors.primary,
                             snackbarData = data
                         )
                     }
                 },
-                backgroundColor = CooksupTheme.colors.uiBackground,
+                backgroundColor = MaterialTheme.colors.background,
                 topBar = {
                     TopAppBar(
                         elevation = 0.dp,
                         modifier = Modifier.fillMaxWidth(),
-                        backgroundColor = CooksupTheme.colors.uiBackground,
+                        backgroundColor = MaterialTheme.colors.background,
                         title = {
                             IconButton(
                                 onClick = { navigator.pop() },
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                modifier = Modifier.background(MaterialTheme.colors.background)
                             ) {
                                 Icon(
                                     imageVector = Icons.Filled.ArrowBack,
-                                    tint = CooksupTheme.colors.brand,
+                                    tint = MaterialTheme.colors.primary,
                                     contentDescription = "Back",
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                    modifier = Modifier.background(MaterialTheme.colors.background)
                                 )
                             }
                             TextField(
@@ -113,7 +113,7 @@ class RecipesFavoriteScreen() : Screen {
                                     Icon(
                                         imageVector = Icons.Default.Search,
                                         contentDescription = "Search Icon",
-                                        tint = CooksupTheme.colors.brand,
+                                        tint = MaterialTheme.colors.primary,
                                         modifier = Modifier.padding(horizontal = 12.dp)
                                     )
                                 },
@@ -125,7 +125,7 @@ class RecipesFavoriteScreen() : Screen {
                                             .padding(horizontal = 12.dp),
                                         textAlign = TextAlign.Start,
                                         fontSize = 20.sp,
-                                        color = CooksupTheme.colors.textPrimary
+                                        color = MaterialTheme.colors.primary
                                     )
                                 },
                                 trailingIcon = {
@@ -133,7 +133,7 @@ class RecipesFavoriteScreen() : Screen {
                                         Icon(
                                             imageVector = Icons.Default.Close,
                                             contentDescription = "Close Icon",
-                                            tint = CooksupTheme.colors.brand,
+                                            tint = MaterialTheme.colors.primary,
                                             modifier = Modifier
                                                 .padding(horizontal = 12.dp)
                                                 .clickable {
@@ -142,7 +142,7 @@ class RecipesFavoriteScreen() : Screen {
                                         )
                                     }
                                 },
-                                textStyle = MaterialTheme.typography.h6.copy(color = CooksupTheme.colors.brand),
+                                textStyle = MaterialTheme.typography.h6.copy(color = MaterialTheme.colors.primary),
                                 value = searchTextState.value,
                                 onValueChange = {
                                     searchTextState.value =
@@ -154,12 +154,12 @@ class RecipesFavoriteScreen() : Screen {
                                 ),
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .background(CooksupTheme.colors.uiBackground),
+                                    .background(MaterialTheme.colors.background),
                                 colors = TextFieldDefaults.textFieldColors(
-                                    backgroundColor = CooksupTheme.colors.uiBackground,
-                                    cursorColor = CooksupTheme.colors.brand,
-                                    focusedIndicatorColor = CooksupTheme.colors.brand,
-                                    unfocusedIndicatorColor = CooksupTheme.colors.brand
+                                    backgroundColor = MaterialTheme.colors.background,
+                                    cursorColor = MaterialTheme.colors.primary,
+                                    focusedIndicatorColor = MaterialTheme.colors.primary,
+                                    unfocusedIndicatorColor = MaterialTheme.colors.primary
                                 )
                             )
 
@@ -169,7 +169,7 @@ class RecipesFavoriteScreen() : Screen {
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(CooksupTheme.colors.uiBackground)
+                            .background(MaterialTheme.colors.background)
                             .padding(horizontal = 8.dp)
                     ) {
                         Column(
@@ -182,12 +182,12 @@ class RecipesFavoriteScreen() : Screen {
                             Icon(
                                 imageVector = Icons.Default.Search,
                                 contentDescription = "",
-                                tint = CooksupTheme.colors.brand,
+                                tint = MaterialTheme.colors.primary,
                                 modifier = Modifier.size(300.dp)
                             )
                             Text(
                                 text = "Добавьте рецепты в избранное",
-                                color = CooksupTheme.colors.brand,
+                                color = MaterialTheme.colors.primary,
                                 style = TextStyle(
                                     fontSize = 28.sp,
                                     fontWeight = FontWeight.Bold,
@@ -234,7 +234,7 @@ class RecipesFavoriteScreen() : Screen {
                                 state = stateGrid,
                                 columns = GridCells.Fixed(2),
                                 modifier = Modifier
-                                    .background(CooksupTheme.colors.uiBackground)
+                                    .background(MaterialTheme.colors.background)
                                     .fillMaxWidth()
                                     .weight(0.8f),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -246,7 +246,7 @@ class RecipesFavoriteScreen() : Screen {
                                         overflow = TextOverflow.Ellipsis,
                                         style = MaterialTheme.typography.h6,
                                         softWrap = false,
-                                        color = CooksupTheme.colors.textSecondary,
+                                        color = MaterialTheme.colors.secondary,
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(
@@ -297,8 +297,10 @@ class RecipesFavoriteScreen() : Screen {
                                         },
                                         isFavorite = isFavorite,
                                         index = index,
-                                        gradient =
-                                        if (index % 2 == 0) CooksupTheme.colors.gradient6_1 else CooksupTheme.colors.gradient6_2,
+                                        gradient = listOf(
+                                            MaterialTheme.colors.primary,
+                                            MaterialTheme.colors.secondary
+                                        ),
                                         gradientWidth = 1800f,
                                         scroll = 1,
                                         modifier = if (index % 2 == 0) Modifier.padding(
@@ -321,12 +323,12 @@ class RecipesFavoriteScreen() : Screen {
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
                                     CircularProgressIndicator(
-                                        color = CooksupTheme.colors.brand,
+                                        color = MaterialTheme.colors.primary,
                                         modifier = Modifier.size(100.dp)
                                     )
                                     Text(
                                         text = "Загрузка рецептов",
-                                        color = CooksupTheme.colors.brand
+                                        color = MaterialTheme.colors.primary
                                     )
                                 }
                             }
