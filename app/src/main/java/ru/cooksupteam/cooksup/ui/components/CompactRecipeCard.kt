@@ -1,6 +1,7 @@
 package ru.cooksupteam.cooksup.ui.components
 
 import android.annotation.SuppressLint
+import android.text.style.ClickableSpan
 import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,12 +18,16 @@ import androidx.compose.material.CheckboxDefaults
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.google.gson.Gson
+import com.popovanton0.heartswitch.HeartSwitch
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
@@ -46,7 +51,7 @@ fun CompactRecipeCard(
             .padding(4.dp)
             .clickable {
                 rvm.lastIndexRecipe = index
-                navigator.push(RecipeDetailScreen(recipe))
+                navigator.push(RecipeDetailScreen(Gson().toJson(recipe)))
             },
         elevation = 2.dp,
         shape = RoundedCornerShape(4.dp),
@@ -82,19 +87,12 @@ fun CompactRecipeCard(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            Checkbox(
+            HeartSwitch(modifier = Modifier.padding(4.dp),
                 checked = isFavorite.value,
                 onCheckedChange = {
                     onFavoriteClick(recipe, isFavorite.value)
                     isFavorite.value = !isFavorite.value
-//                    recipe.selected = isFavorite.value
-                },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = CooksupTheme.colors.brandSecondary,
-                    uncheckedColor = CooksupTheme.colors.brandSecondary.copy(alpha = 0.6f),
-                    checkmarkColor = CooksupTheme.colors.uiBackground
-                ),
-                modifier = Modifier.padding(4.dp)
+                }
             )
         }
     }

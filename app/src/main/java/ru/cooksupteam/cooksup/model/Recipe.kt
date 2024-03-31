@@ -1,5 +1,8 @@
 package ru.cooksupteam.cooksup.model
 
+import android.annotation.SuppressLint
+import android.os.Parcel
+import android.os.Parcelable
 import kotlinx.serialization.Serializable
 
 @Serializable

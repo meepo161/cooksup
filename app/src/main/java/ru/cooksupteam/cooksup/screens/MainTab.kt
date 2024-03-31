@@ -1,10 +1,9 @@
 package ru.cooksupteam.cooksup.screens
 
+import Banner
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -34,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -44,19 +41,11 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import kotlinx.coroutines.flow.asFlow
-import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.decodeFromStream
-import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.navigator
-import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.R
-import ru.cooksupteam.cooksup.app.firstStart
 import ru.cooksupteam.cooksup.app.ivm
-import ru.cooksupteam.cooksup.app.rvm
-import ru.cooksupteam.cooksup.model.Recipe
+import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
@@ -78,7 +67,7 @@ class MainTab : Tab {
         }
 
     @OptIn(ExperimentalSerializationApi::class)
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
+    @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "ResourceType")
     @Composable
     override fun Content() {
         val scaffoldState = rememberScaffoldState()
@@ -135,6 +124,8 @@ class MainTab : Tab {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        yandexBannerAd.id = R.string.banner_main_tab
+                        item { Banner(yandexBannerAd.id) }
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 repeat(5) { repeat ->

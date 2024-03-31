@@ -2,44 +2,29 @@ package ru.cooksupteam.cooksup.app
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Alignment.Companion.Center
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import com.yandex.mobile.ads.banner.BannerAdView
+import com.yandex.mobile.ads.common.MobileAds
+import com.yandex.mobile.ads.instream.MobileInstreamAds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.screens.MainScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.utils.ConnectionState
-import ru.cooksupteam.cooksup.utils.connectivityState
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 import ru.cooksupteam.cooksup.viewmodel.RecipeViewModel
 import ru.cooksupteam.cooksup.viewmodel.UserViewModel
@@ -50,20 +35,32 @@ import ru.rustore.sdk.appupdate.model.AppUpdateOptions
 import ru.rustore.sdk.appupdate.model.AppUpdateType
 import ru.rustore.sdk.appupdate.model.InstallStatus
 import ru.rustore.sdk.appupdate.model.UpdateAvailability
+import java.io.File
 import kotlin.time.Duration.Companion.seconds
+
 
 lateinit var ivm: IngredientsViewModel
 lateinit var rvm: RecipeViewModel
 lateinit var uvm: UserViewModel
-var firstStart = true
+var path = Environment.getExternalStoragePublicDirectory(
+    Environment.DIRECTORY_DOCUMENTS
+)
+lateinit var yandexBannerAd: BannerAdView
+
 
 class MainActivity : ComponentActivity() {
     val updateType = AppUpdateType.FLEXIBLE
     lateinit var appUpdateManager: RuStoreAppUpdateManager
 
-    @SuppressLint("SourceLockedOrientationActivity")
+
+    @SuppressLint("SourceLockedOrientationActivity", "ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        MobileAds.initialize(this) { }
+        MobileInstreamAds.setAdGroupPreloading(true)
+        MobileAds.enableLogging(true)
+        yandexBannerAd = BannerAdView(this)
+        yandexBannerAd.id = R.string.banner_recipes_tab
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         appContext = applicationContext
         try {
@@ -74,14 +71,28 @@ class MainActivity : ComponentActivity() {
             checkForAppUpdates()
         } catch (_: Exception) {
         }
-
         ivm = IngredientsViewModel()
         rvm = RecipeViewModel()
         uvm = UserViewModel()
+        val firstTime = File(path, "fisrtTime.txt")
+        try {
+            firstTime.readText() != "1"
+        } catch (e: Exception) {
+            val uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID)
+            startActivity(Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri))
+            firstTime.createNewFile()
+            firstTime.writeText("1")
+        }
         setContent {
             CooksupTheme {
                 Navigator(MainScreen())
             }
+        }
+    }
+
+    private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            Log.d("Intent12345", intent.dataString?: "12345")
         }
     }
 

@@ -1,5 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
+import Banner
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -29,6 +30,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -45,6 +47,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.CompactIngredientCard
 import ru.cooksupteam.cooksup.ui.components.IngredientListItem
@@ -68,7 +71,10 @@ class IngredientsTab : Tab {
         }
 
     @OptIn(ExperimentalComposeUiApi::class)
-    @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState")
+    @SuppressLint(
+        "UnusedMaterialScaffoldPaddingParameter", "UnrememberedMutableState",
+        "ResourceType"
+    )
     @Composable
     override fun Content() {
         val navigatorTab = LocalNavigator.currentOrThrow
@@ -194,9 +200,15 @@ class IngredientsTab : Tab {
                         style = MaterialTheme.typography.h6,
                         softWrap = false,
                         color = CooksupTheme.colors.textSecondary,
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp)
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
-                    LazyColumn {
+                    LazyColumn(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                    ) {
+                        yandexBannerAd.id = R.string.banner_ingredients_tab
+                        item { Banner(yandexBannerAd.id) }
                         itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
                             CompactIngredientCard(
                                 modifier = Modifier,

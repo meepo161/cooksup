@@ -1,6 +1,8 @@
 package ru.cooksupteam.cooksup.screens
 
+import Banner
 import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -30,6 +32,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -44,9 +48,14 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.google.gson.Gson
+import com.popovanton0.heartswitch.HeartSwitch
 import ru.cooksupteam.cooksup.Singleton
+import ru.cooksupteam.cooksup.app.MainActivity
+import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
+import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.autoformat
 import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.toIntOrDefault
@@ -54,14 +63,16 @@ import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.RecipeImage
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
-class RecipeDetailScreen(var recipe: Recipe) : Screen {
+class RecipeDetailScreen(var recipeGson: String) : Screen {
     @SuppressLint(
         "UnusedMaterialScaffoldPaddingParameter", "MutableCollectionMutableState",
-        "UnrememberedMutableState"
+        "UnrememberedMutableState", "ResourceType"
     )
     @Composable
     override fun Content() {
+        val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
+        val recipe = Gson().fromJson(recipeGson, Recipe::class.java)
         val servingsState = remember { mutableStateOf(recipe.servings.toString()) }
         CooksupTheme {
             Scaffold(
@@ -70,23 +81,53 @@ class RecipeDetailScreen(var recipe: Recipe) : Screen {
                     TopAppBar(
                         backgroundColor = CooksupTheme.colors.uiBackground,
                         title = {
-                            IconButton(
-                                onClick = { navigator.pop() },
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.Center,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    imageVector = Icons.Filled.ArrowBack,
-                                    tint = CooksupTheme.colors.brand,
-                                    contentDescription = "Back",
-                                    modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                IconButton(
+                                    onClick = { navigator.pop() },
+                                    modifier = Modifier
+                                        .background(CooksupTheme.colors.uiBackground)
+                                        .weight(0.1f)
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Filled.ArrowBack,
+                                        tint = CooksupTheme.colors.brand,
+                                        contentDescription = "Back",
+                                        modifier = Modifier.background(CooksupTheme.colors.uiBackground)
+                                    )
+                                }
+                                Text(
+                                    text = recipe.name,
+                                    color = CooksupTheme.colors.brand,
+                                    maxLines = 2,
+                                    modifier = Modifier
+                                        .background(CooksupTheme.colors.uiBackground)
+                                        .weight(0.7f)
                                 )
+                                HeartSwitch(modifier = Modifier
+                                    .weight(0.2f)
+                                    .padding(end = 8.dp),
+                                    checked = rvm.favoriteRecipe.contains(recipe),
+                                    onCheckedChange = {
+                                        if (it) {
+                                            rvm.addFavoriteRecipeFromJSON(recipe)
+                                        } else {
+                                            rvm.removeFavoriteRecipeFromJSON(recipe)
+                                        }
+                                    }
+                                )
+                                IconButton(modifier = Modifier, onClick = {
+                                    val intent = Intent(context, MainActivity::class.java)
+                                    intent.action = Intent.ACTION_SEND
+                                    intent.putExtra("Recipe", recipeGson)
+                                    context.startActivity(Intent.createChooser(intent, "Отправить"))
+                                }) {
+                                    Icon(imageVector = Icons.Filled.Share, contentDescription = "")
+                                }
                             }
-                            Text(
-                                text = recipe.name,
-                                color = CooksupTheme.colors.brand,
-                                maxLines = 2,
-                                modifier = Modifier.background(CooksupTheme.colors.uiBackground)
-                            )
                         }
                     )
                 },
@@ -96,7 +137,10 @@ class RecipeDetailScreen(var recipe: Recipe) : Screen {
                         .fillMaxWidth()
                         .background(CooksupTheme.colors.uiBackground)
                         .padding(8.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+                    yandexBannerAd.id = R.string.banner_recipes_detail_screen
+                    item { Banner(yandexBannerAd.id) }
                     item {
                         RecipeImage(
                             imageUrl = recipe.pic,

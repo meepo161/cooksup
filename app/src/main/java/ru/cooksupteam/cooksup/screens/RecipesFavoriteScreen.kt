@@ -264,7 +264,7 @@ class RecipesFavoriteScreen() : Screen {
                                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
                             )
                             LazyColumn(state = lazyListState) {
-                                itemsIndexed(rvm.favoriteRecipe) { index, recipe ->
+                                itemsIndexed(items.value) { index, recipe ->
                                     CompactRecipeCard(
                                         recipe = recipe,
                                         index = index

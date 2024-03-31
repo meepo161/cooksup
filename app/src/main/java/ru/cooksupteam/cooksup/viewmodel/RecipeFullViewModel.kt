@@ -3,8 +3,10 @@ package ru.cooksupteam.cooksup.viewmodel
 import android.os.Environment
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import com.google.gson.Gson
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
@@ -17,6 +19,7 @@ import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.path
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
 import java.io.BufferedReader
@@ -32,9 +35,6 @@ class RecipeViewModel {
     var favoriteRecipe = mutableStateListOf<Recipe>()
     var lastIndexRecipe = 0
     var searchTextState = mutableStateOf("")
-    var path = Environment.getExternalStoragePublicDirectory(
-        Environment.DIRECTORY_DOCUMENTS
-    )
 
     init {
         if (allRecipes.isEmpty()) {
