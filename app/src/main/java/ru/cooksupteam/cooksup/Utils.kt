@@ -2,6 +2,7 @@ package ru.cooksupteam.cooksup
 
 import android.text.TextUtils
 import androidx.compose.ui.graphics.Color
+import java.nio.charset.Charset
 import java.util.Locale
 
 
@@ -37,4 +38,10 @@ fun Double.autoformat(): String =
             }.format(Locale.ENGLISH, this@autoformat)
         }
     }
+fun String.toUTF8(): String {
+    // Получаем экземпляр Charset для кодировки UTF-8
+    val charset = Charset.forName("UTF-8")
 
+    // Преобразуем строку из UTF-16 в UTF-8
+    return this.toByteArray(charset).toString(charset)
+}

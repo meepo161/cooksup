@@ -3,6 +3,8 @@ package ru.cooksupteam.cooksup.screens
 import Banner
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -21,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
+import androidx.compose.material.Checkbox
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
@@ -31,8 +35,12 @@ import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Share
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,7 +57,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.google.gson.Gson
-import com.popovanton0.heartswitch.HeartSwitch
 import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.app.MainActivity
 import ru.cooksupteam.cooksup.app.R
@@ -107,25 +114,45 @@ class RecipeDetailScreen(var recipeGson: String) : Screen {
                                         .background(CooksupTheme.colors.uiBackground)
                                         .weight(0.7f)
                                 )
-                                HeartSwitch(modifier = Modifier
-                                    .weight(0.2f)
-                                    .padding(end = 8.dp),
-                                    checked = rvm.favoriteRecipe.contains(recipe),
-                                    onCheckedChange = {
-                                        if (it) {
-                                            rvm.addFavoriteRecipeFromJSON(recipe)
-                                        } else {
+                                IconButton(
+                                    modifier = Modifier.weight(0.1f),
+                                    onClick = {
+                                        if (rvm.favoriteRecipe.contains(recipe)) {
                                             rvm.removeFavoriteRecipeFromJSON(recipe)
+                                        } else {
+                                            rvm.addFavoriteRecipeFromJSON(recipe)
                                         }
-                                    }
-                                )
+                                    }) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .fillMaxHeight()
+                                            .size(32.dp),
+                                        imageVector = if (rvm.favoriteRecipe.contains(recipe)) Icons.Filled.Favorite else Icons.Rounded.FavoriteBorder,
+                                        contentDescription = "",
+                                        tint = CooksupTheme.colors.error
+                                    )
+                                }
                                 IconButton(modifier = Modifier, onClick = {
-                                    val intent = Intent(context, MainActivity::class.java)
-                                    intent.action = Intent.ACTION_SEND
-                                    intent.putExtra("Recipe", recipeGson)
-                                    context.startActivity(Intent.createChooser(intent, "Отправить"))
+                                    val shareIntent = Intent()
+                                    shareIntent.action = Intent.ACTION_SEND
+                                    shareIntent.type = "text/plain"
+                                    shareIntent.putExtra(
+                                        Intent.EXTRA_TEXT,
+                                        "cooksup://recipe/${recipe.name}"
+                                    )
+//                                    cockapp://nigger.recipe/id=1488
+                                    context.startActivity(
+                                        Intent.createChooser(
+                                            shareIntent,
+                                            "Share via"
+                                        )
+                                    )
                                 }) {
-                                    Icon(imageVector = Icons.Filled.Share, contentDescription = "")
+                                    Icon(
+                                        imageVector = Icons.Filled.Share,
+                                        contentDescription = "",
+                                        tint = CooksupTheme.colors.brand
+                                    )
                                 }
                             }
                         }

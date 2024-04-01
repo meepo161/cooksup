@@ -3,10 +3,12 @@ package ru.cooksupteam.cooksup.ui.components
 import android.annotation.SuppressLint
 import android.text.style.ClickableSpan
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,8 +17,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Checkbox
 import androidx.compose.material.CheckboxDefaults
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.Favorite
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,11 +36,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.google.gson.Gson
-import com.popovanton0.heartswitch.HeartSwitch
+import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.screens.RecipeDetailScreen
+import ru.cooksupteam.cooksup.screens.RecipesFavoriteScreen
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @SuppressLint("UnrememberedMutableState")
@@ -87,13 +97,21 @@ fun CompactRecipeCard(
                     overflow = TextOverflow.Ellipsis
                 )
             }
-            HeartSwitch(modifier = Modifier.padding(4.dp),
-                checked = isFavorite.value,
-                onCheckedChange = {
+            IconButton(
+                modifier = Modifier.weight(0.1f),
+                onClick = {
                     onFavoriteClick(recipe, isFavorite.value)
                     isFavorite.value = !isFavorite.value
-                }
-            )
+                }) {
+                Icon(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .size(32.dp),
+                    imageVector = if(isFavorite.value) Icons.Filled.Favorite else Icons.Rounded.FavoriteBorder,
+                    contentDescription = "",
+                    tint = CooksupTheme.colors.error
+                )
+            }
         }
     }
 }

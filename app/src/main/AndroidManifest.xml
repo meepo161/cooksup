@@ -29,12 +29,36 @@
             android:theme="@style/Theme.Cooksup2">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https"
+                    android:host="www.cooksupteam.ru"
+                    android:pathPrefix="/recipe" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="cooksup"
+                    android:host="recipe" />
+            </intent-filter>
         </activity>
-        <uses-permission android:name="com.google.android.gms.permission.AD_ID" tools:node="remove"
-            tools:ignore="WrongManifestParent" />
+
+        <uses-permission
+            android:name="com.google.android.gms.permission.AD_ID"
+            tools:ignore="WrongManifestParent"
+            tools:node="remove" />
         <meta-data
             android:name="com.yandex.mobile.ads.AUTOMATIC_SDK_INITIALIZATION"
             android:value="false" />

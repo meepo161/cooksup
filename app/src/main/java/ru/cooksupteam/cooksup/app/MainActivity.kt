@@ -3,6 +3,7 @@ package ru.cooksupteam.cooksup.app
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
@@ -17,13 +18,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
+import com.google.gson.Gson
 import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.common.MobileAds
 import com.yandex.mobile.ads.instream.MobileInstreamAds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.cooksupteam.cooksup.RESTAPI.fetchRecipeFilteredFromText
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.screens.MainScreen
+import ru.cooksupteam.cooksup.screens.RecipeDetailScreen
+import ru.cooksupteam.cooksup.toUTF8
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 import ru.cooksupteam.cooksup.viewmodel.RecipeViewModel
@@ -36,6 +41,9 @@ import ru.rustore.sdk.appupdate.model.AppUpdateType
 import ru.rustore.sdk.appupdate.model.InstallStatus
 import ru.rustore.sdk.appupdate.model.UpdateAvailability
 import java.io.File
+import java.lang.Thread.sleep
+import java.net.URLDecoder
+import java.nio.charset.Charset
 import kotlin.time.Duration.Companion.seconds
 
 
@@ -56,6 +64,7 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity", "ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         MobileAds.initialize(this) { }
         MobileInstreamAds.setAdGroupPreloading(true)
         MobileAds.enableLogging(true)
@@ -83,16 +92,32 @@ class MainActivity : ComponentActivity() {
             firstTime.createNewFile()
             firstTime.writeText("1")
         }
-        setContent {
-            CooksupTheme {
-                Navigator(MainScreen())
+        val data: CharSequence? = intent?.data?.toString()
+        val nameRecipeIntent = data.toString().replace("cooksup://recipe/", "")
+        var convertedString = URLDecoder.decode(nameRecipeIntent, "UTF-8")
+        Log.d("RecipeDataIntent", convertedString)
+//        if (data.isNullOrBlank()) {
+            setContent {
+                CooksupTheme {
+                    Navigator(MainScreen())
+                }
             }
-        }
+//        } else {
+//            while (rvm.allRecipes.size < 90000) {
+//                sleep(10)
+//            }
+//            setContent {
+//                CooksupTheme {
+//                    Navigator(RecipeDetailScreen(Gson().toJson(fetchRecipeFilteredFromText(convertedString).first())))
+//                }
+//            }
+//        }
+
     }
 
     private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("Intent12345", intent.dataString?: "12345")
+            Log.d("Intent12345", intent.dataString ?: "12345")
         }
     }
 
