@@ -1,8 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
-import Banner
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
@@ -43,7 +41,6 @@ import androidx.compose.material.icons.filled.MenuBook
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -65,22 +62,16 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.scope
-import ru.cooksupteam.cooksup.app.MainActivity
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
 import ru.cooksupteam.cooksup.app.rvm
-import ru.cooksupteam.cooksup.app.uvm
-import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.regex
-import ru.cooksupteam.cooksup.ui.components.CompactIngredientCard
 import ru.cooksupteam.cooksup.ui.components.CompactRecipeCard
-import ru.cooksupteam.cooksup.ui.components.RecipeCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 class RecipesTab() : Tab {
@@ -302,7 +293,7 @@ class RecipesTab() : Tab {
                         }
                     }
                 } else {
-                    Column {
+                    Column(modifier = Modifier.padding(bottom = 100.dp, top = 8.dp)) {
                         val items =
                             if (ivm.selectedIngredients.isNotEmpty() && rvm.searchTextState.value.isNotEmpty()) {
                                 rvm.recipeFiltered.sortedBy { it.name.lowercase() }.filter {
@@ -352,8 +343,6 @@ class RecipesTab() : Tab {
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 state = lazyListState
                             ) {
-                                yandexBannerAd.id = R.string.banner_recipes_tab
-                                item { Banner(yandexBannerAd.id) }
                                 itemsIndexed(items) { index, recipe ->
                                     CompactRecipeCard(
                                         recipe = recipe,

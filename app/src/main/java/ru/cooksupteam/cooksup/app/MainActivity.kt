@@ -2,11 +2,7 @@ package ru.cooksupteam.cooksup.app
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.BroadcastReceiver
-import android.content.ClipData
-import android.content.Context
 import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.net.Uri
 import android.os.Bundle
@@ -18,19 +14,20 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
-import com.google.gson.Gson
+import com.my.target.ads.MyTargetView
+import com.my.target.common.MyTargetConfig
+import com.my.target.common.MyTargetManager
+import com.my.target.nativeads.NativeAd
 import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.common.MobileAds
 import com.yandex.mobile.ads.instream.MobileInstreamAds
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import ru.cooksupteam.cooksup.RESTAPI.fetchRecipeFilteredFromText
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.screens.MainScreen
-import ru.cooksupteam.cooksup.screens.RecipeDetailScreen
-import ru.cooksupteam.cooksup.toUTF8
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
+import ru.cooksupteam.cooksup.viewmodel.MainViewModel
 import ru.cooksupteam.cooksup.viewmodel.RecipeViewModel
 import ru.cooksupteam.cooksup.viewmodel.UserViewModel
 import ru.rustore.sdk.appupdate.listener.InstallStateUpdateListener
@@ -41,20 +38,21 @@ import ru.rustore.sdk.appupdate.model.AppUpdateType
 import ru.rustore.sdk.appupdate.model.InstallStatus
 import ru.rustore.sdk.appupdate.model.UpdateAvailability
 import java.io.File
-import java.lang.Thread.sleep
 import java.net.URLDecoder
-import java.nio.charset.Charset
 import kotlin.time.Duration.Companion.seconds
 
 
 lateinit var ivm: IngredientsViewModel
 lateinit var rvm: RecipeViewModel
-lateinit var uvm: UserViewModel
+lateinit var mvm: MainViewModel
 var path = Environment.getExternalStoragePublicDirectory(
     Environment.DIRECTORY_DOCUMENTS
 )
 lateinit var yandexBannerAd: BannerAdView
 
+//lateinit var myTargedBannerAd: MyTargetView
+var ruStoreNativeAd: NativeAd? = null
+val YOUR_SLOT_ID = 1534998
 
 class MainActivity : ComponentActivity() {
     val updateType = AppUpdateType.FLEXIBLE
@@ -64,12 +62,6 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("SourceLockedOrientationActivity", "ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        MobileAds.initialize(this) { }
-        MobileInstreamAds.setAdGroupPreloading(true)
-        MobileAds.enableLogging(true)
-        yandexBannerAd = BannerAdView(this)
-        yandexBannerAd.id = R.string.banner_recipes_tab
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         appContext = applicationContext
         try {
@@ -80,9 +72,22 @@ class MainActivity : ComponentActivity() {
             checkForAppUpdates()
         } catch (_: Exception) {
         }
+
+        MobileAds.initialize(this) { }
+        MobileInstreamAds.setAdGroupPreloading(true)
+        MobileAds.enableLogging(true)
+        yandexBannerAd = BannerAdView(this)
+
+        ruStoreNativeAd = NativeAd(YOUR_SLOT_ID, this)
+        ruStoreNativeAd!!.load()
+//        myTargedBannerAd = MyTargetView(this);
+//        myTargedBannerAd.setSlotId(YOUR_SLOT_ID)
+//        myTargedBannerAd.setAdSize(MyTargetView.AdSize.ADSIZE_320x50);
+//        myTargedBannerAd.load()
+
         ivm = IngredientsViewModel()
         rvm = RecipeViewModel()
-        uvm = UserViewModel()
+        mvm = MainViewModel()
         val firstTime = File(path, "fisrtTime.txt")
         try {
             firstTime.readText() != "1"
@@ -97,11 +102,11 @@ class MainActivity : ComponentActivity() {
         var convertedString = URLDecoder.decode(nameRecipeIntent, "UTF-8")
         Log.d("RecipeDataIntent", convertedString)
 //        if (data.isNullOrBlank()) {
-            setContent {
-                CooksupTheme {
-                    Navigator(MainScreen())
-                }
+        setContent {
+            CooksupTheme {
+                Navigator(MainScreen())
             }
+        }
 //        } else {
 //            while (rvm.allRecipes.size < 90000) {
 //                sleep(10)
@@ -113,12 +118,6 @@ class MainActivity : ComponentActivity() {
 //            }
 //        }
 
-    }
-
-    private val mMessageReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            Log.d("Intent12345", intent.dataString ?: "12345")
-        }
     }
 
     private val installStateUpdateListener = InstallStateUpdateListener { state ->

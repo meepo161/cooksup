@@ -3,8 +3,7 @@ package ru.cooksupteam.cooksup.screens
 import Banner
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.net.Uri
-import android.os.Bundle
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
-import androidx.compose.material.Checkbox
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LocalTextStyle
@@ -38,8 +37,6 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.Share
-import androidx.compose.material.icons.outlined.Favorite
-import androidx.compose.material.icons.rounded.Favorite
 import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -53,16 +50,16 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.google.gson.Gson
 import ru.cooksupteam.cooksup.Singleton
-import ru.cooksupteam.cooksup.app.MainActivity
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
+import ru.cooksupteam.cooksup.app.mvm
 import ru.cooksupteam.cooksup.app.rvm
-import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.autoformat
 import ru.cooksupteam.cooksup.model.Recipe
 import ru.cooksupteam.cooksup.toIntOrDefault
@@ -77,6 +74,9 @@ class RecipeDetailScreen(var recipeGson: String) : Screen {
     )
     @Composable
     override fun Content() {
+        LifecycleEffect(onStarted = {
+            mvm.adsLoaded.value = false
+        })
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val recipe = Gson().fromJson(recipeGson, Recipe::class.java)
@@ -84,6 +84,23 @@ class RecipeDetailScreen(var recipeGson: String) : Screen {
         CooksupTheme {
             Scaffold(
                 backgroundColor = CooksupTheme.colors.uiBackground,
+                bottomBar = {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        AnimatedVisibility(visible = !mvm.adsLoaded.value) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(100.dp)
+                                    .fillMaxWidth(),
+                                color = CooksupTheme.colors.brand
+                            )
+                        }
+                        Banner()
+                    }
+                },
                 topBar = {
                     TopAppBar(
                         backgroundColor = CooksupTheme.colors.uiBackground,
@@ -155,19 +172,16 @@ class RecipeDetailScreen(var recipeGson: String) : Screen {
                                     )
                                 }
                             }
-                        }
-                    )
+                        })
                 },
             ) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(CooksupTheme.colors.uiBackground)
-                        .padding(8.dp),
+                        .padding(bottom = 100.dp, top = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    yandexBannerAd.id = R.string.banner_recipes_detail_screen
-                    item { Banner(yandexBannerAd.id) }
                     item {
                         RecipeImage(
                             imageUrl = recipe.pic,

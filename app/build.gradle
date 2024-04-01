@@ -59,6 +59,7 @@ android {
 
 dependencies {
     implementation "com.yandex.android:mobileads:6.4.1"
+    implementation "com.my.target:mytarget-sdk:5.17.0"
 
     implementation "org.jsoup:jsoup:1.7.2"
     implementation "io.coil-kt:coil-compose:2.2.1"

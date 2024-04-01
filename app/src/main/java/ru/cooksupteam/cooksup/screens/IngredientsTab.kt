@@ -1,19 +1,12 @@
 package ru.cooksupteam.cooksup.screens
 
-import Banner
 import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.text.KeyboardActions
@@ -47,10 +40,8 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
-import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.regex
 import ru.cooksupteam.cooksup.ui.components.CompactIngredientCard
-import ru.cooksupteam.cooksup.ui.components.IngredientListItem
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 class IngredientsTab : Tab {
@@ -191,7 +182,7 @@ class IngredientsTab : Tab {
 
                         })
                 }) {
-                Column() {
+                Column(modifier = Modifier.padding(bottom = 100.dp, top = 8.dp)) {
                     Text(
                         text = "Ингредиентов ${ivm.items.size}",
                         textAlign = TextAlign.Start,
@@ -207,8 +198,6 @@ class IngredientsTab : Tab {
                     LazyColumn(
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
-                        yandexBannerAd.id = R.string.banner_ingredients_tab
-                        item { Banner(yandexBannerAd.id) }
                         itemsIndexed(ivm.items.sortedBy { !it.selected }) { index, ingredient ->
                             CompactIngredientCard(
                                 modifier = Modifier,

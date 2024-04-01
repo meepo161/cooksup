@@ -85,8 +85,6 @@
     <string name="recipes">Рецепты</string>
     <string name="my_profile">Мой профиль</string>
     <string name="banner_main_tab">R-M-7108725-1</string>
-    <string name="banner_ingredients_tab">R-M-7108725-1</string>
-    <string name="banner_recipes_tab">R-M-7108725-1</string>
-    <string name="banner_recipes_detail_screen">R-M-7108725-1</string>
+    <string name="banner_rustore">1534998</string>
 
 </resources>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="nativeads_media_view" type="id" />
+    <item name="nativeads_ad_view" type="id" />
+    <item name="nativeads_title" type="id" />
+    <item name="nativeads_description" type="id" />
+    <item name="nativeads_call_to_action" type="id" />
+    <item name="nativeads_icon" type="id"/>
+</resources>

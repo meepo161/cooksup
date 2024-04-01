@@ -1,6 +1,5 @@
 package ru.cooksupteam.cooksup.screens
 
-import Banner
 import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -118,14 +117,12 @@ class MainTab : Tab {
                     LazyColumn(
                         state = scrollState,
                         modifier = Modifier
-                            .padding(bottom = 56.dp, top = 8.dp)
+                            .padding(bottom = 156.dp, top = 8.dp)
                             .fillMaxSize()
                             .background(CooksupTheme.colors.uiBackground),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        yandexBannerAd.id = R.string.banner_main_tab
-                        item { Banner(yandexBannerAd.id) }
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 repeat(5) { repeat ->

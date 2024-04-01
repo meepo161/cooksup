@@ -1,37 +1,31 @@
 package ru.cooksupteam.cooksup.screens
 
-import android.Manifest
+import Banner
 import android.annotation.SuppressLint
-import android.content.Intent
-import android.content.pm.PackageManager
 import android.content.res.Configuration
-import android.util.Log
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonColors
-import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -40,11 +34,10 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import kotlinx.serialization.Serializable
-import ru.cooksupteam.cooksup.Singleton
-import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.navigator
+import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
-import ru.cooksupteam.cooksup.app.rvm
+import ru.cooksupteam.cooksup.app.mvm
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 
 @Serializable
@@ -53,24 +46,36 @@ class MainScreen() :
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter")
     @Composable
     override fun Content() {
+        LifecycleEffect(onStarted = {
+            mvm.adsLoaded.value = false
+        })
         navigator = LocalNavigator.currentOrThrow
-
-
-
-
         if (ivm.isIngredientDataReady.value) {
             TabNavigator(MainTab()) {
                 Scaffold(
                     bottomBar = {
                         CooksupTheme {
-                            BottomNavigation(
-                                backgroundColor = CooksupTheme.colors.uiBackground,
-                                contentColor = CooksupTheme.colors.textPrimary
+                            Column(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                TabNavigationItem(tab = MainTab())
-                                TabNavigationItem(tab = IngredientsTab())
-                                TabNavigationItem(tab = RecipesTab())
+                                AnimatedVisibility(visible = !mvm.adsLoaded.value) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(100.dp).fillMaxWidth(),
+                                        color = CooksupTheme.colors.brand
+                                    )
+                                }
+                                Banner()
+                                BottomNavigation(
+                                    backgroundColor = CooksupTheme.colors.uiBackground,
+                                    contentColor = CooksupTheme.colors.textPrimary
+                                ) {
+                                    TabNavigationItem(tab = MainTab())
+                                    TabNavigationItem(tab = IngredientsTab())
+                                    TabNavigationItem(tab = RecipesTab())
 //                                TabNavigationItem(tab = ProfileTab())
+                                }
                             }
                         }
                     }) {
