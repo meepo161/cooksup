@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.ActivityInfo
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
@@ -12,12 +13,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.navigator.Navigator
-import com.my.target.ads.MyTargetView
-import com.my.target.common.MyTargetConfig
-import com.my.target.common.MyTargetManager
-import com.my.target.nativeads.NativeAd
 import com.yandex.mobile.ads.banner.BannerAdView
 import com.yandex.mobile.ads.common.MobileAds
 import com.yandex.mobile.ads.instream.MobileInstreamAds
@@ -29,7 +27,6 @@ import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
 import ru.cooksupteam.cooksup.viewmodel.IngredientsViewModel
 import ru.cooksupteam.cooksup.viewmodel.MainViewModel
 import ru.cooksupteam.cooksup.viewmodel.RecipeViewModel
-import ru.cooksupteam.cooksup.viewmodel.UserViewModel
 import ru.rustore.sdk.appupdate.listener.InstallStateUpdateListener
 import ru.rustore.sdk.appupdate.manager.RuStoreAppUpdateManager
 import ru.rustore.sdk.appupdate.manager.factory.RuStoreAppUpdateManagerFactory
@@ -50,25 +47,20 @@ var path = Environment.getExternalStoragePublicDirectory(
 )
 lateinit var yandexBannerAd: BannerAdView
 
-//lateinit var myTargedBannerAd: MyTargetView
-var ruStoreNativeAd: NativeAd? = null
-val YOUR_SLOT_ID = 1534998
-
 class MainActivity : ComponentActivity() {
     val updateType = AppUpdateType.FLEXIBLE
     lateinit var appUpdateManager: RuStoreAppUpdateManager
 
 
+    @RequiresApi(Build.VERSION_CODES.R)
     @SuppressLint("SourceLockedOrientationActivity", "ResourceType")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
+        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
         appContext = applicationContext
         try {
             appUpdateManager = RuStoreAppUpdateManagerFactory.create(applicationContext)
-            if (updateType == AppUpdateType.FLEXIBLE) {
-                appUpdateManager.registerListener(installStateUpdateListener)
-            }
+            appUpdateManager.registerListener(installStateUpdateListener)
             checkForAppUpdates()
         } catch (_: Exception) {
         }
@@ -77,13 +69,6 @@ class MainActivity : ComponentActivity() {
         MobileInstreamAds.setAdGroupPreloading(true)
         MobileAds.enableLogging(true)
         yandexBannerAd = BannerAdView(this)
-
-        ruStoreNativeAd = NativeAd(YOUR_SLOT_ID, this)
-        ruStoreNativeAd!!.load()
-//        myTargedBannerAd = MyTargetView(this);
-//        myTargedBannerAd.setSlotId(YOUR_SLOT_ID)
-//        myTargedBannerAd.setAdSize(MyTargetView.AdSize.ADSIZE_320x50);
-//        myTargedBannerAd.load()
 
         ivm = IngredientsViewModel()
         rvm = RecipeViewModel()
@@ -99,7 +84,7 @@ class MainActivity : ComponentActivity() {
         }
         val data: CharSequence? = intent?.data?.toString()
         val nameRecipeIntent = data.toString().replace("cooksup://recipe/", "")
-        var convertedString = URLDecoder.decode(nameRecipeIntent, "UTF-8")
+        val convertedString = URLDecoder.decode(nameRecipeIntent, "UTF-8")
         Log.d("RecipeDataIntent", convertedString)
 //        if (data.isNullOrBlank()) {
         setContent {
@@ -173,11 +158,11 @@ class MainActivity : ComponentActivity() {
                 }
             }
             .addOnFailureListener { error ->
-//                Toast.makeText(
-//                    applicationContext,
-//                    "Что-то пошло не так: $error",
-//                    Toast.LENGTH_LONG
-//                ).show()
+                Toast.makeText(
+                    applicationContext,
+                    "Что-то пошло не так: $error",
+                    Toast.LENGTH_LONG
+                ).show()
             }
     }
 }

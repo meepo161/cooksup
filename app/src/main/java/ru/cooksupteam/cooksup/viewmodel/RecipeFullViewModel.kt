@@ -1,21 +1,16 @@
 package ru.cooksupteam.cooksup.viewmodel
 
-import android.os.Environment
 import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
 import com.google.gson.Gson
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.launch
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton
 import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.ivm
@@ -24,7 +19,6 @@ import ru.cooksupteam.cooksup.app.rvm
 import ru.cooksupteam.cooksup.model.Recipe
 import java.io.BufferedReader
 import java.io.File
-import java.io.FileWriter
 import java.io.InputStreamReader
 
 
@@ -38,7 +32,7 @@ class RecipeViewModel {
 
     init {
         if (allRecipes.isEmpty()) {
-            for (i in 1..8) {
+            for (i in 0..8) {
                 scope.launch {
                     Json.decodeFromStream<List<Recipe>>(
                         stream = appContext.assets.open("recipes$i.json")
@@ -71,9 +65,6 @@ class RecipeViewModel {
                     ivm.lastIngredients = ivm.selectedIngredients.map { it.name }
                 }
             }
-            while (rvm.allRecipes.isEmpty()) {
-                delay(10)
-            }
             loadFavorite()
         }
     }
@@ -84,6 +75,7 @@ class RecipeViewModel {
         val inputStream = File(path, "favorites.json").inputStream()
         try {
             favoriteRecipe.addAll(Json.decodeFromStream<List<Recipe>>(stream = inputStream))
+            Log.d("favoriteRecipe", "${favoriteRecipe.size}")
         } catch (e: Exception) {
             Log.d("favoriteRecipe", e.toString())
         }

@@ -40,14 +40,11 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import kotlinx.serialization.ExperimentalSerializationApi
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.app.R
 import ru.cooksupteam.cooksup.app.ivm
-import ru.cooksupteam.cooksup.app.yandexBannerAd
 import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-
 
 class MainTab : Tab {
     override val options: TabOptions
@@ -65,7 +62,6 @@ class MainTab : Tab {
             }
         }
 
-    @OptIn(ExperimentalSerializationApi::class)
     @SuppressLint("UnusedMaterialScaffoldPaddingParameter", "ResourceType")
     @Composable
     override fun Content() {
@@ -123,6 +119,7 @@ class MainTab : Tab {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+//                        if (isOnloaded.value) item { BannerRustore() }
                         item {
                             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                                 repeat(5) { repeat ->

@@ -17,13 +17,11 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
 import androidx.compose.material.ButtonDefaults
@@ -65,8 +63,6 @@ import ru.cooksupteam.cooksup.ui.components.CooksupSurface
 import ru.cooksupteam.cooksup.ui.components.IngredientImage
 import ru.cooksupteam.cooksup.ui.components.SnackCard
 import ru.cooksupteam.cooksup.ui.theme.CooksupTheme
-import ru.cooksupteam.cooksup.ui.theme.Neutral8
-import ru.cooksupteam.cooksup.utils.mirroringBackIcon
 import kotlin.math.max
 import kotlin.math.min
 
@@ -158,27 +154,6 @@ class IngredientDetailScreen(
                 .fillMaxWidth()
                 .background(Brush.horizontalGradient(CooksupTheme.colors.tornado1))
         )
-    }
-
-    @Composable
-    private fun Up(upPress: () -> Unit) {
-        IconButton(
-            onClick = upPress,
-            modifier = Modifier
-                .statusBarsPadding()
-                .padding(horizontal = 16.dp, vertical = 10.dp)
-                .size(36.dp)
-                .background(
-                    color = Neutral8.copy(alpha = 0.32f),
-                    shape = CircleShape
-                )
-        ) {
-            Icon(
-                imageVector = mirroringBackIcon(),
-                tint = CooksupTheme.colors.iconInteractive,
-                contentDescription = stringResource(R.string.label_back)
-            )
-        }
     }
 
     @Composable

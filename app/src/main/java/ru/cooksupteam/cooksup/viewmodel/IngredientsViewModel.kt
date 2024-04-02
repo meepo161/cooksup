@@ -7,10 +7,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromStream
-import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton
+import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.model.Ingredient
 import java.io.File
 
@@ -20,15 +20,16 @@ class IngredientsViewModel {
     var lastIngredients: List<String> = listOf()
     var allIngredients = mutableStateListOf<Ingredient>()
     val selectedIngredients = mutableStateListOf<Ingredient>()
-    val selectedIngredientIdx = mutableStateOf<Int>(1)
+    val selectedIngredientIdx = mutableStateOf(1)
     var searchTextState = mutableStateOf("")
     var items = mutableStateListOf<Ingredient>()
-    val fileFields = File(Singleton.appContext.filesDir, "fields.json")
+    private val fileFields = File(appContext.filesDir, "fields.json")
 
     init {
         load()
     }
 
+    @OptIn(ExperimentalSerializationApi::class)
     fun load() {
         if (allIngredients.isEmpty()) {
             scope.launch {
@@ -41,7 +42,7 @@ class IngredientsViewModel {
                 Log.d("fields", fileFields.readText())
                 allIngredients.addAll(
                     Json.decodeFromStream<List<Ingredient>>(
-                        stream = Singleton.appContext.assets.open(
+                        stream = appContext.assets.open(
                             "ingredients.json"
                         )
                     ).sortedBy { it.name }
@@ -51,7 +52,4 @@ class IngredientsViewModel {
             }
         }
     }
-
-    fun getFilteredIngredients(predicate: String): List<Ingredient> =
-        allIngredients.filter { it.name.lowercase().contains(predicate.lowercase()) }
 }

@@ -1,7 +1,6 @@
 package ru.cooksupteam.cooksup.screens
 
 import android.annotation.SuppressLint
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -64,7 +63,6 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import ru.cooksupteam.cooksup.RESTAPI
-import ru.cooksupteam.cooksup.Singleton.appContext
 import ru.cooksupteam.cooksup.Singleton.navigator
 import ru.cooksupteam.cooksup.Singleton.scope
 import ru.cooksupteam.cooksup.app.R
@@ -208,15 +206,7 @@ class RecipesTab() : Tab {
                                 IconButton(
                                     modifier = Modifier.weight(0.1f),
                                     onClick = {
-                                        if (!rvm.allRecipes.isEmpty()) {
-                                            navigator.push(RecipesFavoriteScreen())
-                                        } else {
-                                            Toast.makeText(
-                                                appContext,
-                                                "Дождитесь загрузки рецептов",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
-                                        }
+                                        navigator.push(RecipesFavoriteScreen())
                                     }) {
                                     Icon(
                                         modifier = Modifier
